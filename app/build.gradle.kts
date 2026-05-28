@@ -40,7 +40,7 @@ java {
 
 application {
     // Define the main class for the application.
-    mainClass = "it.unicam.cs.mpgc.rpg130730.App"
+    mainClass = "it.unicam.cs.mpgc.rpg130730.EntryPoint"
 }
 
 tasks.named<Test>("test") {
