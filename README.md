@@ -9,19 +9,8 @@
 ### Istruzioni
 
 ```bash
-git clone <url-del-repository>
-cd <nome-cartella>
-```
-
-### Build del progetto
-
-```bash
-./gradlew build
-```
-
-### Esecuzione
-
-```bash
+git clone "https://github.com/tom-acciarresi/progetto-mgc2026.git"
+cd progetto-mgc2026
 ./gradlew run
 ```
 
