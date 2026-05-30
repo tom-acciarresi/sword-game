@@ -11,7 +11,7 @@
 ```bash
 git clone "https://github.com/tom-acciarresi/progetto-mgc2026.git";
 cd progetto-mgc2026 &&
-gradle run
+gradle build run
 ```
 
 <img src="https://github.com/waltzaround/RAID/blob/main/assets/NO-AI.png" alt="No AI used in this project" width="128" height="128">
