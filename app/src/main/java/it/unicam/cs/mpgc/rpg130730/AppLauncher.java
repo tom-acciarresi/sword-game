@@ -16,7 +16,7 @@ public class AppLauncher extends Application {
     public static final boolean IS_RESIZABLE = true;
     public static final int WINDOW_WIDTH = 768;
     public static final int WINDOW_HEIGHT = 640;
-    private static final String ICON_FILENAME = "icon.png";
+    private static final String ICON_FILENAME = "images/icon.png";
     // #endregion
 
     @Override
@@ -35,11 +35,10 @@ public class AppLauncher extends Application {
 
         SceneManager sceneManager = SceneManager.get_instance();
         Scene scene = new Scene(sceneManager);
-        System.out.println(sceneManager.getChildren());
 
         stage.setScene(scene);
 
-        Node tilesetScene = FXMLLoader.load(getClass().getResource("tilegrid.fxml"));
+        Node tilesetScene = FXMLLoader.load(getClass().getResource("scenes/tilegrid.fxml"));
 
         sceneManager.addNode(tilesetScene);
 
@@ -47,8 +46,9 @@ public class AppLauncher extends Application {
 
         stage.show();
 
-        ImageView tempPlayer = FXMLLoader.load(getClass().getResource("player.fxml"));
-        tempPlayer.setImage(new Image(getClass().getResource("player.png").toExternalForm(), 64.0, 64.0, true, false));
+        ImageView tempPlayer = FXMLLoader.load(getClass().getResource("scenes/player.fxml"));
+        tempPlayer.setImage(
+                new Image(getClass().getResource("images/player.png").toExternalForm(), 64.0, 64.0, true, false));
         tempPlayer.setTranslateX((WINDOW_WIDTH / 2) - (64 / 2));
         tempPlayer.setTranslateY((WINDOW_HEIGHT / 2) - (64 / 2));
         sceneManager.addNode(tempPlayer);

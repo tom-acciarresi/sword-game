@@ -3,7 +3,7 @@
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 
-<ImageView fitHeight="64.0" fitWidth="64.0" pickOnBounds="true" preserveRatio="true" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.unicam.cs.mpgc.rpg130730.PlayerController">
+<ImageView fitHeight="64.0" fitWidth="64.0" pickOnBounds="true" preserveRatio="true" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.unicam.cs.mpgc.rpg130730.PlayerController">
    <image>
       <Image url="@icon.png" />
    </image>
