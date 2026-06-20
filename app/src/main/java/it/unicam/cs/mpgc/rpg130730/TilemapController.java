@@ -8,6 +8,11 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 
+/**
+ * Draws tiles in a grid
+ *
+ * @author Tommaso Acciarresi
+ */
 public class TilemapController {
     public static final int TILE_SIZE = 64;
     public static final int GRID_WIDTH = 12;

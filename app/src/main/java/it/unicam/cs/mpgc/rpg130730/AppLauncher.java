@@ -2,6 +2,7 @@ package it.unicam.cs.mpgc.rpg130730;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
@@ -10,15 +11,25 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
+/**
+ * Creates application window and populates it with the first scene
+ * <p>
+ * Contains game loop
+ *
+ * @author Tommaso Acciarresi
+ */
 public class AppLauncher extends Application {
     public static final boolean IS_FULLSCREEN = false, IS_RESIZABLE = true;
     public static final int WINDOW_WIDTH = 768, WINDOW_HEIGHT = 640;
+    private static final int TARGET_FRAMERATE = 60;
     public static final String APPLICATION_TITLE = "New Game", ICON_FILENAME = "images/icon.png";
 
+    public static HashMap<KeyCode, Boolean> keys = new HashMap<KeyCode, Boolean>();
     public static ArrayList<Updatable> objectsToUpdate;
 
     public AppLauncher() {
@@ -51,6 +62,11 @@ public class AppLauncher extends Application {
         SceneManager sceneManager = SceneManager.get_instance();
         Scene scene = new Scene(sceneManager);
         stage.setScene(scene);
+
+        // Register key presses
+        stage.getScene().setOnKeyPressed(e -> keys.put(e.getCode(), true));
+        stage.getScene().setOnKeyReleased(e -> keys.put(e.getCode(), false));
+
         return sceneManager;
     }
 
@@ -69,12 +85,21 @@ public class AppLauncher extends Application {
     }
 
     private void startLoop(Stage stage) {
-        Timeline loop = new Timeline(new KeyFrame(Duration.millis(1000.0 / 60), e -> update(1000.0 / 60)));
+        Timeline loop = new Timeline(
+                new KeyFrame(Duration.seconds(1.0 / TARGET_FRAMERATE), e -> update(1.0 / TARGET_FRAMERATE)));
         loop.setCycleCount(Animation.INDEFINITE);
         loop.play();
     }
 
+    /**
+     * Called 60 times per second (hopefully) at `timeDelta` intervals
+     */
     private void update(double timeDelta) {
+        updateObjects(timeDelta);
+        System.out.println(keys);
+    }
+
+    private void updateObjects(double timeDelta) {
         for (Updatable object : objectsToUpdate) {
             if (object != null)
                 object.update(timeDelta);
