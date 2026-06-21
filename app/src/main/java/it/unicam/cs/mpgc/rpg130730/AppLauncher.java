@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import it.unicam.cs.mpgc.rpg130730.util.SceneManager;
+import it.unicam.cs.mpgc.rpg130730.util.Updatable;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -24,13 +26,18 @@ import javafx.util.Duration;
  * @author Tommaso Acciarresi
  */
 public class AppLauncher extends Application {
+    public static final String FILEPATH_PREFIX = "/it/unicam/cs/mpgc/rpg130730/";
+    public static final int TILE_SIZE = 64;
+    public static final int GRID_WIDTH = 12;
+    public static final int GRID_HEIGHT = 10;
+
     public static final boolean IS_RESIZABLE = false;
     public static final int WINDOW_WIDTH = 768, WINDOW_HEIGHT = 640;
-    private static final int TARGET_FRAMERATE = 60;
+    public static final int TARGET_FRAMERATE = 60;
     public static final String APPLICATION_TITLE = "New Game", ICON_FILENAME = "images/icon.png";
 
-    public static HashMap<KeyCode, Boolean> keys = new HashMap<KeyCode, Boolean>();
-    public static ArrayList<Updatable> objectsToUpdate;
+    private static HashMap<KeyCode, Boolean> keys = new HashMap<KeyCode, Boolean>();
+    private static ArrayList<Updatable> objectsToUpdate;
 
     public AppLauncher() {
         objectsToUpdate = new ArrayList<Updatable>();
@@ -47,6 +54,14 @@ public class AppLauncher extends Application {
         startLoop(stage);
 
         stage.show();
+    }
+
+    public static boolean subscribeToUpdates(Updatable obj) {
+        return objectsToUpdate.add(obj);
+    }
+
+    public static HashMap<KeyCode, Boolean> getCurrentlyPressedKeys() {
+        return keys;
     }
 
     private void setSettings(Stage stage) {

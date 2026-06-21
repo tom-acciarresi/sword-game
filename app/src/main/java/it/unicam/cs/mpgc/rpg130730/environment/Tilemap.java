@@ -1,7 +1,10 @@
-package it.unicam.cs.mpgc.rpg130730;
+package it.unicam.cs.mpgc.rpg130730.environment;
 
 import java.util.Arrays;
 import java.util.HashMap;
+
+import it.unicam.cs.mpgc.rpg130730.AppLauncher;
+import it.unicam.cs.mpgc.rpg130730.util.CustomFileReader;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.image.Image;
@@ -33,8 +36,10 @@ public class Tilemap {
 
         int[] info = loadTilemapInfoFromTextFile();
 
-        tileDictionary.put(1, new Image(getClass().getResource("images/tiles/testtile.png").toExternalForm()));
-        tileDictionary.put(2, new Image(getClass().getResource("images/tiles/testtile2.png").toExternalForm()));
+        tileDictionary.put(1, new Image(
+                getClass().getResource(AppLauncher.FILEPATH_PREFIX + "images/tiles/testtile.png").toExternalForm()));
+        tileDictionary.put(2, new Image(getClass().getResource(
+                AppLauncher.FILEPATH_PREFIX + "images/tiles/testtile2.png").toExternalForm()));
 
         setTilemapTo(info);
     }

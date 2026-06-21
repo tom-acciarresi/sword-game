@@ -1,4 +1,4 @@
-package it.unicam.cs.mpgc.rpg130730;
+package it.unicam.cs.mpgc.rpg130730.util;
 
 /**
  * Tuple datatype cause java still doesn't have these apparently

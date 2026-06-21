@@ -1,5 +1,10 @@
-package it.unicam.cs.mpgc.rpg130730;
+package it.unicam.cs.mpgc.rpg130730.entities;
 
+import java.util.HashMap;
+
+import it.unicam.cs.mpgc.rpg130730.AppLauncher;
+import it.unicam.cs.mpgc.rpg130730.util.Tuple;
+import it.unicam.cs.mpgc.rpg130730.util.Updatable;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.image.ImageView;
@@ -31,16 +36,17 @@ public class Player implements Updatable {
     private void handleInput(double timeDelta) {
         handleMovement(timeDelta);
 
-        if (AppLauncher.keys.getOrDefault(KeyCode.ESCAPE, false))
+        if (AppLauncher.getCurrentlyPressedKeys().getOrDefault(KeyCode.ESCAPE, false))
             Platform.exit();
     }
 
     private void handleMovement(double timeDelta) {
+        HashMap<KeyCode, Boolean> currentlyPressedKeys = AppLauncher.getCurrentlyPressedKeys();
         input = new Tuple<Integer, Integer>(
-                (AppLauncher.keys.getOrDefault(KeyCode.A, false) ? -1 : 0)
-                        + (AppLauncher.keys.getOrDefault(KeyCode.D, false) ? +1 : 0),
-                (AppLauncher.keys.getOrDefault(KeyCode.W, false) ? -1 : 0)
-                        + (AppLauncher.keys.getOrDefault(KeyCode.S, false) ? +1 : 0));
+                (currentlyPressedKeys.getOrDefault(KeyCode.A, false) ? -1 : 0)
+                        + (currentlyPressedKeys.getOrDefault(KeyCode.D, false) ? +1 : 0),
+                (currentlyPressedKeys.getOrDefault(KeyCode.W, false) ? -1 : 0)
+                        + (currentlyPressedKeys.getOrDefault(KeyCode.S, false) ? +1 : 0));
         // System.out.println(input);
 
         move(input, timeDelta);

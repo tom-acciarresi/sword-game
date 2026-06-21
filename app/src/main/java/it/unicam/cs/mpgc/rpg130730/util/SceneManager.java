@@ -1,4 +1,4 @@
-package it.unicam.cs.mpgc.rpg130730;
+package it.unicam.cs.mpgc.rpg130730.util;
 
 import javafx.scene.Group;
 import javafx.scene.Node;
