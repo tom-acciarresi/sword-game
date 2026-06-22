@@ -26,7 +26,6 @@ import javafx.util.Duration;
  * @author Tommaso Acciarresi
  */
 public class AppLauncher extends Application {
-    public static final String FILEPATH_PREFIX = "/it/unicam/cs/mpgc/rpg130730/";
     public static final int TILE_SIZE = 64;
     public static final int GRID_WIDTH = 12;
     public static final int GRID_HEIGHT = 10;
@@ -34,7 +33,7 @@ public class AppLauncher extends Application {
     public static final boolean IS_RESIZABLE = false;
     public static final int WINDOW_WIDTH = 768, WINDOW_HEIGHT = 640;
     public static final int TARGET_FRAMERATE = 60;
-    public static final String APPLICATION_TITLE = "New Game", ICON_FILENAME = "images/icon.png";
+    public static final String APPLICATION_TITLE = "New Game", ICON_FILENAME = "/images/icon.png";
 
     private static HashMap<KeyCode, Boolean> keys = new HashMap<KeyCode, Boolean>();
     private static ArrayList<Updatable> objectsToUpdate;
@@ -87,11 +86,11 @@ public class AppLauncher extends Application {
     private void loadFirstScene(Stage stage, SceneManager sceneManager) throws IOException {
         // TODO: Change
         // Add tiles
-        sceneManager.addNode(FXMLLoader.load(getClass().getResource("scenes/tilemap.fxml")));
+        sceneManager.addNode(FXMLLoader.load(getClass().getResource("/scenes/tilemap.fxml")));
         stage.sizeToScene();
 
         // Add player
-        ImageView tempPlayer = FXMLLoader.load(getClass().getResource("scenes/player.fxml"));
+        ImageView tempPlayer = FXMLLoader.load(getClass().getResource("/scenes/player.fxml"));
         // Center player
         tempPlayer.setTranslateX((WINDOW_WIDTH / 2) - (64 / 2));
         tempPlayer.setTranslateY((WINDOW_HEIGHT / 2) - (64 / 2));

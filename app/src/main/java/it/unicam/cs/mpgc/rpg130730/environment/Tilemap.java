@@ -2,8 +2,13 @@ package it.unicam.cs.mpgc.rpg130730.environment;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 
-import it.unicam.cs.mpgc.rpg130730.AppLauncher;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
+
 import it.unicam.cs.mpgc.rpg130730.util.CustomFileReader;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
@@ -34,14 +39,9 @@ public class Tilemap {
 
         loadTileSpritesWithJSON();
 
-        int[] info = loadTilemapInfoFromTextFile();
+        int[] bitmap = loadTileBitmapFromTextFile();
 
-        tileDictionary.put(1, new Image(
-                getClass().getResource(AppLauncher.FILEPATH_PREFIX + "images/tiles/testtile.png").toExternalForm()));
-        tileDictionary.put(2, new Image(getClass().getResource(
-                AppLauncher.FILEPATH_PREFIX + "images/tiles/testtile2.png").toExternalForm()));
-
-        setTilemapTo(info);
+        setTilemapTo(bitmap);
     }
 
     private void getTilePointersFromGridPane() {
@@ -58,37 +58,33 @@ public class Tilemap {
         }
     }
 
-    // TODO populate dict with sprites
-    private boolean loadTileSpritesWithJSON() {
-        // Gson gson = new Gson();
-        // String jsonString = null;
-        // try {
-        // File file = new File();
-        // FileReader in = new FileReader(file);
-        // JsonReader reader = new JsonReader(in);
-        // jsonString = gson.fromJson(reader, String.class);
-        // } catch (Exception e) {
-        // System.err.println("ERROR\n");
-        // }
-        // if (jsonString == null)
-        return false;
+    private void loadTileSpritesWithJSON() {
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        CustomFileReader fr = new CustomFileReader();
+        String fileOut = fr.readFile("/text/tiles.json");
 
-        // System.out.println(jsonString);
-        // return true;
+        TypeToken<Map<Integer, String>> mapType = new TypeToken<Map<Integer, String>>() {
+        };
+        Map<Integer, String> map = gson.fromJson(fileOut, mapType);
 
+        for (Entry<Integer, String> entry : map.entrySet()) {
+            Integer index = entry.getKey();
+            Image tileSprite = new Image(getClass().getResource("/images/tiles/" + entry.getValue()).toExternalForm());
+
+            tileDictionary.put(index, tileSprite);
+        }
     }
 
-    // TODO make sure array size is correct and integers in dictionary as keys?
-    private int[] loadTilemapInfoFromTextFile() {
+    private int[] loadTileBitmapFromTextFile() {
         CustomFileReader fr = new CustomFileReader();
-        String out = fr.readFile("text/layout.txt").replaceAll("\n", " ");
+        String out = fr.readFile("/text/layout.txt").replaceAll("\n", " ");
         return Arrays.stream(out.split(" ")).mapToInt(Integer::parseInt).toArray();
     }
 
-    private void setTilemapTo(int[] stuff) {
+    private void setTilemapTo(int[] tileLayoutBitmap) {
         for (int i = 0; i < GRID_HEIGHT; i++) {
             for (int j = 0; j < GRID_WIDTH; j++) {
-                tiles[i][j].setImage(tileDictionary.get(stuff[i * GRID_WIDTH + j]));
+                tiles[i][j].setImage(tileDictionary.get(tileLayoutBitmap[i * GRID_WIDTH + j]));
             }
         }
     }

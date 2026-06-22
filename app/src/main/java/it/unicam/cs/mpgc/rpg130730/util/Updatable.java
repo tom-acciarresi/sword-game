@@ -4,6 +4,8 @@ import it.unicam.cs.mpgc.rpg130730.AppLauncher;
 
 /**
  * Implementers have access to the game loop `update()` method
+ *
+ * @author Tommaso Acciarresi
  */
 public interface Updatable {
     public default void subscribeToUpdates() {
