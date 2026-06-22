@@ -9,11 +9,11 @@ import javafx.scene.Node;
  * @author Tommaso Acciarresi
  */
 public class SceneManager extends Group {
-    public boolean addNode(Node node) {
+    public boolean addChild(Node node) {
         return getChildren().add(node);
     }
 
-    public boolean removeNode(Node node) {
+    public boolean removeChild(Node node) {
         return getChildren().remove(node);
     }
 }

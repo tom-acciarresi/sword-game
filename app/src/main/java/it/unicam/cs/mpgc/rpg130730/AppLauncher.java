@@ -4,15 +4,16 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import it.unicam.cs.mpgc.rpg130730.entities.Player;
+import it.unicam.cs.mpgc.rpg130730.environment.Tilemap;
 import it.unicam.cs.mpgc.rpg130730.util.SceneManager;
+import it.unicam.cs.mpgc.rpg130730.util.Tuple;
 import it.unicam.cs.mpgc.rpg130730.util.Updatable;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Application;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
@@ -36,11 +37,7 @@ public class AppLauncher extends Application {
     public static final String APPLICATION_TITLE = "New Game", ICON_FILENAME = "/images/icon.png";
 
     private static HashMap<KeyCode, Boolean> keys = new HashMap<KeyCode, Boolean>();
-    private static ArrayList<Updatable> objectsToUpdate;
-
-    public AppLauncher() {
-        objectsToUpdate = new ArrayList<Updatable>();
-    }
+    private static ArrayList<Updatable> objectsToUpdate = new ArrayList<Updatable>();
 
     @Override
     public void start(Stage stage) throws IOException {
@@ -86,15 +83,15 @@ public class AppLauncher extends Application {
     private void loadFirstScene(Stage stage, SceneManager sceneManager) throws IOException {
         // TODO: Change
         // Add tiles
-        sceneManager.addNode(FXMLLoader.load(getClass().getResource("/scenes/tilemap.fxml")));
-        stage.sizeToScene();
+        sceneManager.addChild(new Tilemap("/text/layout.txt"));
 
         // Add player
-        ImageView tempPlayer = FXMLLoader.load(getClass().getResource("/scenes/player.fxml"));
-        // Center player
-        tempPlayer.setTranslateX((WINDOW_WIDTH / 2) - (64 / 2));
-        tempPlayer.setTranslateY((WINDOW_HEIGHT / 2) - (64 / 2));
-        sceneManager.addNode(tempPlayer);
+        Player tempPlayer = new Player(new Tuple<Double, Double>(
+                (WINDOW_WIDTH - TILE_SIZE) / 2.0,
+                (WINDOW_HEIGHT - TILE_SIZE) / 2.0));
+        sceneManager.addChild(tempPlayer);
+
+        stage.sizeToScene();
     }
 
     private void startLoop(Stage stage) {
