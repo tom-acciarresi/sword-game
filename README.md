@@ -1,12 +1,10 @@
 # progetto-mdc2026
 
-## Come eseguire il progetto
-
-### Prerequisiti
+## Prerequisiti
 - Java 25 (LTS)
 - Gradle
 
-### Istruzioni
+## Istruzioni
 
 ```bash
 git clone "https://github.com/tom-acciarresi/progetto-mgc2026.git";
@@ -14,13 +12,13 @@ cd progetto-mgc2026 &&
 gradle run
 ```
 
-### Controlli
+## Controlli
 
 - W, A, S, D -- Movimento
 - ⬅, ⬆, ➡, ⬇ -- Attacco direzionale
 - ESC -- Esci dal gioco
 
-### Crediti
+## Crediti
 
 - [Asset Pack Utilizzato](https://pixel-boy.itch.io/ninja-adventure-asset-pack)
 
