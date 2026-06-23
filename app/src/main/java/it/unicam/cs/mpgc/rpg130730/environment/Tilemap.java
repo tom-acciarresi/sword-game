@@ -10,7 +10,7 @@ import com.google.gson.reflect.TypeToken;
 import it.unicam.cs.mpgc.rpg130730.util.CustomFileReader;
 import it.unicam.cs.mpgc.rpg130730.util.CustomImageLoader;
 import it.unicam.cs.mpgc.rpg130730.util.GlobalConstants;
-import it.unicam.cs.mpgc.rpg130730.util.Tuple;
+import it.unicam.cs.mpgc.rpg130730.util.Vector2i;
 import javafx.scene.image.Image;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
@@ -84,7 +84,7 @@ public class Tilemap extends GridPane {
         }
     }
 
-    public void setTile(Tuple<Integer, Integer> coords, Image img) {
+    public void setTile(Vector2i coords, Image img) {
         tiles[coords.x()][coords.y()].getSprite().setFill(new ImagePattern(img));
     }
 

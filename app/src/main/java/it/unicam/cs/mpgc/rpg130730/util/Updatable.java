@@ -6,9 +6,14 @@ package it.unicam.cs.mpgc.rpg130730.util;
  * @author Tommaso Acciarresi
  */
 public interface Updatable {
-    public default void subscribeToUpdates() {
+    default void subscribeToUpdates() {
         GameLoop.subscribeToUpdates(this);
     };
 
-    public void update(double timeDelta);
+    default void unsubscribeToUpdates() {
+        if (GameLoop.getObjectsToUpdate().contains(this))
+            GameLoop.unsubscribeToUpdates(this);
+    };
+
+    void update(double timeDelta);
 }

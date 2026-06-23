@@ -19,4 +19,8 @@ gradle run
 - W, A, S, D -- Movimento
 - ESC -- Esci dal gioco
 
-<img src="https://github.com/waltzaround/RAID/blob/main/assets/NO-AI.png" alt="No AI used in this project" width="128" height="128">
+---
+
+<img src="image.png" width="1000">
+
+<img src="https://github.com/waltzaround/RAID/blob/main/assets/NO-AI.png" alt="No AI used in this project" width="256">

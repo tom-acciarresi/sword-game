@@ -1,0 +1,17 @@
+[
+    {
+        "index": 1,
+        "fileName": "tile.png",
+        "isCollidable": "false"
+    },
+    {
+        "index": 2,
+        "fileName": "tile2.png",
+        "isCollidable": "false"
+    },
+    {
+        "index": 8,
+        "fileName": "wall.png",
+        "isCollidable": "true"
+    }
+]

@@ -10,7 +10,7 @@ import it.unicam.cs.mpgc.rpg130730.util.GameLoop;
 import it.unicam.cs.mpgc.rpg130730.util.GlobalConstants;
 import it.unicam.cs.mpgc.rpg130730.util.InputMap;
 import it.unicam.cs.mpgc.rpg130730.util.SceneManager;
-import it.unicam.cs.mpgc.rpg130730.util.Tuple;
+import it.unicam.cs.mpgc.rpg130730.util.Vector2f;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
@@ -24,24 +24,24 @@ import javafx.stage.Stage;
  */
 public class AppLauncher extends Application {
 
-    private Stage stage = new Stage();
+    private final Stage stage = new Stage();
+    private final SceneManager sceneManager = new SceneManager();
 
     @Override
     public void start(@Nullable Stage defaultStage) throws IOException {
-        setSettings(stage);
-
-        SceneManager sceneManager = instantiateSceneManager(stage);
+        setSettings();
+        stage.setScene(new Scene(sceneManager));
 
         setInputListeners();
 
-        loadFirstScene(stage, sceneManager);
+        loadFirstScene();
 
         GameLoop.startLoop(stage);
 
         stage.show();
     }
 
-    private void setSettings(Stage stage) {
+    private void setSettings() {
         // Set Window Settings
         stage.setWidth(GlobalConstants.WINDOW_WIDTH);
         stage.setHeight(GlobalConstants.WINDOW_HEIGHT);
@@ -52,30 +52,20 @@ public class AppLauncher extends Application {
         stage.getIcons().add(il.loadImage(GlobalConstants.ICON_FILENAME));
     }
 
-    private SceneManager instantiateSceneManager(Stage stage) {
-        SceneManager sceneManager = new SceneManager();
-        Scene scene = new Scene(sceneManager);
-        stage.setScene(scene);
-
-        return sceneManager;
-    }
-
     private void setInputListeners() {
         stage.getScene().setOnKeyPressed(e -> InputMap.getCurrentlyPressedKeys().put(e.getCode(), true));
         stage.getScene().setOnKeyReleased(e -> InputMap.getCurrentlyPressedKeys().put(e.getCode(), false));
     }
 
-    private void loadFirstScene(Stage stage, SceneManager sceneManager) {
+    private void loadFirstScene() {
         // TODO: Change
         // Add tiles
-        Tilemap firstTilemap = new Tilemap("/text/layout.txt");
-        sceneManager.addChild(firstTilemap);
+        sceneManager.addChild(new Tilemap("/levels/first_level.txt"));
 
         // Add player
-        Player tempPlayer = new Player(new Tuple<Double, Double>(
+        sceneManager.addChild(new Player(new Vector2f(
                 (GlobalConstants.WINDOW_WIDTH - GlobalConstants.TILE_SIZE) / 2.0,
-                (GlobalConstants.WINDOW_HEIGHT - GlobalConstants.TILE_SIZE) / 2.0));
-        sceneManager.addChild(tempPlayer);
+                (GlobalConstants.WINDOW_HEIGHT - GlobalConstants.TILE_SIZE) / 2.0)));
     }
 
 }

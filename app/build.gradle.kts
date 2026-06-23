@@ -13,7 +13,10 @@ plugins {
 
 javafx {
     version = "25"
-    modules = listOf("javafx.controls", "javafx.fxml")
+    modules = listOf(
+        "javafx.controls",
+        // "javafx.fxml"
+        )
 }
 
 repositories {
@@ -30,7 +33,7 @@ dependencies {
 
     implementation("com.google.code.gson:gson:2.14.0")
 
-    implementation("org.jspecify:jspecify:1.0.0")
+    compileOnly("org.jspecify:jspecify:1.0.0")
 }
 
 // Apply a specific Java toolchain to ease working on different environments.
