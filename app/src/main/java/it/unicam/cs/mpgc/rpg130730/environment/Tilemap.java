@@ -15,6 +15,7 @@ import javafx.scene.image.Image;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.ImagePattern;
+import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
 
 /**
@@ -103,18 +104,22 @@ public class Tilemap extends GridPane {
 
     public class Tile extends StackPane {
         private Rectangle sprite = new Rectangle(GlobalConstants.TILE_SIZE, GlobalConstants.TILE_SIZE);
-        // private boolean isCollidable;
+        private boolean canCollide;
 
         public Tile() {
             getChildren().add(sprite);
         }
 
-        public void setSprite(ImagePattern img) {
-            sprite.setFill(img);
+        public void setSprite(Paint value) {
+            sprite.setFill(value);
         }
 
         public Rectangle getSprite() {
             return this.sprite;
+        }
+
+        public boolean canCollide() {
+            return canCollide;
         }
     }
 }

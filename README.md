@@ -17,7 +17,13 @@ gradle run
 ### Controlli
 
 - W, A, S, D -- Movimento
+- ⬅, ⬆, ➡, ⬇ -- Attacco direzionale
 - ESC -- Esci dal gioco
+
+### Crediti
+
+- [Asset Pack Utilizzato](https://pixel-boy.itch.io/ninja-adventure-asset-pack)
+
 
 ---
 

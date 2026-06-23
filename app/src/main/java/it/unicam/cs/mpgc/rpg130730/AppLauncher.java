@@ -38,6 +38,7 @@ public class AppLauncher extends Application {
 
         GameLoop.startLoop(stage);
 
+        stage.sizeToScene();
         stage.show();
     }
 

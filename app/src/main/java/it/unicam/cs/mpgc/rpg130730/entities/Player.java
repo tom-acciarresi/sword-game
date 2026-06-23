@@ -3,11 +3,12 @@ package it.unicam.cs.mpgc.rpg130730.entities;
 import java.util.HashMap;
 
 import it.unicam.cs.mpgc.rpg130730.util.CustomImageLoader;
+import it.unicam.cs.mpgc.rpg130730.util.GameLoop;
 import it.unicam.cs.mpgc.rpg130730.util.GlobalConstants;
 import it.unicam.cs.mpgc.rpg130730.util.InputMap;
+import it.unicam.cs.mpgc.rpg130730.util.Movable;
 import it.unicam.cs.mpgc.rpg130730.util.Updatable;
 import it.unicam.cs.mpgc.rpg130730.util.Vector2f;
-import it.unicam.cs.mpgc.rpg130730.util.Vector2i;
 import javafx.application.Platform;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
@@ -20,7 +21,7 @@ import javafx.scene.shape.Rectangle;
  *
  * @author Tommaso Acciarresi
  */
-public class Player extends StackPane implements Updatable {
+public class Player extends StackPane implements Updatable, Movable {
 
     public enum KeyBind {
         ESC(KeyCode.ESCAPE),
@@ -44,10 +45,12 @@ public class Player extends StackPane implements Updatable {
 
     private Rectangle playerSprite = new Rectangle(GlobalConstants.TILE_SIZE, GlobalConstants.TILE_SIZE);
 
-    private Vector2i movementInput = Vector2i.ZERO;
+    private Vector2f movementInput = Vector2f.ZERO;
     private Vector2f position = Vector2f.ZERO;
 
     private boolean acceptsInput = true;
+
+    // private boolean canCollide = true;
 
     public Player(Vector2f position) {
         subscribeToUpdates();
@@ -72,13 +75,13 @@ public class Player extends StackPane implements Updatable {
     private void handleMovement(double timeDelta) {
         movementInput = acceptsInput
                 ? getMovementInput()
-                : Vector2i.ZERO;
-        move(movementInput, timeDelta);
+                : Vector2f.ZERO;
+        move(movementInput);
     }
 
-    private Vector2i getMovementInput() {
+    private Vector2f getMovementInput() {
         HashMap<KeyCode, Boolean> currentlyPressedKeys = InputMap.getCurrentlyPressedKeys();
-        return new Vector2i(
+        return new Vector2f(
                 (currentlyPressedKeys.getOrDefault(KeyBind.LEFT.key(), false) ? -1 : 0) +
                         (currentlyPressedKeys.getOrDefault(KeyBind.RIGHT.key(), false) ? +1 : 0),
                 (currentlyPressedKeys.getOrDefault(KeyBind.UP.key(), false) ? -1 : 0) +
@@ -90,10 +93,15 @@ public class Player extends StackPane implements Updatable {
             Platform.exit();
     }
 
-    public void move(Vector2i input, double timeDelta) {
-        if (input.equals(Vector2i.ZERO))
+    public void setAcceptsInput(boolean acceptsInput) {
+        this.acceptsInput = acceptsInput;
+    }
+
+    public void move(Vector2f input) {
+        if (input.equals(Vector2f.ZERO))
             return;
-        double r = GlobalConstants.PLAYER_SPEED * timeDelta;
+
+        double r = GlobalConstants.PLAYER_SPEED * GameLoop.timeDelta;
         // WHY ARE THIS FUNCTION'S INPUTS INVERTED??? WHO PUTS Y BEFORE X???
         double angle = Math.atan2(input.y(), input.x());
 
