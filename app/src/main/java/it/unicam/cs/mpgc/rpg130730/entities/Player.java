@@ -2,14 +2,14 @@ package it.unicam.cs.mpgc.rpg130730.entities;
 
 import java.util.HashMap;
 
+import it.unicam.cs.mpgc.rpg130730.Launcher;
+import it.unicam.cs.mpgc.rpg130730.environment.Tilemap.Tile;
 import it.unicam.cs.mpgc.rpg130730.util.CustomImageLoader;
 import it.unicam.cs.mpgc.rpg130730.util.GameLoop;
-import it.unicam.cs.mpgc.rpg130730.util.GlobalConstants;
 import it.unicam.cs.mpgc.rpg130730.util.InputMap;
-import it.unicam.cs.mpgc.rpg130730.util.Movable;
 import it.unicam.cs.mpgc.rpg130730.util.Updatable;
-import it.unicam.cs.mpgc.rpg130730.util.Vector2f;
-import javafx.application.Platform;
+import it.unicam.cs.mpgc.rpg130730.util.Vector2;
+import it.unicam.cs.mpgc.rpg130730.util.InputMap.KeyBind;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.StackPane;
@@ -21,45 +21,30 @@ import javafx.scene.shape.Rectangle;
  *
  * @author Tommaso Acciarresi
  */
-public class Player extends StackPane implements Updatable, Movable {
+public class Player extends StackPane implements Updatable {
+    public static final int DEFAULT_PLAYER_SPEED = 400; // px/s
 
-    public enum KeyBind {
-        ESC(KeyCode.ESCAPE),
-        DOWN(KeyCode.S),
-        UP(KeyCode.W),
-        RIGHT(KeyCode.D),
-        LEFT(KeyCode.A);
+    private Rectangle playerSprite = new Rectangle(Launcher.TILE_SIZE, Launcher.TILE_SIZE);
 
-        private final KeyCode key;
-
-        // Constructor
-        KeyBind(KeyCode s) {
-            this.key = s;
-        }
-
-        // Getters
-        public KeyCode key() {
-            return key;
-        }
-    }
-
-    private Rectangle playerSprite = new Rectangle(GlobalConstants.TILE_SIZE, GlobalConstants.TILE_SIZE);
-
-    private Vector2f movementInput = Vector2f.ZERO;
-    private Vector2f position = Vector2f.ZERO;
+    /** Normalized input vector */
+    private Vector2 movementInput = Vector2.ZERO;
+    private Vector2 position = Vector2.ZERO;
 
     private boolean acceptsInput = true;
 
-    // private boolean canCollide = true;
+    // private CollisionComponent coll = new CollisionComponent(playerSprite);
 
-    public Player(Vector2f position) {
+    public Player() {
         subscribeToUpdates();
         getChildren().add(playerSprite);
 
-        setPosition(position);
-
         CustomImageLoader il = new CustomImageLoader();
         setSprite(il.loadImage("/images/knight/down.png"));
+    }
+
+    public Player(Vector2 position) {
+        this();
+        setPosition(position);
     }
 
     public void update(double timeDelta) {
@@ -68,49 +53,57 @@ public class Player extends StackPane implements Updatable, Movable {
 
     private void handleInput(double timeDelta) {
         handleMovement(timeDelta);
-
-        checkIfExitPressed();
     }
 
     private void handleMovement(double timeDelta) {
         movementInput = acceptsInput
                 ? getMovementInput()
-                : Vector2f.ZERO;
+                : Vector2.ZERO;
         move(movementInput);
     }
 
-    private Vector2f getMovementInput() {
+    /** Returns normalized movement input based on currently pressed keys */
+    private Vector2 getMovementInput() {
         HashMap<KeyCode, Boolean> currentlyPressedKeys = InputMap.getCurrentlyPressedKeys();
-        return new Vector2f(
-                (currentlyPressedKeys.getOrDefault(KeyBind.LEFT.key(), false) ? -1 : 0) +
-                        (currentlyPressedKeys.getOrDefault(KeyBind.RIGHT.key(), false) ? +1 : 0),
-                (currentlyPressedKeys.getOrDefault(KeyBind.UP.key(), false) ? -1 : 0) +
-                        (currentlyPressedKeys.getOrDefault(KeyBind.DOWN.key(), false) ? +1 : 0));
-    }
 
-    private void checkIfExitPressed() {
-        if (InputMap.getCurrentlyPressedKeys().getOrDefault(KeyBind.ESC.key(), false))
-            Platform.exit();
+        int horizontalAxis = (currentlyPressedKeys.getOrDefault(KeyBind.LEFT.key(), false) ? -1 : 0)
+                + (currentlyPressedKeys.getOrDefault(KeyBind.RIGHT.key(), false) ? +1 : 0);
+
+        int verticalAxis = (currentlyPressedKeys.getOrDefault(KeyBind.UP.key(), false) ? -1 : 0)
+                + (currentlyPressedKeys.getOrDefault(KeyBind.DOWN.key(), false) ? +1 : 0);
+
+        return new Vector2(horizontalAxis, verticalAxis).normalized();
     }
 
     public void setAcceptsInput(boolean acceptsInput) {
         this.acceptsInput = acceptsInput;
     }
 
-    public void move(Vector2f input) {
-        if (input.equals(Vector2f.ZERO))
+    public void move(Vector2 input) {
+        if (input.equals(Vector2.ZERO))
             return;
 
-        double r = GlobalConstants.PLAYER_SPEED * GameLoop.timeDelta;
-        // WHY ARE THIS FUNCTION'S INPUTS INVERTED??? WHO PUTS Y BEFORE X???
-        double angle = Math.atan2(input.y(), input.x());
+        double movementDelta = DEFAULT_PLAYER_SPEED * GameLoop.timeDelta;
+        Vector2 newPos = new Vector2(position.x() + input.x() * movementDelta,
+                position.y() + input.y() * movementDelta);
 
-        setPosition(new Vector2f(
-                position.x() + r * Math.cos(angle),
-                position.y() + r * Math.sin(angle)));
+        if (checkCollision(newPos))
+            return;
+
+        setPosition(newPos);
     }
 
-    public void setPosition(Vector2f pos) {
+    private boolean checkCollision(Vector2 newPos) {
+        for (Tile tile : CollisionHandler.collTiles) {
+            if (new Rectangle(newPos.x(), newPos.y(), playerSprite.getWidth(), playerSprite.getHeight())
+                    .intersects(tile.getBoundsInLocal()))
+                ;
+            return true;
+        }
+        return false;
+    }
+
+    public void setPosition(Vector2 pos) {
         this.position = pos;
 
         updateSprite();

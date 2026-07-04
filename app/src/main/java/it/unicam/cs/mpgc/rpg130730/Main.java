@@ -5,8 +5,8 @@ package it.unicam.cs.mpgc.rpg130730;
  *
  * @author Tommaso Acciarresi
  */
-public class EntryPoint {
+public class Main {
     public static void main(final String[] args) {
-        AppLauncher.launch(AppLauncher.class, args);
+        Launcher.launch(Launcher.class, args);
     }
 }

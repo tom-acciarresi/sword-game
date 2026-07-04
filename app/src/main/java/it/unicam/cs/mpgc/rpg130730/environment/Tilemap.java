@@ -2,20 +2,13 @@ package it.unicam.cs.mpgc.rpg130730.environment;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
-
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-
-import it.unicam.cs.mpgc.rpg130730.util.CustomFileReader;
-import it.unicam.cs.mpgc.rpg130730.util.CustomImageLoader;
-import it.unicam.cs.mpgc.rpg130730.util.GlobalConstants;
-import it.unicam.cs.mpgc.rpg130730.util.Vector2i;
+import it.unicam.cs.mpgc.rpg130730.util.AssetRegistry;
+import it.unicam.cs.mpgc.rpg130730.Launcher;
+import it.unicam.cs.mpgc.rpg130730.util.Vector2;
 import javafx.scene.image.Image;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.ImagePattern;
-import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
 
 /**
@@ -24,75 +17,42 @@ import javafx.scene.shape.Rectangle;
  * @author Tommaso Acciarresi
  */
 public class Tilemap extends GridPane {
-
-    private HashMap<Integer, Image> tileDictionary = new HashMap<Integer, Image>();
-
-    private Tile[][] tiles = new Tile[GlobalConstants.GRID_HEIGHT][GlobalConstants.GRID_WIDTH];
+    private Tile[][] tiles = new Tile[Launcher.GRID_HEIGHT][Launcher.GRID_WIDTH];
 
     public Tilemap() {
         instantiateTiles();
-
-        loadTileSpritesWithJSON();
     }
 
-    public Tilemap(String filepath) {
+    public Tilemap(String level_identifier) {
         this();
-        setTileMapTo(loadTileBitmapFromTextFile(filepath));
+        setTileMapTo(level_identifier);
     }
 
     private void instantiateTiles() {
-        for (int i = 0; i < GlobalConstants.GRID_HEIGHT; i++) {
-            for (int j = 0; j < GlobalConstants.GRID_WIDTH; j++) {
+        for (int i = 0; i < Launcher.GRID_HEIGHT; i++) {
+            for (int j = 0; j < Launcher.GRID_WIDTH; j++) {
                 Tile newTile = new Tile();
+                newTile.changeTo(1);
                 tiles[i][j] = newTile;
                 this.add(newTile, j, i);
             }
         }
     }
 
-    private void loadTileSpritesWithJSON() {
-        Gson gson = new Gson();
-        CustomFileReader fr = new CustomFileReader();
-        String fileOut = fr.readFile(GlobalConstants.TILE_INFO_FILE);
-
-        TypeToken<ArrayList<HashMap<String, String>>> mapType = new TypeToken<ArrayList<HashMap<String, String>>>() {
-        };
-        ArrayList<HashMap<String, String>> map = gson.fromJson(fileOut, mapType);
-
-        CustomImageLoader il = new CustomImageLoader();
-        for (HashMap<String, String> tileData : map) {
-            tileDictionary.put(Integer.valueOf(tileData.get("index")),
-                    il.loadImage(GlobalConstants.TILE_DIR_PREFIX + tileData.get("fileName")));
-        }
-    }
-
-    public void setTileMapTo(String filepath) {
-        setTileMapTo(loadTileBitmapFromTextFile(filepath));
+    public void setTileMapTo(String level_identifier) {
+        setTileMapTo(loadTileBitmapFromRegistry(level_identifier));
     }
 
     private void setTileMapTo(int[] tileLayoutBitmap) {
-        for (int i = 0; i < GlobalConstants.GRID_HEIGHT; i++) {
-            for (int j = 0; j < GlobalConstants.GRID_WIDTH; j++) {
-                Image newSprite = tileDictionary.get(tileLayoutBitmap[i * GlobalConstants.GRID_WIDTH + j]);
-
-                if (newSprite == null) {
-                    System.err.println("Null sprite");
-                    return;
-                }
-
-                tiles[i][j].getSprite().setFill(new ImagePattern(newSprite));
-            }
+        int i = 0;
+        for (Tile currTile : getTiles()) {
+            currTile.changeTo(tileLayoutBitmap[i++]);
         }
     }
 
-    public void setTile(Vector2i coords, Image img) {
-        tiles[coords.x()][coords.y()].getSprite().setFill(new ImagePattern(img));
-    }
-
-    private int[] loadTileBitmapFromTextFile(String filepath) {
-        CustomFileReader fr = new CustomFileReader();
-        String out = fr.readFile(filepath).replaceAll("\n", " ");
-        int[] array = Arrays.stream(out.split(" ")).mapToInt(Integer::parseInt).toArray();
+    private int[] loadTileBitmapFromRegistry(String level_identifier) {
+        String info = AssetRegistry.getLevelData().get(level_identifier).replaceAll("\n", " ");
+        int[] array = Arrays.stream(info.split(" ")).mapToInt(Integer::parseInt).toArray();
 
         if (array == null) {
             System.err.println("Null array");
@@ -102,24 +62,44 @@ public class Tilemap extends GridPane {
         return array;
     }
 
+    public void setTile(Vector2 coords, int index) {
+        tiles[(int) coords.x()][(int) coords.y()].changeTo(index);
+    }
+
+    public ArrayList<Tile> getTiles() {
+        ArrayList<Tile> list = new ArrayList<Tile>(Launcher.GRID_HEIGHT * Launcher.GRID_WIDTH);
+        for (int i = 0; i < Launcher.GRID_HEIGHT; i++) {
+            for (int j = 0; j < Launcher.GRID_WIDTH; j++) {
+                list.add(tiles[i][j]);
+            }
+        }
+
+        return list;
+    }
+
+    // TODO refactor
     public class Tile extends StackPane {
-        private Rectangle sprite = new Rectangle(GlobalConstants.TILE_SIZE, GlobalConstants.TILE_SIZE);
-        private boolean canCollide;
+        private TileInfo info;
+        private Rectangle sprite;
 
         public Tile() {
+            this.info = AssetRegistry.getTileInfo().get(1);
+            this.sprite = new Rectangle(Launcher.TILE_SIZE, Launcher.TILE_SIZE,
+                    new ImagePattern(info.sprite()));
             getChildren().add(sprite);
         }
 
-        public void setSprite(Paint value) {
-            sprite.setFill(value);
+        public void changeTo(int index) {
+            this.info = AssetRegistry.getTileInfo().get(index);
+            this.sprite.setFill(new ImagePattern(info.sprite()));
         }
 
-        public Rectangle getSprite() {
-            return this.sprite;
+        @Override
+        public String toString() {
+            return info + ", " + sprite;
         }
+    }
 
-        public boolean canCollide() {
-            return canCollide;
-        }
+    public record TileInfo(int index, Image sprite, boolean canCollide) {
     }
 }

@@ -2,6 +2,7 @@ package it.unicam.cs.mpgc.rpg130730.util;
 
 import java.util.ArrayList;
 
+import it.unicam.cs.mpgc.rpg130730.Launcher;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -9,6 +10,8 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 
 /**
+ * Runs `update` method on all listeners at target framerate
+ *
  * @author Tommaso Acciarresi
  */
 public class GameLoop {
@@ -18,14 +21,14 @@ public class GameLoop {
 
     public static void startLoop(Stage stage) {
         Timeline loop = new Timeline(
-                new KeyFrame(Duration.seconds(1.0 / GlobalConstants.TARGET_FRAMERATE),
-                        e -> updateObjects(1.0 / GlobalConstants.TARGET_FRAMERATE)));
+                new KeyFrame(Duration.seconds(1.0 / Launcher.TARGET_FRAMERATE),
+                        e -> updateObjects(1.0 / Launcher.TARGET_FRAMERATE)));
         loop.setCycleCount(Animation.INDEFINITE);
         loop.play();
     }
 
     /**
-     * Called 60 times per second (hopefully) at `timeDelta` intervals
+     * Called repeatedly at `timeDelta` intervals
      */
     private static void updateObjects(double timeDelta) {
         GameLoop.timeDelta = timeDelta;
