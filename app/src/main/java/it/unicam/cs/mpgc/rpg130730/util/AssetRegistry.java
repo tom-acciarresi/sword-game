@@ -6,6 +6,7 @@ import java.util.HashMap;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import it.unicam.cs.mpgc.rpg130730.environment.SceneManager.Level;
 import it.unicam.cs.mpgc.rpg130730.environment.Tilemap.TileInfo;
 import javafx.scene.image.Image;
 
@@ -14,54 +15,59 @@ public class AssetRegistry {
     public static final String LEVEL_DIR_PREFIX = "/levels/";
 
     public static final String TILE_INFO_FILE = "/images/tiles/tiles.json";
-    public static final String LEVEL_INFO_FILE = "/levels/levels.json";
 
     private static HashMap<String, Image> tileSprites = new HashMap<String, Image>();
     private static HashMap<Integer, TileInfo> tileInfo = new HashMap<Integer, TileInfo>();
     // private static HashMap<Integer, CharacterAnimation> levelData = new
     // HashMap<Integer, CharacterAnimation>();
-    private static HashMap<String, String> levelData = new HashMap<String, String>();
+    private static ArrayList<String> levelData = new ArrayList<String>();
 
     public AssetRegistry() {
         CustomFileReader fr = new CustomFileReader();
         CustomImageLoader il = new CustomImageLoader();
 
-        loadTileSprites(il);
+        loadTileSprites(il, fr);
         // loadEntitySprites();
         loadLevelData(fr);
     }
 
-    private void loadTileSprites(CustomImageLoader il) {
+    private void loadTileSprites(CustomImageLoader il, CustomFileReader fr) {
         Gson gson = new Gson();
-        CustomFileReader fr = new CustomFileReader();
         String fileOut = fr.readFile(TILE_INFO_FILE);
 
-        TypeToken<ArrayList<HashMap<String, String>>> mapType = new TypeToken<ArrayList<HashMap<String, String>>>() {
+        TypeToken<ArrayList<HashMap<String, String>>> dataType = new TypeToken<ArrayList<HashMap<String, String>>>() {
         };
 
-        ArrayList<HashMap<String, String>> arr = gson.fromJson(fileOut, mapType);
+        ArrayList<HashMap<String, String>> arr = gson.fromJson(fileOut, dataType);
 
         for (HashMap<String, String> tile : arr) {
             Integer index = Integer.valueOf(tile.get("index"));
             String fileName = tile.get("fileName");
-            boolean canCollide = Boolean.valueOf(tile.get("canCollide"));
+            boolean collides = Boolean.valueOf(tile.get("collides"));
 
             tileSprites.put(fileName, il.loadImage(TILE_DIR_PREFIX + fileName));
 
-            tileInfo.put(index, new TileInfo(index, tileSprites.get(fileName), canCollide));
+            Image image = tileSprites.get(fileName);
+            if (image == null) {
+                System.err.println("Null image");
+                return;
+            }
+
+            tileInfo.put(index, new TileInfo(index, image, collides));
         }
     }
 
     private void loadLevelData(CustomFileReader fr) {
-        // TODO Change
-        levelData.put("first_level.txt", fr.readFile("/levels/first_level.txt"));
+        for (Level level : Level.ROOM_1.getDeclaringClass().getEnumConstants()) {
+            levelData.add(level.index(), fr.readFile(LEVEL_DIR_PREFIX + level.filename()).replaceAll("\n", " "));
+        }
     }
 
     public static HashMap<Integer, TileInfo> getTileInfo() {
         return tileInfo;
     }
 
-    public static HashMap<String, String> getLevelData() {
+    public static ArrayList<String> getLevelData() {
         return levelData;
     }
 }

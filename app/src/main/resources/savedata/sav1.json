@@ -1,4 +1,5 @@
 {
     "playTime" : 0,
-    "kills" : 0
+    "kills" : 0,
+    "location" : "first_level.txt"
 }

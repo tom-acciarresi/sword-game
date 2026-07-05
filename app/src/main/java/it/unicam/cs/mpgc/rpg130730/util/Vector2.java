@@ -25,11 +25,20 @@ public record Vector2(double x, double y) {
         return new Vector2(x / length, y / length);
     }
 
-    // public Vector2f add(Vector2f other) {
-    // return new Vector2f(this.x() + other.x(), this.y() + other.y());
-    // }
+    public Vector2 copy() {
+        return new Vector2(x, y);
+    }
 
-    // public Vector2f invert() {
-    // return new Vector2f(-this.x(), -this.y());
-    // }
+    @Override
+    public final String toString() {
+        return "(" + String.format("%.2f", x) + ", " + String.format("%.2f", y) + ")";
+    }
+
+    public Vector2 add(Vector2 other) {
+        return new Vector2(this.x() + other.x(), this.y() + other.y());
+    }
+
+    public Vector2 invert() {
+        return new Vector2(-this.x(), -this.y());
+    }
 }

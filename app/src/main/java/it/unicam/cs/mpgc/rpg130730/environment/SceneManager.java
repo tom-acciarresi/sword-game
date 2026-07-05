@@ -9,6 +9,27 @@ import javafx.scene.Node;
  * @author Tommaso Acciarresi
  */
 public class SceneManager extends Group {
+    public static enum Level {
+        ROOM_1(0, "first_level.txt"),
+        ROOM_2(1, "second_level.txt");
+
+        private final int index;
+        private final String filename;
+
+        Level(int i, String s) {
+            this.index = i;
+            this.filename = s;
+        }
+
+        public int index() {
+            return index;
+        }
+
+        public String filename() {
+            return filename;
+        }
+    }
+
     public void addChild(Node node) {
         getChildren().add(node);
     }

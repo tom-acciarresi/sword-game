@@ -2,16 +2,16 @@
     {
         "index": 1,
         "fileName": "tile1.png",
-        "isCollidable": "false"
+        "collides": "false"
     },
     {
         "index": 2,
         "fileName": "tile2.png",
-        "isCollidable": "false"
+        "collides": "false"
     },
     {
         "index": 8,
         "fileName": "wall.png",
-        "isCollidable": "true"
+        "collides": "true"
     }
 ]

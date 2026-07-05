@@ -8,6 +8,7 @@ import java.io.InputStream;
  *
  * @author Tommaso Acciarresi
  */
+
 public class CustomFileReader {
 
     public String readFile(String filepath) {

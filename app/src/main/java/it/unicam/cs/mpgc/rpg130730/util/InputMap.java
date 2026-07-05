@@ -14,12 +14,10 @@ public class InputMap {
 
         private final KeyCode key;
 
-        // Constructor
         KeyBind(KeyCode s) {
             this.key = s;
         }
 
-        // Getters
         public KeyCode key() {
             return key;
         }

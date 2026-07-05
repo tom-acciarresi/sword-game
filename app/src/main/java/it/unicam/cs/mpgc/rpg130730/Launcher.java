@@ -23,9 +23,9 @@ import javafx.stage.Stage;
  * @author Tommaso Acciarresi
  */
 public class Launcher extends Application {
+    public static final boolean IS_RESIZABLE = false;
     public static final String APPLICATION_TITLE = "Sword Game";
     public static final int WINDOW_WIDTH = 768, WINDOW_HEIGHT = 640;
-    public static final boolean IS_RESIZABLE = false;
     public static final int TARGET_FRAMERATE = 60;
 
     public static final int TILE_SIZE = 64;
@@ -37,11 +37,11 @@ public class Launcher extends Application {
 
     public static final String ICON_FILENAME = "/images/icon.png";
 
-    private static final Stage stage = new Stage();
-    private static final SceneManager sceneManager = new SceneManager();
-
     @SuppressWarnings("unused")
     private static final AssetRegistry assetRegistry = new AssetRegistry();
+
+    private static final Stage stage = new Stage();
+    private static final SceneManager sceneManager = new SceneManager();
 
     @Override
     public void start(@Nullable Stage defaultStage) throws IOException {

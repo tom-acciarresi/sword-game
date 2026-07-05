@@ -10,9 +10,11 @@ import it.unicam.cs.mpgc.rpg130730.util.InputMap;
 import it.unicam.cs.mpgc.rpg130730.util.Updatable;
 import it.unicam.cs.mpgc.rpg130730.util.Vector2;
 import it.unicam.cs.mpgc.rpg130730.util.InputMap.KeyBind;
+import javafx.geometry.Bounds;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.StackPane;
+import javafx.scene.paint.Color;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Rectangle;
 
@@ -26,20 +28,29 @@ public class Player extends StackPane implements Updatable {
 
     private Rectangle playerSprite = new Rectangle(Launcher.TILE_SIZE, Launcher.TILE_SIZE);
 
+    private Vector2 colliderOffset = new Vector2(8, 56);
+    private Vector2 colliderSize = new Vector2(48, 8);
+
+    private Rectangle tmpCollider = new Rectangle(colliderSize.x(), colliderSize.y(), Color.BEIGE);
+    private int tempADJASIDjASOI = (int) (32 - colliderSize.y() / 2);
+
     /** Normalized input vector */
     private Vector2 movementInput = Vector2.ZERO;
     private Vector2 position = Vector2.ZERO;
 
     private boolean acceptsInput = true;
 
-    // private CollisionComponent coll = new CollisionComponent(playerSprite);
-
     public Player() {
         subscribeToUpdates();
+
         getChildren().add(playerSprite);
 
+        // TODO tmp
+        getChildren().add(tmpCollider);
+        tmpCollider.setTranslateY(tempADJASIDjASOI);
+
         CustomImageLoader il = new CustomImageLoader();
-        setSprite(il.loadImage("/images/knight/down.png"));
+        setSprite(il.loadImage("/images/entities/knight/down.png"));
     }
 
     public Player(Vector2 position) {
@@ -49,6 +60,7 @@ public class Player extends StackPane implements Updatable {
 
     public void update(double timeDelta) {
         handleInput(timeDelta);
+        checkEnemyCollision();
     }
 
     private void handleInput(double timeDelta) {
@@ -56,9 +68,7 @@ public class Player extends StackPane implements Updatable {
     }
 
     private void handleMovement(double timeDelta) {
-        movementInput = acceptsInput
-                ? getMovementInput()
-                : Vector2.ZERO;
+        movementInput = acceptsInput ? getMovementInput() : Vector2.ZERO;
         move(movementInput);
     }
 
@@ -84,23 +94,42 @@ public class Player extends StackPane implements Updatable {
             return;
 
         double movementDelta = DEFAULT_PLAYER_SPEED * GameLoop.timeDelta;
-        Vector2 newPos = new Vector2(position.x() + input.x() * movementDelta,
-                position.y() + input.y() * movementDelta);
+        Vector2 deltaPos = new Vector2(input.x() * movementDelta, input.y() * movementDelta);
 
-        if (checkCollision(newPos))
-            return;
+        Vector2 newPos = this.position.add(deltaPos);
+
+        newPos = checkTileCollision(newPos);
 
         setPosition(newPos);
     }
 
-    private boolean checkCollision(Vector2 newPos) {
+    private Vector2 checkTileCollision(Vector2 pos) {
+        boolean intersectsX = false;
+        boolean intersectsY = false;
         for (Tile tile : CollisionHandler.collTiles) {
-            if (new Rectangle(newPos.x(), newPos.y(), playerSprite.getWidth(), playerSprite.getHeight())
-                    .intersects(tile.getBoundsInLocal()))
-                ;
-            return true;
+            Bounds tileCollider = tile.getBoundsInParent();
+
+            Rectangle rectangleX = new Rectangle(pos.x() + colliderOffset.x(), position.y() + colliderOffset.y(),
+                    colliderSize.x(), colliderSize.y());
+
+            Rectangle rectangleY = new Rectangle(position.x() + colliderOffset.x(), pos.y() + colliderOffset.y(),
+                    colliderSize.x(), colliderSize.y());
+            if (tileCollider.intersects(rectangleX.getBoundsInParent()))
+                intersectsX = true;
+            if (tileCollider.intersects(rectangleY.getBoundsInParent()))
+                intersectsY = true;
         }
-        return false;
+
+        if (intersectsY)
+            pos = new Vector2(pos.x(), position.y());
+        if (intersectsX)
+            pos = new Vector2(position.x(), pos.y());
+        return pos;
+    }
+
+    private void checkEnemyCollision() {
+        // TODO implement
+        return;
     }
 
     public void setPosition(Vector2 pos) {

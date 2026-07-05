@@ -3,7 +3,9 @@ package it.unicam.cs.mpgc.rpg130730.environment;
 import java.util.ArrayList;
 import java.util.Arrays;
 import it.unicam.cs.mpgc.rpg130730.util.AssetRegistry;
+import it.unicam.cs.mpgc.rpg130730.util.CustomImageLoader;
 import it.unicam.cs.mpgc.rpg130730.Launcher;
+import it.unicam.cs.mpgc.rpg130730.entities.CollisionHandler;
 import it.unicam.cs.mpgc.rpg130730.util.Vector2;
 import javafx.scene.image.Image;
 import javafx.scene.layout.GridPane;
@@ -17,6 +19,9 @@ import javafx.scene.shape.Rectangle;
  * @author Tommaso Acciarresi
  */
 public class Tilemap extends GridPane {
+    private static final String NULL_TILE_PATH = "/images/tiles/null.png";
+    public static final TileInfo NULL_TILE = new TileInfo(0, new CustomImageLoader().loadImage(NULL_TILE_PATH), false);
+
     private Tile[][] tiles = new Tile[Launcher.GRID_HEIGHT][Launcher.GRID_WIDTH];
 
     public Tilemap() {
@@ -32,7 +37,6 @@ public class Tilemap extends GridPane {
         for (int i = 0; i < Launcher.GRID_HEIGHT; i++) {
             for (int j = 0; j < Launcher.GRID_WIDTH; j++) {
                 Tile newTile = new Tile();
-                newTile.changeTo(1);
                 tiles[i][j] = newTile;
                 this.add(newTile, j, i);
             }
@@ -47,6 +51,8 @@ public class Tilemap extends GridPane {
         int i = 0;
         for (Tile currTile : getTiles()) {
             currTile.changeTo(tileLayoutBitmap[i++]);
+            if (currTile.getInfo().canCollide)
+                CollisionHandler.collTiles.add(currTile);
         }
     }
 
@@ -77,21 +83,27 @@ public class Tilemap extends GridPane {
         return list;
     }
 
-    // TODO refactor
     public class Tile extends StackPane {
-        private TileInfo info;
-        private Rectangle sprite;
+        private TileInfo info = NULL_TILE;
+        private Rectangle sprite = new Rectangle(Launcher.TILE_SIZE, Launcher.TILE_SIZE,
+                new ImagePattern(info.sprite()));
 
         public Tile() {
-            this.info = AssetRegistry.getTileInfo().get(1);
-            this.sprite = new Rectangle(Launcher.TILE_SIZE, Launcher.TILE_SIZE,
-                    new ImagePattern(info.sprite()));
             getChildren().add(sprite);
         }
 
         public void changeTo(int index) {
-            this.info = AssetRegistry.getTileInfo().get(index);
+            TileInfo tileInfo = AssetRegistry.getTileInfo().get(index);
+            if (tileInfo == null) {
+                System.err.println("Null tileInfo");
+                return;
+            }
+            this.info = tileInfo;
             this.sprite.setFill(new ImagePattern(info.sprite()));
+        }
+
+        public TileInfo getInfo() {
+            return info;
         }
 
         @Override
