@@ -17,7 +17,7 @@ import javafx.util.Duration;
 public class GameLoop {
     private static ArrayList<Updatable> objectsToUpdate = new ArrayList<Updatable>();
 
-    public static double timeDelta;
+    private static double timeDelta;
 
     public static void startLoop(Stage stage) {
         Timeline loop = new Timeline(
@@ -25,6 +25,22 @@ public class GameLoop {
                         e -> updateObjects(1.0 / Launcher.TARGET_FRAMERATE)));
         loop.setCycleCount(Animation.INDEFINITE);
         loop.play();
+    }
+
+    public static double getTimeDelta() {
+        return timeDelta;
+    }
+
+    public static boolean subscribeToUpdates(Updatable obj) {
+        return objectsToUpdate.add(obj);
+    }
+
+    public static boolean unsubscribeToUpdates(Updatable obj) {
+        return objectsToUpdate.remove(obj);
+    }
+
+    public static ArrayList<Updatable> getObjectsToUpdate() {
+        return objectsToUpdate;
     }
 
     /**
@@ -39,17 +55,5 @@ public class GameLoop {
             else
                 System.err.println("Null updatable object");
         }
-    }
-
-    public static boolean subscribeToUpdates(Updatable obj) {
-        return objectsToUpdate.add(obj);
-    }
-
-    public static boolean unsubscribeToUpdates(Updatable obj) {
-        return objectsToUpdate.remove(obj);
-    }
-
-    public static ArrayList<Updatable> getObjectsToUpdate() {
-        return objectsToUpdate;
     }
 }

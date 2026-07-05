@@ -7,15 +7,10 @@ import it.unicam.cs.mpgc.rpg130730.environment.Tilemap.Tile;
 import it.unicam.cs.mpgc.rpg130730.util.CustomImageLoader;
 import it.unicam.cs.mpgc.rpg130730.util.GameLoop;
 import it.unicam.cs.mpgc.rpg130730.util.InputMap;
-import it.unicam.cs.mpgc.rpg130730.util.Updatable;
 import it.unicam.cs.mpgc.rpg130730.util.Vector2;
 import it.unicam.cs.mpgc.rpg130730.util.InputMap.KeyBind;
 import javafx.geometry.Bounds;
-import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
-import javafx.scene.layout.StackPane;
-import javafx.scene.paint.Color;
-import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Rectangle;
 
 /**
@@ -23,40 +18,41 @@ import javafx.scene.shape.Rectangle;
  *
  * @author Tommaso Acciarresi
  */
-public class Player extends StackPane implements Updatable {
-    public static final int DEFAULT_PLAYER_SPEED = 400; // px/s
+public class Player extends Entity {
+    private static final int DEFAULT_PLAYER_SPEED = 400; // px/s
+    private static final int DEFAULT_PLAYER_HEALTH = 10; // px/s
 
-    private Rectangle playerSprite = new Rectangle(Launcher.TILE_SIZE, Launcher.TILE_SIZE);
-
-    private Vector2 colliderOffset = new Vector2(8, 56);
-    private Vector2 colliderSize = new Vector2(48, 8);
-
-    private Rectangle tmpCollider = new Rectangle(colliderSize.x(), colliderSize.y(), Color.BEIGE);
-    private int tempADJASIDjASOI = (int) (32 - colliderSize.y() / 2);
+    private static final Vector2 COLLIDER_SIZE = new Vector2(48, 12);
+    private static final Vector2 COLLIDER_OFFSET = new Vector2((Launcher.TILE_SIZE - COLLIDER_SIZE.x()) / 2,
+            Launcher.TILE_SIZE - COLLIDER_SIZE.y());
 
     /** Normalized input vector */
     private Vector2 movementInput = Vector2.ZERO;
-    private Vector2 position = Vector2.ZERO;
 
     private boolean acceptsInput = true;
 
     public Player() {
-        subscribeToUpdates();
+        super();
 
-        getChildren().add(playerSprite);
+        setHealth(DEFAULT_PLAYER_HEALTH);
 
-        // TODO tmp
-        getChildren().add(tmpCollider);
-        tmpCollider.setTranslateY(tempADJASIDjASOI);
+        setSprite(new CustomImageLoader().loadImage("/images/entities/knight/down.png"));
 
-        CustomImageLoader il = new CustomImageLoader();
-        setSprite(il.loadImage("/images/entities/knight/down.png"));
+        // DEBUG
+        // debugShowCollisionBox();
     }
 
     public Player(Vector2 position) {
         this();
         setPosition(position);
     }
+
+    // private void debugShowCollisionBox() {
+    // Rectangle debugCollider = new Rectangle(COLLIDER_SIZE.x(), COLLIDER_SIZE.y(),
+    // javafx.scene.paint.Color.MAGENTA);
+    // getChildren().add(debugCollider);
+    // debugCollider.setTranslateY(Launcher.TILE_SIZE / 2 - COLLIDER_SIZE.y() / 2);
+    // }
 
     public void update(double timeDelta) {
         handleInput(timeDelta);
@@ -89,61 +85,50 @@ public class Player extends StackPane implements Updatable {
         this.acceptsInput = acceptsInput;
     }
 
+    @Override
     public void move(Vector2 input) {
         if (input.equals(Vector2.ZERO))
             return;
 
-        double movementDelta = DEFAULT_PLAYER_SPEED * GameLoop.timeDelta;
+        double movementDelta = DEFAULT_PLAYER_SPEED * GameLoop.getTimeDelta();
         Vector2 deltaPos = new Vector2(input.x() * movementDelta, input.y() * movementDelta);
 
-        Vector2 newPos = this.position.add(deltaPos);
+        Vector2 newPos = this.getPosition().add(deltaPos);
 
         newPos = checkTileCollision(newPos);
 
         setPosition(newPos);
     }
 
-    private Vector2 checkTileCollision(Vector2 pos) {
+    private Vector2 checkTileCollision(Vector2 newPos) {
         boolean intersectsX = false;
         boolean intersectsY = false;
         for (Tile tile : CollisionHandler.collTiles) {
-            Bounds tileCollider = tile.getBoundsInParent();
+            Bounds tileBounds = tile.getBoundsInParent();
 
-            Rectangle rectangleX = new Rectangle(pos.x() + colliderOffset.x(), position.y() + colliderOffset.y(),
-                    colliderSize.x(), colliderSize.y());
-
-            Rectangle rectangleY = new Rectangle(position.x() + colliderOffset.x(), pos.y() + colliderOffset.y(),
-                    colliderSize.x(), colliderSize.y());
-            if (tileCollider.intersects(rectangleX.getBoundsInParent()))
+            // Horizontal collision
+            double newX = newPos.x() + COLLIDER_OFFSET.x();
+            double oldY = getPosition().y() + COLLIDER_OFFSET.y();
+            Bounds boundsX = new Rectangle(newX, oldY, COLLIDER_SIZE.x(), COLLIDER_SIZE.y()).getBoundsInParent();
+            if (tileBounds.intersects(boundsX))
                 intersectsX = true;
-            if (tileCollider.intersects(rectangleY.getBoundsInParent()))
+
+            // Vertical collision
+            double oldX = getPosition().x() + COLLIDER_OFFSET.x();
+            double newY = newPos.y() + COLLIDER_OFFSET.y();
+            Bounds boundsY = new Rectangle(oldX, newY, COLLIDER_SIZE.x(), COLLIDER_SIZE.y()).getBoundsInParent();
+            if (tileBounds.intersects(boundsY))
                 intersectsY = true;
+
         }
 
-        if (intersectsY)
-            pos = new Vector2(pos.x(), position.y());
-        if (intersectsX)
-            pos = new Vector2(position.x(), pos.y());
-        return pos;
+        // Don't update X if colliding horizontally
+        // Don't update Y if colliding vertically
+        return new Vector2(intersectsX ? getPosition().x() : newPos.x(), intersectsY ? getPosition().y() : newPos.y());
     }
 
     private void checkEnemyCollision() {
         // TODO implement
         return;
     }
-
-    public void setPosition(Vector2 pos) {
-        this.position = pos;
-
-        updateSprite();
-    }
-
-    private void setSprite(Image image) {
-        playerSprite.setFill(new ImagePattern(image));
-    }
-
-    private void updateSprite() {
-        this.setTranslateX(position.x());
-        this.setTranslateY(position.y());
-    };
 }

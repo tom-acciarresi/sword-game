@@ -6,6 +6,7 @@ import it.unicam.cs.mpgc.rpg130730.util.AssetRegistry;
 import it.unicam.cs.mpgc.rpg130730.util.CustomImageLoader;
 import it.unicam.cs.mpgc.rpg130730.Launcher;
 import it.unicam.cs.mpgc.rpg130730.entities.CollisionHandler;
+import it.unicam.cs.mpgc.rpg130730.environment.SceneManager.Level;
 import it.unicam.cs.mpgc.rpg130730.util.Vector2;
 import javafx.scene.image.Image;
 import javafx.scene.layout.GridPane;
@@ -20,22 +21,22 @@ import javafx.scene.shape.Rectangle;
  */
 public class Tilemap extends GridPane {
     private static final String NULL_TILE_PATH = "/images/tiles/null.png";
-    public static final TileInfo NULL_TILE = new TileInfo(0, new CustomImageLoader().loadImage(NULL_TILE_PATH), false);
+    private static final TileInfo NULL_TILE = new TileInfo(0, new CustomImageLoader().loadImage(NULL_TILE_PATH), false);
 
-    private Tile[][] tiles = new Tile[Launcher.GRID_HEIGHT][Launcher.GRID_WIDTH];
+    private Tile[][] tiles = new Tile[(int) Launcher.GRID_DIMENSIONS.y()][(int) Launcher.GRID_DIMENSIONS.x()];
 
     public Tilemap() {
         instantiateTiles();
     }
 
-    public Tilemap(String level_identifier) {
+    public Tilemap(Level level) {
         this();
-        setTileMapTo(level_identifier);
+        setTileMapTo(level);
     }
 
     private void instantiateTiles() {
-        for (int i = 0; i < Launcher.GRID_HEIGHT; i++) {
-            for (int j = 0; j < Launcher.GRID_WIDTH; j++) {
+        for (int i = 0; i < Launcher.GRID_DIMENSIONS.y(); i++) {
+            for (int j = 0; j < Launcher.GRID_DIMENSIONS.x(); j++) {
                 Tile newTile = new Tile();
                 tiles[i][j] = newTile;
                 this.add(newTile, j, i);
@@ -43,29 +44,16 @@ public class Tilemap extends GridPane {
         }
     }
 
-    public void setTileMapTo(String level_identifier) {
-        setTileMapTo(loadTileBitmapFromRegistry(level_identifier));
-    }
-
-    private void setTileMapTo(int[] tileLayoutBitmap) {
+    public void setTileMapTo(Level level) {
         int i = 0;
+        String levelString = AssetRegistry.getLevelData().get(level.index());
+        int[] levelInfo = Arrays.stream(levelString.split(" ")).mapToInt(Integer::parseInt).toArray();
+
         for (Tile currTile : getTiles()) {
-            currTile.changeTo(tileLayoutBitmap[i++]);
+            currTile.changeTo(levelInfo[i++]);
             if (currTile.getInfo().canCollide)
                 CollisionHandler.collTiles.add(currTile);
         }
-    }
-
-    private int[] loadTileBitmapFromRegistry(String level_identifier) {
-        String info = AssetRegistry.getLevelData().get(level_identifier).replaceAll("\n", " ");
-        int[] array = Arrays.stream(info.split(" ")).mapToInt(Integer::parseInt).toArray();
-
-        if (array == null) {
-            System.err.println("Null array");
-            return new int[0];
-        }
-
-        return array;
     }
 
     public void setTile(Vector2 coords, int index) {
@@ -73,9 +61,9 @@ public class Tilemap extends GridPane {
     }
 
     public ArrayList<Tile> getTiles() {
-        ArrayList<Tile> list = new ArrayList<Tile>(Launcher.GRID_HEIGHT * Launcher.GRID_WIDTH);
-        for (int i = 0; i < Launcher.GRID_HEIGHT; i++) {
-            for (int j = 0; j < Launcher.GRID_WIDTH; j++) {
+        ArrayList<Tile> list = new ArrayList<Tile>((int) (Launcher.GRID_DIMENSIONS.y() * Launcher.GRID_DIMENSIONS.x()));
+        for (int i = 0; i < Launcher.GRID_DIMENSIONS.y(); i++) {
+            for (int j = 0; j < Launcher.GRID_DIMENSIONS.x(); j++) {
                 list.add(tiles[i][j]);
             }
         }

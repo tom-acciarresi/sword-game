@@ -3,9 +3,11 @@ package it.unicam.cs.mpgc.rpg130730;
 import java.io.IOException;
 import org.jspecify.annotations.Nullable;
 
+import it.unicam.cs.mpgc.rpg130730.entities.Enemy;
 import it.unicam.cs.mpgc.rpg130730.entities.Player;
 import it.unicam.cs.mpgc.rpg130730.environment.SceneManager;
 import it.unicam.cs.mpgc.rpg130730.environment.Tilemap;
+import it.unicam.cs.mpgc.rpg130730.environment.SceneManager.Level;
 import it.unicam.cs.mpgc.rpg130730.util.AssetRegistry;
 import it.unicam.cs.mpgc.rpg130730.util.CustomImageLoader;
 import it.unicam.cs.mpgc.rpg130730.util.GameLoop;
@@ -23,19 +25,19 @@ import javafx.stage.Stage;
  * @author Tommaso Acciarresi
  */
 public class Launcher extends Application {
-    public static final boolean IS_RESIZABLE = false;
-    public static final String APPLICATION_TITLE = "Sword Game";
-    public static final int WINDOW_WIDTH = 768, WINDOW_HEIGHT = 640;
+    private static final boolean IS_RESIZABLE = false;
+    private static final String APPLICATION_TITLE = "Sword Game";
+    private static final Vector2 WINDOW_SIZE = new Vector2(768, 640);
     public static final int TARGET_FRAMERATE = 60;
 
     public static final int TILE_SIZE = 64;
-    public static final int GRID_WIDTH = 12, GRID_HEIGHT = 10;
+    public static final Vector2 GRID_DIMENSIONS = new Vector2(12, 10);
 
     public static final Vector2 WINDOW_CENTER = new Vector2(
-            Launcher.WINDOW_WIDTH / 2 - TILE_SIZE / 2,
-            Launcher.WINDOW_HEIGHT / 2 - TILE_SIZE / 2);
+            Launcher.WINDOW_SIZE.x() / 2 - TILE_SIZE / 2,
+            Launcher.WINDOW_SIZE.y() / 2 - TILE_SIZE / 2);
 
-    public static final String ICON_FILENAME = "/images/icon.png";
+    private static final String ICON_FILENAME = "/images/icon.png";
 
     @SuppressWarnings("unused")
     private static final AssetRegistry assetRegistry = new AssetRegistry();
@@ -61,8 +63,8 @@ public class Launcher extends Application {
 
     private void setSettings() {
         // Set Window Settings
-        stage.setWidth(WINDOW_WIDTH);
-        stage.setHeight(WINDOW_HEIGHT);
+        stage.setWidth(WINDOW_SIZE.x());
+        stage.setHeight(WINDOW_SIZE.y());
         stage.setTitle(APPLICATION_TITLE);
         stage.setResizable(IS_RESIZABLE);
         // Set icon
@@ -80,12 +82,15 @@ public class Launcher extends Application {
         stage.getScene().setOnKeyReleased(e -> InputMap.getCurrentlyPressedKeys().put(e.getCode(), false));
     }
 
+    // TODO: Change
     private void loadFirstScene() {
-        // TODO: Change
         // Add tiles
-        sceneManager.addChild(new Tilemap("first_level.txt"));
+        sceneManager.addChild(new Tilemap(Level.ROOM_1));
+
+        // Add enemy
+        sceneManager.addChild(new Enemy(Enemy.EnemyType.PIG, WINDOW_CENTER.add(new Vector2(64 * 2, -64 * 3))));
 
         // Add player
-        sceneManager.addChild(new Player(WINDOW_CENTER));
+        sceneManager.addChild(new Player(new Vector2(64 * 3, 64 * 5)));
     }
 }

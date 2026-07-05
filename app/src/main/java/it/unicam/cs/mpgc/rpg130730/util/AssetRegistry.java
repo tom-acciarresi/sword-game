@@ -11,10 +11,10 @@ import it.unicam.cs.mpgc.rpg130730.environment.Tilemap.TileInfo;
 import javafx.scene.image.Image;
 
 public class AssetRegistry {
-    public static final String TILE_DIR_PREFIX = "/images/tiles/";
-    public static final String LEVEL_DIR_PREFIX = "/levels/";
+    private static final String TILE_DIR_PREFIX = "/images/tiles/";
+    private static final String LEVEL_DIR_PREFIX = "/levels/";
 
-    public static final String TILE_INFO_FILE = "/images/tiles/tiles.json";
+    private static final String TILE_INFO_FILE = "/images/tiles/tiles.json";
 
     private static HashMap<String, Image> tileSprites = new HashMap<String, Image>();
     private static HashMap<Integer, TileInfo> tileInfo = new HashMap<Integer, TileInfo>();
