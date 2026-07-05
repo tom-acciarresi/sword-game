@@ -1,8 +1,8 @@
-package it.unicam.cs.mpgc.rpg130730.util;
+package it.unicam.cs.mpgc.rpg130730;
 
 import java.util.ArrayList;
+import java.util.List;
 
-import it.unicam.cs.mpgc.rpg130730.Launcher;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -15,7 +15,7 @@ import javafx.util.Duration;
  * @author Tommaso Acciarresi
  */
 public class GameLoop {
-    private static ArrayList<Updatable> objectsToUpdate = new ArrayList<Updatable>();
+    private static List<Updatable> objectsToUpdate = new ArrayList<Updatable>();
 
     private static double timeDelta;
 
@@ -39,7 +39,7 @@ public class GameLoop {
         return objectsToUpdate.remove(obj);
     }
 
-    public static ArrayList<Updatable> getObjectsToUpdate() {
+    public static List<Updatable> getObjectsToUpdate() {
         return objectsToUpdate;
     }
 
@@ -50,10 +50,25 @@ public class GameLoop {
         GameLoop.timeDelta = timeDelta;
 
         for (Updatable object : objectsToUpdate) {
-            if (object != null)
-                object.update(timeDelta);
-            else
-                System.err.println("Null updatable object");
+            object.update(timeDelta);
         }
+    }
+
+    /**
+     * Implementers have access to the game loop `update()` method
+     *
+     * @author Tommaso Acciarresi
+     */
+    public interface Updatable {
+        default void subscribeToUpdates() {
+            GameLoop.subscribeToUpdates(this);
+        };
+
+        default void unsubscribeToUpdates() {
+            if (GameLoop.getObjectsToUpdate().contains(this))
+                GameLoop.unsubscribeToUpdates(this);
+        };
+
+        void update(double timeDelta);
     }
 }

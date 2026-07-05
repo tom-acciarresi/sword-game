@@ -3,16 +3,13 @@ package it.unicam.cs.mpgc.rpg130730;
 import java.io.IOException;
 import org.jspecify.annotations.Nullable;
 
+import it.unicam.cs.mpgc.rpg130730.InputMap.KeyBind;
 import it.unicam.cs.mpgc.rpg130730.entities.Enemy;
 import it.unicam.cs.mpgc.rpg130730.entities.Player;
 import it.unicam.cs.mpgc.rpg130730.environment.SceneManager;
 import it.unicam.cs.mpgc.rpg130730.environment.Tilemap;
-import it.unicam.cs.mpgc.rpg130730.environment.SceneManager.Level;
-import it.unicam.cs.mpgc.rpg130730.util.AssetRegistry;
+import it.unicam.cs.mpgc.rpg130730.environment.SceneManager.TileLayout;
 import it.unicam.cs.mpgc.rpg130730.util.CustomImageLoader;
-import it.unicam.cs.mpgc.rpg130730.util.GameLoop;
-import it.unicam.cs.mpgc.rpg130730.util.InputMap;
-import it.unicam.cs.mpgc.rpg130730.util.InputMap.KeyBind;
 import it.unicam.cs.mpgc.rpg130730.util.Vector2;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -40,7 +37,7 @@ public class Launcher extends Application {
     private static final String ICON_FILENAME = "/images/icon.png";
 
     @SuppressWarnings("unused")
-    private static final AssetRegistry assetRegistry = new AssetRegistry();
+    private static final AssetLibrary assetRegistry = new AssetLibrary();
 
     private static final Stage stage = new Stage();
     private static final SceneManager sceneManager = new SceneManager();
@@ -85,7 +82,7 @@ public class Launcher extends Application {
     // TODO: Change
     private void loadFirstScene() {
         // Add tiles
-        sceneManager.addChild(new Tilemap(Level.ROOM_1));
+        sceneManager.addChild(new Tilemap(TileLayout.ROOM_1));
 
         // Add enemy
         sceneManager.addChild(new Enemy(Enemy.EnemyType.PIG, WINDOW_CENTER.add(new Vector2(64 * 2, -64 * 3))));

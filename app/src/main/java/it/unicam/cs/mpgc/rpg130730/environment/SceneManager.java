@@ -9,16 +9,16 @@ import javafx.scene.Node;
  * @author Tommaso Acciarresi
  */
 public class SceneManager extends Group {
-    public static enum Level {
+    public static enum TileLayout {
         ROOM_1(0, "first_level.txt"),
         ROOM_2(1, "second_level.txt");
 
         private final int index;
         private final String filename;
 
-        Level(int i, String s) {
-            this.index = i;
-            this.filename = s;
+        TileLayout(int index, String filename) {
+            this.index = index;
+            this.filename = filename;
         }
 
         public int index() {

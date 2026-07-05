@@ -1,14 +1,14 @@
 package it.unicam.cs.mpgc.rpg130730.entities;
 
-import java.util.HashMap;
+import java.util.Map;
 
+import it.unicam.cs.mpgc.rpg130730.GameLoop;
+import it.unicam.cs.mpgc.rpg130730.InputMap;
 import it.unicam.cs.mpgc.rpg130730.Launcher;
+import it.unicam.cs.mpgc.rpg130730.InputMap.KeyBind;
 import it.unicam.cs.mpgc.rpg130730.environment.Tilemap.Tile;
 import it.unicam.cs.mpgc.rpg130730.util.CustomImageLoader;
-import it.unicam.cs.mpgc.rpg130730.util.GameLoop;
-import it.unicam.cs.mpgc.rpg130730.util.InputMap;
 import it.unicam.cs.mpgc.rpg130730.util.Vector2;
-import it.unicam.cs.mpgc.rpg130730.util.InputMap.KeyBind;
 import javafx.geometry.Bounds;
 import javafx.scene.input.KeyCode;
 import javafx.scene.shape.Rectangle;
@@ -70,7 +70,7 @@ public class Player extends Entity {
 
     /** Returns normalized movement input based on currently pressed keys */
     private Vector2 getMovementInput() {
-        HashMap<KeyCode, Boolean> currentlyPressedKeys = InputMap.getCurrentlyPressedKeys();
+        Map<KeyCode, Boolean> currentlyPressedKeys = InputMap.getCurrentlyPressedKeys();
 
         int horizontalAxis = (currentlyPressedKeys.getOrDefault(KeyBind.LEFT.key(), false) ? -1 : 0)
                 + (currentlyPressedKeys.getOrDefault(KeyBind.RIGHT.key(), false) ? +1 : 0);
@@ -93,7 +93,7 @@ public class Player extends Entity {
         double movementDelta = DEFAULT_PLAYER_SPEED * GameLoop.getTimeDelta();
         Vector2 deltaPos = new Vector2(input.x() * movementDelta, input.y() * movementDelta);
 
-        Vector2 newPos = this.getPosition().add(deltaPos);
+        Vector2 newPos = getPosition().add(deltaPos);
 
         newPos = checkTileCollision(newPos);
 

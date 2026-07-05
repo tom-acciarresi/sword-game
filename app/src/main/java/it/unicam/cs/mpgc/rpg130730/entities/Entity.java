@@ -1,7 +1,7 @@
 package it.unicam.cs.mpgc.rpg130730.entities;
 
 import it.unicam.cs.mpgc.rpg130730.Launcher;
-import it.unicam.cs.mpgc.rpg130730.util.Updatable;
+import it.unicam.cs.mpgc.rpg130730.GameLoop.Updatable;
 import it.unicam.cs.mpgc.rpg130730.util.Vector2;
 import javafx.scene.image.Image;
 import javafx.scene.layout.StackPane;
@@ -45,10 +45,10 @@ public abstract class Entity extends StackPane implements Updatable {
     }
 
     protected void setPosition(Vector2 newPos) {
-        this.position = newPos;
+        position = newPos;
 
-        this.setTranslateX(position.x());
-        this.setTranslateY(position.y());
+        setTranslateX(position.x());
+        setTranslateY(position.y());
     }
 
     public Rectangle getSprite() {

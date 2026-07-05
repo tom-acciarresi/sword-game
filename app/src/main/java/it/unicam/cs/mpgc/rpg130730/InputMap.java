@@ -1,6 +1,7 @@
-package it.unicam.cs.mpgc.rpg130730.util;
+package it.unicam.cs.mpgc.rpg130730;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import javafx.scene.input.KeyCode;
 
@@ -14,8 +15,8 @@ public class InputMap {
 
         private final KeyCode key;
 
-        KeyBind(KeyCode s) {
-            this.key = s;
+        KeyBind(KeyCode key) {
+            this.key = key;
         }
 
         public KeyCode key() {
@@ -23,9 +24,9 @@ public class InputMap {
         }
     }
 
-    private static HashMap<KeyCode, Boolean> keys = new HashMap<KeyCode, Boolean>();
+    private static Map<KeyCode, Boolean> keys = new HashMap<KeyCode, Boolean>();
 
-    public static HashMap<KeyCode, Boolean> getCurrentlyPressedKeys() {
+    public static Map<KeyCode, Boolean> getCurrentlyPressedKeys() {
         return keys;
     }
 }

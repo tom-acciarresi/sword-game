@@ -1,12 +1,14 @@
 package it.unicam.cs.mpgc.rpg130730.environment;
 
+import java.util.List;
 import java.util.ArrayList;
 import java.util.Arrays;
-import it.unicam.cs.mpgc.rpg130730.util.AssetRegistry;
+
 import it.unicam.cs.mpgc.rpg130730.util.CustomImageLoader;
+import it.unicam.cs.mpgc.rpg130730.AssetLibrary;
 import it.unicam.cs.mpgc.rpg130730.Launcher;
 import it.unicam.cs.mpgc.rpg130730.entities.CollisionHandler;
-import it.unicam.cs.mpgc.rpg130730.environment.SceneManager.Level;
+import it.unicam.cs.mpgc.rpg130730.environment.SceneManager.TileLayout;
 import it.unicam.cs.mpgc.rpg130730.util.Vector2;
 import javafx.scene.image.Image;
 import javafx.scene.layout.GridPane;
@@ -29,9 +31,9 @@ public class Tilemap extends GridPane {
         instantiateTiles();
     }
 
-    public Tilemap(Level level) {
+    public Tilemap(TileLayout layout) {
         this();
-        setTileMapTo(level);
+        setTileMapTo(layout);
     }
 
     private void instantiateTiles() {
@@ -39,18 +41,18 @@ public class Tilemap extends GridPane {
             for (int j = 0; j < Launcher.GRID_DIMENSIONS.x(); j++) {
                 Tile newTile = new Tile();
                 tiles[i][j] = newTile;
-                this.add(newTile, j, i);
+                add(newTile, j, i);
             }
         }
     }
 
-    public void setTileMapTo(Level level) {
+    public void setTileMapTo(TileLayout layout) {
         int i = 0;
-        String levelString = AssetRegistry.getLevelData().get(level.index());
-        int[] levelInfo = Arrays.stream(levelString.split(" ")).mapToInt(Integer::parseInt).toArray();
+        String levelString = AssetLibrary.getTileLayouts().get(layout.index());
+        int[] tileLayoutInfo = Arrays.stream(levelString.split(" ")).mapToInt(Integer::parseInt).toArray();
 
         for (Tile currTile : getTiles()) {
-            currTile.changeTo(levelInfo[i++]);
+            currTile.changeTo(tileLayoutInfo[i++]);
             if (currTile.getInfo().canCollide)
                 CollisionHandler.collTiles.add(currTile);
         }
@@ -60,8 +62,8 @@ public class Tilemap extends GridPane {
         tiles[(int) coords.x()][(int) coords.y()].changeTo(index);
     }
 
-    public ArrayList<Tile> getTiles() {
-        ArrayList<Tile> list = new ArrayList<Tile>((int) (Launcher.GRID_DIMENSIONS.y() * Launcher.GRID_DIMENSIONS.x()));
+    public List<Tile> getTiles() {
+        List<Tile> list = new ArrayList<Tile>();
         for (int i = 0; i < Launcher.GRID_DIMENSIONS.y(); i++) {
             for (int j = 0; j < Launcher.GRID_DIMENSIONS.x(); j++) {
                 list.add(tiles[i][j]);
@@ -81,13 +83,14 @@ public class Tilemap extends GridPane {
         }
 
         public void changeTo(int index) {
-            TileInfo tileInfo = AssetRegistry.getTileInfo().get(index);
+            TileInfo tileInfo = AssetLibrary.getTileInfo().get(index);
             if (tileInfo == null) {
                 System.err.println("Null tileInfo");
                 return;
             }
-            this.info = tileInfo;
-            this.sprite.setFill(new ImagePattern(info.sprite()));
+
+            info = tileInfo;
+            sprite.setFill(new ImagePattern(info.sprite()));
         }
 
         public TileInfo getInfo() {
