@@ -1,12 +1,11 @@
 package it.unicam.cs.mpgc.rpg130730.entities;
 
-import it.unicam.cs.mpgc.rpg130730.util.CustomImageLoader;
+import it.unicam.cs.mpgc.rpg130730.AssetLibrary;
 import it.unicam.cs.mpgc.rpg130730.util.Vector2;
-import javafx.scene.image.Image;
 
 public class Enemy extends Entity {
     public enum EnemyType {
-        PIG(new EnemyInfo(10, new CustomImageLoader().loadImage("/images/entities/pig_enemy/down.png")));
+        PIG(new EnemyInfo(10, "pig"));
 
         private final EnemyInfo info;
 
@@ -19,12 +18,15 @@ public class Enemy extends Entity {
         }
     }
 
+    private EnemyInfo test;
+    private AnimationPlayer ap = new AnimationPlayer(AssetLibrary.getAnimation("pig" + "/walk_left"));
+
     public Enemy(EnemyType type) {
         super();
 
-        EnemyInfo info = type.info();
-        setHealth(info.health());
-        setSprite(info.sprite());
+        test = type.info();
+
+        setHealth(test.health());
     }
 
     public Enemy(EnemyType type, Vector2 position) {
@@ -34,9 +36,9 @@ public class Enemy extends Entity {
 
     @Override
     public void update(double timeDelta) {
-        // TODO Auto-generated method stub
+        setSprite(ap.getCurrFrame());
     }
 
-    public record EnemyInfo(int health, Image sprite) {
+    public record EnemyInfo(int health, String identifier) {
     }
 }

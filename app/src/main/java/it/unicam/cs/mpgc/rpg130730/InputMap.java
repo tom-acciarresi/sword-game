@@ -3,7 +3,9 @@ package it.unicam.cs.mpgc.rpg130730;
 import java.util.HashMap;
 import java.util.Map;
 
+import javafx.application.Platform;
 import javafx.scene.input.KeyCode;
+import javafx.stage.Stage;
 
 public class InputMap {
     public static enum KeyBind {
@@ -13,20 +15,43 @@ public class InputMap {
         RIGHT(KeyCode.D),
         LEFT(KeyCode.A);
 
-        private final KeyCode key;
+        private final KeyCode keyCode;
 
-        KeyBind(KeyCode key) {
-            this.key = key;
+        KeyBind(KeyCode keyCode) {
+            this.keyCode = keyCode;
         }
 
-        public KeyCode key() {
-            return key;
+        public KeyCode keyCode() {
+            return keyCode;
         }
     }
 
-    private static Map<KeyCode, Boolean> keys = new HashMap<KeyCode, Boolean>();
+    public static void initialize(Stage stage) {
+        stage.getScene().setOnKeyPressed(e -> {
+            KeyCode code = e.getCode();
+            if (code == null)
+                throw new NullPointerException();
+            InputMap.setKeyPressed(code, true);
 
-    public static Map<KeyCode, Boolean> getCurrentlyPressedKeys() {
-        return keys;
+            if (code == KeyBind.QUIT.keyCode())
+                Platform.exit();
+        });
+
+        stage.getScene().setOnKeyReleased(e -> {
+            KeyCode code = e.getCode();
+            if (code == null)
+                throw new NullPointerException();
+            InputMap.setKeyPressed(code, false);
+        });
+    }
+
+    private static Map<KeyCode, Boolean> currentlyPressedKeys = new HashMap<KeyCode, Boolean>();
+
+    public static boolean isKeyPressed(KeyBind keyBind) {
+        return currentlyPressedKeys.getOrDefault(keyBind.keyCode(), false);
+    }
+
+    private static void setKeyPressed(KeyCode keyCode, boolean b) {
+        currentlyPressedKeys.put(keyCode, b);
     }
 }

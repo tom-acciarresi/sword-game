@@ -9,11 +9,6 @@ import javafx.animation.Timeline;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
-/**
- * Runs `update` method on all listeners at target framerate
- *
- * @author Tommaso Acciarresi
- */
 public class GameLoop {
     private static List<Updatable> objectsToUpdate = new ArrayList<Updatable>();
 
@@ -39,13 +34,6 @@ public class GameLoop {
         return objectsToUpdate.remove(obj);
     }
 
-    public static List<Updatable> getObjectsToUpdate() {
-        return objectsToUpdate;
-    }
-
-    /**
-     * Called repeatedly at `timeDelta` intervals
-     */
     private static void updateObjects(double timeDelta) {
         GameLoop.timeDelta = timeDelta;
 
@@ -54,19 +42,13 @@ public class GameLoop {
         }
     }
 
-    /**
-     * Implementers have access to the game loop `update()` method
-     *
-     * @author Tommaso Acciarresi
-     */
     public interface Updatable {
-        default void subscribeToUpdates() {
-            GameLoop.subscribeToUpdates(this);
+        default boolean subscribeToUpdates() {
+            return GameLoop.subscribeToUpdates(this);
         };
 
-        default void unsubscribeToUpdates() {
-            if (GameLoop.getObjectsToUpdate().contains(this))
-                GameLoop.unsubscribeToUpdates(this);
+        default boolean unsubscribeToUpdates() {
+            return GameLoop.unsubscribeToUpdates(this);
         };
 
         void update(double timeDelta);

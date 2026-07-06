@@ -4,118 +4,117 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-
 import it.unicam.cs.mpgc.rpg130730.entities.AnimationPlayer.Animation;
-import it.unicam.cs.mpgc.rpg130730.environment.SceneManager.TileLayout;
+import it.unicam.cs.mpgc.rpg130730.environment.SceneManager.LevelData;
 import it.unicam.cs.mpgc.rpg130730.environment.Tilemap.TileInfo;
 import it.unicam.cs.mpgc.rpg130730.util.CustomFileReader;
 import it.unicam.cs.mpgc.rpg130730.util.CustomImageLoader;
 import javafx.scene.image.Image;
 
 public class AssetLibrary {
+    public static final String GAME_ICON_PATH = "/images/icon.png";
+    public static final Image GAME_ICON = new CustomImageLoader().load(GAME_ICON_PATH);
+
+    public static final String NULL_TILE_SPRITE_PATH = "/images/tiles/null.png";
+    public static final Image NULL_TILE_SPRITE = new CustomImageLoader().load(NULL_TILE_SPRITE_PATH);
+
     private static final String TILE_DIR_PREFIX = "/images/tiles/";
     private static final String TILE_INFO_FILE = "/images/tiles/tiles.json";
-
-    private static Map<String, Image> tileSprites = new HashMap<String, Image>();
-    private static Map<Integer, TileInfo> tileInfo = new HashMap<Integer, TileInfo>();
+    private static final Map<String, Image> TILE_SPRITES = new HashMap<String, Image>();
+    private static final Map<Integer, TileInfo> TILE_INFO = new HashMap<Integer, TileInfo>();
 
     private static final String LEVEL_DIR_PREFIX = "/levels/";
-
-    private static List<String> tileLayouts = new ArrayList<String>();
+    private static final Map<String, String> LEVEL_DATA = new HashMap<String, String>();
 
     private static final String ENTITY_DIR_PREFIX = "/images/entities/";
     private static final String ENTITY_INFO_SUFFIX = "/animations.json";
+    private static final Map<String, Image> ANIMATION_SPRITES = new HashMap<String, Image>();
+    private static final Map<String, Animation> ANIMATIONS = new HashMap<String, Animation>();
 
-    private static Map<String, Image> animationSprites = new HashMap<String, Image>();
-    private static Map<String, Animation> animations = new HashMap<String, Animation>();
-
-    public AssetLibrary() {
+    public static void initialize() {
         CustomFileReader fr = new CustomFileReader();
         CustomImageLoader il = new CustomImageLoader();
 
         loadTileSprites(il, fr);
+
         loadLevelData(fr);
 
         loadEntitySprites("knight", il, fr);
-        loadEntitySprites("pig_enemy", il, fr);
+        loadEntitySprites("pig", il, fr);
     }
 
-    private void loadTileSprites(CustomImageLoader il, CustomFileReader fr) {
+    private static void loadTileSprites(CustomImageLoader il, CustomFileReader fr) {
         Gson gson = new Gson();
-        String fileOut = fr.readFile(TILE_INFO_FILE);
-
+        String fileOut = fr.read(TILE_INFO_FILE);
         List<Map<String, String>> arr = gson.fromJson(fileOut, new TypeToken<List<Map<String, String>>>() {
         });
-
         for (Map<String, String> tile : arr) {
             Integer index = Integer.valueOf(tile.get("index"));
             String fileName = tile.get("fileName");
             boolean collides = Boolean.valueOf(tile.get("collides"));
-
-            tileSprites.put(fileName, il.loadImage(TILE_DIR_PREFIX + fileName));
-
-            Image image = tileSprites.get(fileName);
-            if (image == null) {
-                System.err.println("Null image");
-                return;
-            }
-
-            tileInfo.put(index, new TileInfo(index, image, collides));
+            TILE_SPRITES.put(fileName, il.load(TILE_DIR_PREFIX + fileName));
+            if (fileName == null)
+                throw new NullPointerException();
+            Image image = getTileSprite(fileName);
+            TILE_INFO.put(index, new TileInfo(index, image, collides));
         }
     }
 
-    private void loadLevelData(CustomFileReader fr) {
-        for (TileLayout level : TileLayout.ROOM_1.getDeclaringClass().getEnumConstants()) {
-            tileLayouts.add(level.index(), fr.readFile(LEVEL_DIR_PREFIX + level.filename()).replaceAll("\n", " "));
+    private static void loadLevelData(CustomFileReader fr) {
+        for (LevelData level : LevelData.ROOM_1.getDeclaringClass().getEnumConstants()) {
+            LEVEL_DATA.put(level.filename(), fr.read(LEVEL_DIR_PREFIX + level.filename()).replaceAll("\n", " "));
         }
     }
 
     private static void loadEntitySprites(String entityIdentifier, CustomImageLoader il, CustomFileReader fr) {
         Gson gson = new Gson();
-        String fileOut = fr.readFile(ENTITY_DIR_PREFIX + entityIdentifier + ENTITY_INFO_SUFFIX);
-
+        String fileOut = fr.read(ENTITY_DIR_PREFIX + entityIdentifier + ENTITY_INFO_SUFFIX);
         TypeToken<List<Map<String, Object>>> typeOfT = new TypeToken<List<Map<String, Object>>>() {
         };
-
         List<Map<String, Object>> arr = gson.fromJson(fileOut, typeOfT);
-
         for (Map<String, Object> animation : arr) {
             String key = entityIdentifier + "/" + (String) animation.get("name");
-
             // MULTI-TRACK DRIFTING!!
             int fps = (int) (double) animation.get("fps");
 
             @SuppressWarnings("unchecked")
             ArrayList<String> frameNames = (ArrayList<String>) animation.get("frames");
-
             List<Image> sprites = new ArrayList<Image>();
-
             for (String frameName : frameNames) {
-                if (frameName == null) {
-                    System.err.println("Null frame");
-                    break;
-                }
-
-                animationSprites.put(frameName, il.loadImage(ENTITY_DIR_PREFIX + entityIdentifier + "/" + frameName));
-                sprites.add(animationSprites.get(frameName));
+                ANIMATION_SPRITES.put(frameName, il.load(ENTITY_DIR_PREFIX + entityIdentifier + "/" + frameName));
+                sprites.add(ANIMATION_SPRITES.get(frameName));
             }
-
-            animations.put(key, new Animation(sprites, fps));
+            ANIMATIONS.put(key, new Animation(sprites, fps));
         }
     }
 
-    public static Map<Integer, TileInfo> getTileInfo() {
-        return tileInfo;
+    private static Image getTileSprite(String s) {
+        Image image = TILE_SPRITES.get(s);
+        if (image == null)
+            throw new NullPointerException("Null animation");
+        return image;
     }
 
-    public static List<String> getTileLayouts() {
-        return tileLayouts;
+    public static TileInfo getTileInfo(int i) {
+        TileInfo info = TILE_INFO.get(i);
+        if (info == null)
+            throw new NullPointerException("Null info");
+        return info;
     }
 
-    public static Map<String, Animation> getAnimations() {
-        return animations;
+    public static String getLevelData(String s) {
+        String levelData = LEVEL_DATA.get(s);
+        if (levelData == null)
+            throw new NullPointerException("Null level data");
+        return levelData;
+    }
+
+    public static Animation getAnimation(String s) {
+        Animation animation = ANIMATIONS.get(s);
+        if (animation == null)
+            throw new NullPointerException("Null animation");
+        return animation;
     }
 }

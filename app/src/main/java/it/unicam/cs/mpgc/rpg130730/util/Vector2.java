@@ -1,10 +1,5 @@
 package it.unicam.cs.mpgc.rpg130730.util;
 
-/**
- * Represents a 2D vector
- *
- * @author Tommaso Acciarresi
- */
 public record Vector2(double x, double y) {
     public static final Vector2 ZERO = new Vector2(0.0, 0.0),
             LEFT = new Vector2(-1.0, 0.0),
