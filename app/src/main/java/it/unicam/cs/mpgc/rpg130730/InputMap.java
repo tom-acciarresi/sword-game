@@ -30,7 +30,7 @@ public class InputMap {
         stage.getScene().setOnKeyPressed(e -> {
             KeyCode code = e.getCode();
             if (code == null)
-                throw new NullPointerException();
+                throw new NullPointerException(code + "is not a valid keycode");
             InputMap.setKeyPressed(code, true);
 
             if (code == KeyBind.QUIT.keyCode())
@@ -40,7 +40,7 @@ public class InputMap {
         stage.getScene().setOnKeyReleased(e -> {
             KeyCode code = e.getCode();
             if (code == null)
-                throw new NullPointerException();
+                throw new NullPointerException(code + "is not a valid keycode");
             InputMap.setKeyPressed(code, false);
         });
     }

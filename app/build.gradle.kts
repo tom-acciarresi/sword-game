@@ -14,8 +14,7 @@ plugins {
 javafx {
     version = "25"
     modules = listOf(
-        "javafx.controls",
-        // "javafx.fxml"
+        "javafx.controls"
         )
 }
 

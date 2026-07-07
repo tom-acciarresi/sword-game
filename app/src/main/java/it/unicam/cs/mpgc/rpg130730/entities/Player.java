@@ -4,26 +4,22 @@ import it.unicam.cs.mpgc.rpg130730.AssetLibrary;
 import it.unicam.cs.mpgc.rpg130730.GameLoop;
 import it.unicam.cs.mpgc.rpg130730.InputMap;
 import it.unicam.cs.mpgc.rpg130730.Launcher;
+import it.unicam.cs.mpgc.rpg130730.entities.AnimationPlayer.Animation;
 import it.unicam.cs.mpgc.rpg130730.InputMap.KeyBind;
-import it.unicam.cs.mpgc.rpg130730.environment.Tilemap.Tile;
 import it.unicam.cs.mpgc.rpg130730.util.Vector2;
-import javafx.geometry.Bounds;
-import javafx.scene.shape.Rectangle;
 
 public class Player extends Entity {
     private static final int DEFAULT_PLAYER_SPEED = 400; // px/s
-    private static final int DEFAULT_PLAYER_HEALTH = 10;
-    private static final Vector2 COLLIDER_SIZE = new Vector2(48, 12);
-    private static final Vector2 COLLIDER_OFFSET = new Vector2((Launcher.TILE_SIZE - COLLIDER_SIZE.x()) / 2,
-            Launcher.TILE_SIZE - COLLIDER_SIZE.y());
+    public static final int DEFAULT_PLAYER_HEALTH = 5;
 
     private Vector2 movementInput = Vector2.ZERO;
     private boolean acceptsInput = true;
-    private AnimationPlayer ap = new AnimationPlayer(AssetLibrary.getAnimation("knight/walk_left"));
+    private AnimationPlayer ap;
 
     public Player() {
         super();
         setHealth(DEFAULT_PLAYER_HEALTH);
+        ap = new AnimationPlayer(AssetLibrary.getAnimation("knight/idle_down"));
     }
 
     public Player(Vector2 position) {
@@ -32,17 +28,43 @@ public class Player extends Entity {
     }
 
     public void update(double timeDelta) {
-        handleInput(timeDelta);
-        setSprite(ap.getCurrFrame());
+        handleMovement(timeDelta);
+        handleAnimation();
     }
 
-    private void handleInput(double timeDelta) {
-        handleMovement(timeDelta);
+    private String getPredominantDirection(Vector2 v) {
+        String direction;
+        double x = v.x();
+        double y = v.y();
+        if (Math.abs(x) > Math.abs(y)) {
+            if (x < 0)
+                direction = "left";
+            else
+                direction = "right";
+        } else if (y < 0) {
+            direction = "up";
+        } else {
+            direction = "down";
+        }
+        return direction;
     }
 
     private void handleMovement(double timeDelta) {
         movementInput = acceptsInput ? getMovementInput() : Vector2.ZERO;
-        move(movementInput);
+        if (movementInput.equals(Vector2.ZERO))
+            return;
+        double movementDelta = DEFAULT_PLAYER_SPEED * GameLoop.getTimeDelta();
+        Vector2 deltaPos = new Vector2(movementInput.x() * movementDelta, movementInput.y() * movementDelta);
+        Vector2 newPos = getPosition().add(deltaPos);
+
+        checkEnemyCollision();
+
+        move(newPos);
+    }
+
+    private void checkEnemyCollision() {
+        // TODO
+
     }
 
     private Vector2 getMovementInput() {
@@ -58,36 +80,38 @@ public class Player extends Entity {
     }
 
     @Override
-    public void move(Vector2 input) {
-        if (input.equals(Vector2.ZERO))
-            return;
-        double movementDelta = DEFAULT_PLAYER_SPEED * GameLoop.getTimeDelta();
-        Vector2 deltaPos = new Vector2(input.x() * movementDelta, input.y() * movementDelta);
-        Vector2 newPos = getPosition().add(deltaPos);
-        newPos = checkTileCollision(newPos);
-        setPosition(newPos);
+    public void setHealth(double health) {
+        if (health <= 0)
+            gameOver();
+
+        super.setHealth(health);
+        Launcher.getGUI().updateBar(health / DEFAULT_PLAYER_HEALTH);
     }
 
-    private Vector2 checkTileCollision(Vector2 newPos) {
-        boolean intersectsX = false;
-        boolean intersectsY = false;
-        for (Tile tile : CollisionHandler.collTiles) {
-            Bounds tileBounds = tile.getBoundsInParent();
-            // Horizontal collision
-            double newX = newPos.x() + COLLIDER_OFFSET.x();
-            double oldY = getPosition().y() + COLLIDER_OFFSET.y();
-            Bounds boundsX = new Rectangle(newX, oldY, COLLIDER_SIZE.x(), COLLIDER_SIZE.y()).getBoundsInParent();
-            if (tileBounds.intersects(boundsX))
-                intersectsX = true;
-            // Vertical collision
-            double oldX = getPosition().x() + COLLIDER_OFFSET.x();
-            double newY = newPos.y() + COLLIDER_OFFSET.y();
-            Bounds boundsY = new Rectangle(oldX, newY, COLLIDER_SIZE.x(), COLLIDER_SIZE.y()).getBoundsInParent();
-            if (tileBounds.intersects(boundsY))
-                intersectsY = true;
+    private void gameOver() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'gameOver'");
+    }
+
+    private void handleAnimation() {
+        setSprite(ap.getCurrFrame());
+
+        String direction = getPredominantDirection(movementInput);
+
+        if (!acceptsInput || movementInput == Vector2.ZERO) {
+            Animation newAnim = AssetLibrary.getAnimation("knight/idle_" + direction);
+            if (ap.getCurrAnimation().equals(newAnim)) {
+                return;
+            }
+            ap.changeTo(newAnim);
+            return;
         }
-        // Don't update X if colliding horizontally
-        // Don't update Y if colliding vertically
-        return new Vector2(intersectsX ? getPosition().x() : newPos.x(), intersectsY ? getPosition().y() : newPos.y());
+
+        Animation newAnim = AssetLibrary.getAnimation("knight/walk_" + direction);
+        if (ap.getCurrAnimation().equals(newAnim)) {
+            return;
+        }
+
+        ap.changeTo(newAnim);
     }
 }

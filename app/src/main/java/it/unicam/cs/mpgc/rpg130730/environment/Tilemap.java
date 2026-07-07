@@ -43,7 +43,7 @@ public class Tilemap extends GridPane {
         for (Tile currTile : getListOfTiles()) {
             currTile.changeTo(levelBitMap[i++]);
             if (currTile.getInfo().canCollide)
-                CollisionHandler.collTiles.add(currTile);
+                CollisionHandler.addCollidableTile(currTile);
         }
     }
 
@@ -62,8 +62,8 @@ public class Tilemap extends GridPane {
     }
 
     public class Tile extends StackPane {
-        private static final TileInfo NULL_TILE = new TileInfo(0,
-                AssetLibrary.NULL_TILE_SPRITE, false);
+        public static final TileInfo NULL_TILE = new TileInfo(0,
+                AssetLibrary.MISSING_SPRITE, false);
         private TileInfo info = NULL_TILE;
         private Rectangle sprite = new Rectangle(Launcher.TILE_SIZE, Launcher.TILE_SIZE,
                 new ImagePattern(info.sprite()));

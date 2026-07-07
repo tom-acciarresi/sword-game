@@ -14,7 +14,7 @@ public class GameLoop {
 
     private static double timeDelta;
 
-    public static void startLoop(Stage stage) {
+    public static void initialize(Stage stage) {
         Timeline loop = new Timeline(
                 new KeyFrame(Duration.seconds(1.0 / Launcher.TARGET_FRAMERATE),
                         e -> updateObjects(1.0 / Launcher.TARGET_FRAMERATE)));

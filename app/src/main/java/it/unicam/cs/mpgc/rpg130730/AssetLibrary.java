@@ -17,8 +17,8 @@ public class AssetLibrary {
     public static final String GAME_ICON_PATH = "/images/icon.png";
     public static final Image GAME_ICON = new CustomImageLoader().load(GAME_ICON_PATH);
 
-    public static final String NULL_TILE_SPRITE_PATH = "/images/tiles/null.png";
-    public static final Image NULL_TILE_SPRITE = new CustomImageLoader().load(NULL_TILE_SPRITE_PATH);
+    public static final String MISSING_SPRITE_PATH = "/images/null.png";
+    public static final Image MISSING_SPRITE = new CustomImageLoader().load(MISSING_SPRITE_PATH);
 
     private static final String TILE_DIR_PREFIX = "/images/tiles/";
     private static final String TILE_INFO_FILE = "/images/tiles/tiles.json";
@@ -56,7 +56,7 @@ public class AssetLibrary {
             boolean collides = Boolean.valueOf(tile.get("collides"));
             TILE_SPRITES.put(fileName, il.load(TILE_DIR_PREFIX + fileName));
             if (fileName == null)
-                throw new NullPointerException();
+                throw new NullPointerException(fileName + " is not a valid file name");
             Image image = getTileSprite(fileName);
             TILE_INFO.put(index, new TileInfo(index, image, collides));
         }
@@ -93,28 +93,28 @@ public class AssetLibrary {
     private static Image getTileSprite(String s) {
         Image image = TILE_SPRITES.get(s);
         if (image == null)
-            throw new NullPointerException("Null animation");
+            throw new NullPointerException(image + " is not a valid image");
         return image;
     }
 
     public static TileInfo getTileInfo(int i) {
         TileInfo info = TILE_INFO.get(i);
         if (info == null)
-            throw new NullPointerException("Null info");
+            throw new NullPointerException(info + " is not valid tile info");
         return info;
     }
 
     public static String getLevelData(String s) {
         String levelData = LEVEL_DATA.get(s);
         if (levelData == null)
-            throw new NullPointerException("Null level data");
+            throw new NullPointerException(levelData + " is not valid level data");
         return levelData;
     }
 
     public static Animation getAnimation(String s) {
         Animation animation = ANIMATIONS.get(s);
         if (animation == null)
-            throw new NullPointerException("Null animation");
+            throw new NullPointerException(animation + " is not a valid animation");
         return animation;
     }
 }

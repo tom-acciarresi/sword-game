@@ -9,7 +9,7 @@ import javafx.scene.image.Image;
 
 public class AnimationPlayer implements Updatable {
     private Animation currAnimation = new Animation(new ArrayList<Image>(), 0);
-    private Image currFrame = AssetLibrary.NULL_TILE_SPRITE;
+    private Image currFrame = AssetLibrary.MISSING_SPRITE;
     private int frameIndex;
     private int tickInterval;
     private int ticksLeft;
@@ -47,6 +47,10 @@ public class AnimationPlayer implements Updatable {
         }
     }
 
+    public Animation getCurrAnimation() {
+        return currAnimation;
+    }
+
     public Image getCurrFrame() {
         return currFrame;
     }
@@ -55,7 +59,7 @@ public class AnimationPlayer implements Updatable {
         public Image getFrame(int i) {
             Image image = frames.get(i);
             if (image == null)
-                throw new NullPointerException();
+                throw new NullPointerException(image + " is not a valid image");
             return image;
         }
 

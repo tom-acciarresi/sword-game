@@ -1,12 +1,15 @@
 package it.unicam.cs.mpgc.rpg130730;
 
 import java.io.IOException;
+
 import org.jspecify.annotations.Nullable;
+
 import it.unicam.cs.mpgc.rpg130730.entities.Enemy;
 import it.unicam.cs.mpgc.rpg130730.entities.Player;
 import it.unicam.cs.mpgc.rpg130730.environment.SceneManager;
-import it.unicam.cs.mpgc.rpg130730.environment.Tilemap;
 import it.unicam.cs.mpgc.rpg130730.environment.SceneManager.LevelData;
+import it.unicam.cs.mpgc.rpg130730.ui.GUI;
+import it.unicam.cs.mpgc.rpg130730.environment.Tilemap;
 import it.unicam.cs.mpgc.rpg130730.util.Vector2;
 import javafx.application.Application;
 import javafx.scene.Scene;
@@ -19,7 +22,7 @@ public class Launcher extends Application {
     public static final int TILE_SIZE = 64;
     public static final Vector2 TILEMAP_DIMENSIONS = new Vector2(12, 10);
 
-    private static final Vector2 WINDOW_SIZE = new Vector2(768, 640);
+    public static final Vector2 WINDOW_SIZE = new Vector2(768, 640);
     public static final Vector2 WINDOW_CENTER = new Vector2(
             Launcher.WINDOW_SIZE.x() / 2 - TILE_SIZE / 2,
             Launcher.WINDOW_SIZE.y() / 2 - TILE_SIZE / 2);
@@ -28,37 +31,58 @@ public class Launcher extends Application {
     private static final Stage stage = new Stage();
     private static final SceneManager sm = new SceneManager();
 
+    private static GUI gui = new GUI();
+
     @Override
     public void start(@Nullable Stage defaultStage) throws IOException {
         initializeStage();
 
         AssetLibrary.initialize();
         InputMap.initialize(stage);
-        GameLoop.startLoop(stage);
+        GameLoop.initialize(stage);
 
         loadFirstScene();
 
+        // Adds title bar to window height
         stage.sizeToScene();
+
         stage.show();
     }
 
     private void initializeStage() {
         // Set Window Settings
         stage.setWidth(WINDOW_SIZE.x());
-        stage.setHeight(WINDOW_SIZE.y());
+        stage.setHeight(WINDOW_SIZE.y() + GUI.GUI_HEIGHT);
         stage.setTitle(APPLICATION_TITLE);
         stage.setResizable(IS_RESIZABLE);
+
         // Set icon
         stage.getIcons().add(AssetLibrary.GAME_ICON);
+
+        // Create tree with SceneManager as root
         stage.setScene(new Scene(sm));
     }
 
-    private void loadFirstScene() {
-        // Add tiles
-        sm.add(new Tilemap(LevelData.ROOM_1));
-        // Add enemy
-        sm.add(new Enemy(Enemy.EnemyType.PIG, WINDOW_CENTER.add(new Vector2(64 * 2, -64 * 3))));
-        // Add player
-        sm.add(new Player(new Vector2(64 * 3, 64 * 5)));
+    private void loadFirstScene() throws IOException {
+        // Instance tiles
+        Tilemap tilemap = new Tilemap(LevelData.ROOM_1);
+        tilemap.setLayoutY(GUI.GUI_HEIGHT);
+
+        // Instance enemy
+        Enemy pig_enemy = new Enemy(Enemy.EnemyType.PIG, new Vector2(2, 3).scalarMult(TILE_SIZE));
+        pig_enemy.setLayoutY(GUI.GUI_HEIGHT);
+
+        // Instance player
+        Player player = new Player(new Vector2(3, 5).scalarMult(TILE_SIZE));
+        player.setLayoutY(GUI.GUI_HEIGHT);
+
+        sm.add(gui);
+        sm.add(tilemap);
+        sm.add(pig_enemy);
+        sm.add(player);
+    }
+
+    public static GUI getGUI() {
+        return gui;
     }
 }

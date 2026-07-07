@@ -4,8 +4,8 @@ public record Vector2(double x, double y) {
     public static final Vector2 ZERO = new Vector2(0.0, 0.0),
             LEFT = new Vector2(-1.0, 0.0),
             RIGHT = new Vector2(1.0, 0.0),
-            UP = new Vector2(0.0, 1.0),
-            DOWN = new Vector2(0.0, -1.0);
+            UP = new Vector2(0.0, -1.0),
+            DOWN = new Vector2(0.0, 1.0);
 
     public double length() {
         return Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2));
@@ -26,6 +26,10 @@ public record Vector2(double x, double y) {
 
     public Vector2 add(Vector2 other) {
         return new Vector2(this.x + other.x, this.y + other.y);
+    }
+
+    public Vector2 scalarMult(double k) {
+        return new Vector2(this.x * k, this.y * k);
     }
 
     public Vector2 invert() {
