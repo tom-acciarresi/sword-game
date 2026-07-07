@@ -3,7 +3,7 @@ package it.unicam.cs.mpgc.rpg130730.environment;
 import javafx.scene.Group;
 import javafx.scene.Node;
 
-public class SceneManager extends Group {
+public final class SceneManager extends Group {
     public static enum LevelData {
         ROOM_1("first_level.txt"),
         ROOM_2("second_level.txt");

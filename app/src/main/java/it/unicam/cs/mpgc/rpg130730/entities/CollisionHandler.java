@@ -5,7 +5,7 @@ import java.util.List;
 
 import it.unicam.cs.mpgc.rpg130730.environment.Tilemap.Tile;
 
-public class CollisionHandler {
+public final class CollisionHandler {
     private static List<Tile> collTiles = new ArrayList<Tile>();
     private static List<Enemy> enemies = new ArrayList<Enemy>();
 

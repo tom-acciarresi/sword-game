@@ -32,23 +32,6 @@ public class Player extends Entity {
         handleAnimation();
     }
 
-    private String getPredominantDirection(Vector2 v) {
-        String direction;
-        double x = v.x();
-        double y = v.y();
-        if (Math.abs(x) > Math.abs(y)) {
-            if (x < 0)
-                direction = "left";
-            else
-                direction = "right";
-        } else if (y < 0) {
-            direction = "up";
-        } else {
-            direction = "down";
-        }
-        return direction;
-    }
-
     private void handleMovement(double timeDelta) {
         movementInput = acceptsInput ? getMovementInput() : Vector2.ZERO;
         if (movementInput.equals(Vector2.ZERO))
@@ -88,11 +71,6 @@ public class Player extends Entity {
         Launcher.getGUI().updateBar(health / DEFAULT_PLAYER_HEALTH);
     }
 
-    private void gameOver() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'gameOver'");
-    }
-
     private void handleAnimation() {
         setSprite(ap.getCurrFrame());
 
@@ -113,5 +91,29 @@ public class Player extends Entity {
         }
 
         ap.changeTo(newAnim);
+    }
+
+    private String getPredominantDirection(Vector2 v) {
+        String direction;
+
+        double x = v.x();
+        double y = v.y();
+        if (Math.abs(x) > Math.abs(y)) {
+            if (x < 0)
+                direction = "left";
+            else
+                direction = "right";
+        } else if (y < 0) {
+            direction = "up";
+        } else {
+            direction = "down";
+        }
+
+        return direction;
+    }
+
+    private void gameOver() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'gameOver'");
     }
 }

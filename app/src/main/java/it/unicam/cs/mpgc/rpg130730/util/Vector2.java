@@ -24,16 +24,20 @@ public record Vector2(double x, double y) {
         return new Vector2(x, y);
     }
 
+    public Vector2 invert() {
+        return new Vector2(-x, -y);
+    }
+
     public Vector2 add(Vector2 other) {
         return new Vector2(this.x + other.x, this.y + other.y);
     }
 
-    public Vector2 scalarMult(double k) {
+    public Vector2 scalar(double k) {
         return new Vector2(this.x * k, this.y * k);
     }
 
-    public Vector2 invert() {
-        return new Vector2(-x, -y);
+    public double dot(Vector2 o) {
+        return this.x * o.x + this.y * o.y;
     }
 
     @Override

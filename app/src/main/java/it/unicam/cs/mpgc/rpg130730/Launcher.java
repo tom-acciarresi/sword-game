@@ -15,7 +15,7 @@ import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
-public class Launcher extends Application {
+public final class Launcher extends Application {
     private static final boolean IS_RESIZABLE = false;
     private static final String APPLICATION_TITLE = "Sword Game";
 
@@ -69,11 +69,11 @@ public class Launcher extends Application {
         tilemap.setLayoutY(GUI.GUI_HEIGHT);
 
         // Instance enemy
-        Enemy pig_enemy = new Enemy(Enemy.EnemyType.PIG, new Vector2(2, 3).scalarMult(TILE_SIZE));
+        Enemy pig_enemy = new Enemy(Enemy.EnemyType.PIG, new Vector2(2, 3).scalar(TILE_SIZE));
         pig_enemy.setLayoutY(GUI.GUI_HEIGHT);
 
         // Instance player
-        Player player = new Player(new Vector2(3, 5).scalarMult(TILE_SIZE));
+        Player player = new Player(new Vector2(3, 5).scalar(TILE_SIZE));
         player.setLayoutY(GUI.GUI_HEIGHT);
 
         sm.add(gui);

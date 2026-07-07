@@ -9,7 +9,7 @@ import javafx.animation.Timeline;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
-public class GameLoop {
+public final class GameLoop {
     private static List<Updatable> objectsToUpdate = new ArrayList<Updatable>();
 
     private static double timeDelta;

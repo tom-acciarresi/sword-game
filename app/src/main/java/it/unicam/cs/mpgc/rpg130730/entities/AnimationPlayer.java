@@ -7,7 +7,7 @@ import it.unicam.cs.mpgc.rpg130730.Launcher;
 import it.unicam.cs.mpgc.rpg130730.GameLoop.Updatable;
 import javafx.scene.image.Image;
 
-public class AnimationPlayer implements Updatable {
+public final class AnimationPlayer implements Updatable {
     private Animation currAnimation = new Animation(new ArrayList<Image>(), 0);
     private Image currFrame = AssetLibrary.MISSING_SPRITE;
     private int frameIndex;

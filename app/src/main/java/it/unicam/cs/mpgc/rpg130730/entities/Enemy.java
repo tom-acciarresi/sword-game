@@ -46,7 +46,7 @@ public class Enemy extends Entity {
     }
 
     private void handleMovement(double timeDelta) {
-        Vector2 posDelta = getPosition().add(currDirection.scalarMult(150 * timeDelta));
+        Vector2 posDelta = getPosition().add(currDirection.scalar(150 * timeDelta));
 
         Vector2 oldPos = getPosition();
 
@@ -81,8 +81,8 @@ public class Enemy extends Entity {
 
     private String getPredominantDirection(Vector2 v) {
         String direction;
-        double x = v.x();
-        double y = v.y();
+
+        double x = v.x(), y = v.y();
         if (Math.abs(x) > Math.abs(y)) {
             if (x < 0)
                 direction = "left";
@@ -93,6 +93,7 @@ public class Enemy extends Entity {
         } else {
             direction = "down";
         }
+
         return direction;
     }
 

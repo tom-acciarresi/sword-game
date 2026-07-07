@@ -7,7 +7,7 @@ import javafx.application.Platform;
 import javafx.scene.input.KeyCode;
 import javafx.stage.Stage;
 
-public class InputMap {
+public final class InputMap {
     public static enum KeyBind {
         QUIT(KeyCode.ESCAPE),
         DOWN(KeyCode.S),

@@ -13,7 +13,7 @@ import it.unicam.cs.mpgc.rpg130730.util.CustomFileReader;
 import it.unicam.cs.mpgc.rpg130730.util.CustomImageLoader;
 import javafx.scene.image.Image;
 
-public class AssetLibrary {
+public final class AssetLibrary {
     public static final String GAME_ICON_PATH = "/images/icon.png";
     public static final Image GAME_ICON = new CustomImageLoader().load(GAME_ICON_PATH);
 
