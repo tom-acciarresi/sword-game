@@ -10,8 +10,13 @@ A "simple" 2D Zelda-like game
 
 ## How to run the game
 
+Clone repo
 ```bash
-git clone "https://github.com/tom-acciarresi/sword-game.git";
+git clone "https://github.com/tom-acciarresi/sword-game.git"
+```
+
+Run game
+```bash
 cd sword-game &&
 gradle run
 ```
