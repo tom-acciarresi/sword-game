@@ -11,8 +11,8 @@ A "simple" 2D Zelda-like game
 ## How to run the game
 
 ```bash
-git clone "https://github.com/tom-acciarresi/progetto-mgc2026.git";
-cd progetto-mgc2026 &&
+git clone "https://github.com/tom-acciarresi/sword-game.git";
+cd sword-game &&
 gradle run
 ```
 
