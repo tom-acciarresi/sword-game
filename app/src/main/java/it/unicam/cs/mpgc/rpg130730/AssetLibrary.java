@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import it.unicam.cs.mpgc.rpg130730.entities.AnimationPlayer.Animation;
@@ -70,7 +71,8 @@ public final class AssetLibrary {
 
     private static void loadLevelData(CustomFileReader fr) {
         for (LevelData level : LevelData.ROOM_1.getDeclaringClass().getEnumConstants()) {
-            LEVEL_DATA.put(level.filename(), fr.read(LEVEL_DIR_PREFIX + level.filename()).replaceAll("\n", " "));
+            LEVEL_DATA.put(level.filename(),
+                    fr.read(LEVEL_DIR_PREFIX + level.filename()).replaceAll("\r\n|[\r\n]", " "));
         }
     }
 
