@@ -11,6 +11,10 @@ A "simple" 2D Zelda-like game
 
 ### 1. Download the repository in whatever way you wish
 
+```bash
+git clone "https://github.com/tom-acciarresi/sword-game.git"
+```
+
 ### 2. Change working directory to the game's directory
 ```bash
 cd sword-game
