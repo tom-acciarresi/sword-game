@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Arrays;
 import it.unicam.cs.mpgc.rpg130730.AssetLibrary;
-import it.unicam.cs.mpgc.rpg130730.Launcher;
 import it.unicam.cs.mpgc.rpg130730.entities.CollisionHandler;
 import it.unicam.cs.mpgc.rpg130730.environment.SceneManager.LevelData;
 import it.unicam.cs.mpgc.rpg130730.util.Vector2;
@@ -15,6 +14,9 @@ import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Rectangle;
 
 public class Tilemap extends GridPane {
+    public static final int TILE_SIZE = 64;
+    public static final Vector2 TILEMAP_DIMENSIONS = new Vector2(12, 10);
+
     private Tile[][] tileGrid = instantiateTiles();
 
     public Tilemap() {
@@ -26,9 +28,9 @@ public class Tilemap extends GridPane {
     }
 
     private Tile[][] instantiateTiles() {
-        Tile[][] tg = new Tile[(int) Launcher.TILEMAP_DIMENSIONS.y()][(int) Launcher.TILEMAP_DIMENSIONS.x()];
-        for (int i = 0; i < Launcher.TILEMAP_DIMENSIONS.y(); i++) {
-            for (int j = 0; j < Launcher.TILEMAP_DIMENSIONS.x(); j++) {
+        Tile[][] tg = new Tile[(int) TILEMAP_DIMENSIONS.y()][(int) TILEMAP_DIMENSIONS.x()];
+        for (int i = 0; i < TILEMAP_DIMENSIONS.y(); i++) {
+            for (int j = 0; j < TILEMAP_DIMENSIONS.x(); j++) {
                 Tile newTile = new Tile();
                 tg[i][j] = newTile;
                 add(newTile, j, i);
@@ -54,8 +56,8 @@ public class Tilemap extends GridPane {
 
     public List<Tile> getListOfTiles() {
         List<Tile> list = new ArrayList<Tile>();
-        for (int i = 0; i < Launcher.TILEMAP_DIMENSIONS.y(); i++) {
-            for (int j = 0; j < Launcher.TILEMAP_DIMENSIONS.x(); j++) {
+        for (int i = 0; i < TILEMAP_DIMENSIONS.y(); i++) {
+            for (int j = 0; j < TILEMAP_DIMENSIONS.x(); j++) {
                 list.add(tileGrid[i][j]);
             }
         }
@@ -66,7 +68,7 @@ public class Tilemap extends GridPane {
         public static final TileInfo NULL_TILE = new TileInfo(0,
                 AssetLibrary.MISSING_SPRITE, false);
         private TileInfo info = NULL_TILE;
-        private Rectangle sprite = new Rectangle(Launcher.TILE_SIZE, Launcher.TILE_SIZE,
+        private Rectangle sprite = new Rectangle(TILE_SIZE, TILE_SIZE,
                 new ImagePattern(info.sprite()));
 
         public Tile() {

@@ -43,9 +43,10 @@ public class MainMenu extends StackPane {
 
     private Button createNewGameButton() {
         Vector2 OFFSET_FROM_CENTER = new Vector2(0, 20);
-        Vector2 BUTTON_SIZE = new Vector2(400, 64);
+        Vector2 BUTTON_SIZE = new Vector2(64 * 6, 64);
         Button button = new Button("New Game");
         button.setFont(AssetLibrary.GUI_FONT);
+        button.setStyle("-fx-background-color: lightgray");
         button.setTranslateX(OFFSET_FROM_CENTER.x());
         button.setTranslateY(OFFSET_FROM_CENTER.y());
         button.setPrefWidth(BUTTON_SIZE.x());
@@ -57,10 +58,11 @@ public class MainMenu extends StackPane {
     }
 
     private Button createContinueButton() {
-        Vector2 OFFSET_FROM_CENTER = new Vector2(0, 80);
-        Vector2 BUTTON_SIZE = new Vector2(400, 64);
+        Vector2 OFFSET_FROM_CENTER = new Vector2(0, 100);
+        Vector2 BUTTON_SIZE = new Vector2(64 * 6, 64);
         Button button = new Button("Continue Game");
         button.setFont(AssetLibrary.GUI_FONT);
+        button.setStyle("-fx-background-color: lightgray");
         button.setTranslateX(OFFSET_FROM_CENTER.x());
         button.setTranslateY(OFFSET_FROM_CENTER.y());
         button.setPrefWidth(BUTTON_SIZE.x());
@@ -72,12 +74,11 @@ public class MainMenu extends StackPane {
     }
 
     private void newGame() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'newGame'");
+        Launcher.getSceneManager().adHocScene();
     }
 
     private void continueGame() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'continueGame'");
+        // TODO change
+        newGame();
     }
 }

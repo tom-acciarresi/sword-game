@@ -15,6 +15,10 @@ A "simple" 2D Zelda-like game
 git clone "https://github.com/tom-acciarresi/sword-game.git"
 ```
 
+OR
+
+Just download and unzip from github
+
 ### 2. Change working directory to the game's directory
 ```bash
 cd sword-game
@@ -37,7 +41,7 @@ Run game on linux
 ## Controls
 
 - W, A, S, D -- Movement
-- ⬅, ⬆, ➡, ⬇ -- Directional attack
+- ⬅, ⬆, ➡, ⬇ -- Directional attack (NOT IMPLEMENTED YET)
 - ESC -- Quit
 
 ## ABSOLUTELY NO AI was used in the making of this project

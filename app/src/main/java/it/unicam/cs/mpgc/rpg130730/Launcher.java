@@ -5,6 +5,7 @@ import java.io.IOException;
 import org.jspecify.annotations.Nullable;
 
 import it.unicam.cs.mpgc.rpg130730.environment.SceneManager;
+import it.unicam.cs.mpgc.rpg130730.environment.Tilemap;
 import it.unicam.cs.mpgc.rpg130730.ui.GUI;
 import it.unicam.cs.mpgc.rpg130730.util.Vector2;
 import javafx.application.Application;
@@ -15,13 +16,10 @@ public final class Launcher extends Application {
     private static final boolean IS_RESIZABLE = false;
     public static final String APPLICATION_TITLE = "Sword Game";
 
-    public static final int TILE_SIZE = 64;
-    public static final Vector2 TILEMAP_DIMENSIONS = new Vector2(12, 10);
-
     public static final Vector2 LEVEL_SIZE = new Vector2(768, 640);
     public static final Vector2 LEVEL_CENTER = new Vector2(
-            Launcher.LEVEL_SIZE.x() / 2 - TILE_SIZE / 2,
-            Launcher.LEVEL_SIZE.y() / 2 - TILE_SIZE / 2);
+            Launcher.LEVEL_SIZE.x() / 2 - Tilemap.TILE_SIZE / 2,
+            Launcher.LEVEL_SIZE.y() / 2 - Tilemap.TILE_SIZE / 2);
     public static final int TARGET_FRAMERATE = 60;
 
     private static final Stage stage = new Stage();
@@ -33,13 +31,15 @@ public final class Launcher extends Application {
 
         AssetLibrary.initialize();
         InputMap.initialize(stage);
-        GameLoop.initialize(stage);
+        GameLoop.initialize();
 
-        sm.loadFirstScene();
+        // Load main menu
+        sm.loadMainMenu();
 
         // Adds title bar to window height
         stage.sizeToScene();
 
+        // Show game window
         stage.show();
     }
 

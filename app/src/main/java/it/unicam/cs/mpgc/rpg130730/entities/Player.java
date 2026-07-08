@@ -88,9 +88,6 @@ public class Player extends Entity {
             return;
         }
 
-        // TODO DEBUG
-        setHealth(getHealth() - 1);
-
         ap.changeTo(newAnim);
     }
 

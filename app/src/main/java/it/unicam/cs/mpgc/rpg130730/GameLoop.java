@@ -6,7 +6,6 @@ import java.util.List;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
-import javafx.stage.Stage;
 import javafx.util.Duration;
 
 public final class GameLoop {
@@ -14,7 +13,7 @@ public final class GameLoop {
 
     private static double timeDelta;
 
-    public static void initialize(Stage stage) {
+    public static void initialize() {
         Timeline loop = new Timeline(
                 new KeyFrame(Duration.seconds(1.0 / Launcher.TARGET_FRAMERATE),
                         e -> updateObjects(1.0 / Launcher.TARGET_FRAMERATE)));

@@ -2,6 +2,7 @@ package it.unicam.cs.mpgc.rpg130730.entities;
 
 import it.unicam.cs.mpgc.rpg130730.AssetLibrary;
 import it.unicam.cs.mpgc.rpg130730.Launcher;
+import it.unicam.cs.mpgc.rpg130730.environment.Tilemap;
 import it.unicam.cs.mpgc.rpg130730.environment.Tilemap.Tile;
 import it.unicam.cs.mpgc.rpg130730.GameLoop.Updatable;
 import it.unicam.cs.mpgc.rpg130730.util.Vector2;
@@ -15,16 +16,16 @@ public abstract class Entity extends StackPane implements Updatable {
     private double health;
 
     private Rectangle sprite = new Rectangle(
-            Launcher.TILE_SIZE,
-            Launcher.TILE_SIZE,
+            Tilemap.TILE_SIZE,
+            Tilemap.TILE_SIZE,
             new ImagePattern(AssetLibrary.MISSING_SPRITE));
 
     private Vector2 position = Vector2.ZERO;
 
     private static final Vector2 COLLIDER_SIZE = new Vector2(48, 12);
     private static final Vector2 COLLIDER_OFFSET = new Vector2(
-            (Launcher.TILE_SIZE - COLLIDER_SIZE.x()) / 2,
-            Launcher.TILE_SIZE - COLLIDER_SIZE.y());
+            (Tilemap.TILE_SIZE - COLLIDER_SIZE.x()) / 2,
+            Tilemap.TILE_SIZE - COLLIDER_SIZE.y());
 
     public Entity() {
         subscribeToUpdates();
