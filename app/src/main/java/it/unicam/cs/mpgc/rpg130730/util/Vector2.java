@@ -33,7 +33,7 @@ public record Vector2(double x, double y) {
     }
 
     public Vector2 scalar(double k) {
-        return new Vector2(this.x * k, this.y * k);
+        return new Vector2(x * k, y * k);
     }
 
     public double dot(Vector2 o) {

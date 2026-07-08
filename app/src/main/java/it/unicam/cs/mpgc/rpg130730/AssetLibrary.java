@@ -12,6 +12,9 @@ import it.unicam.cs.mpgc.rpg130730.environment.Tilemap.TileInfo;
 import it.unicam.cs.mpgc.rpg130730.util.CustomFileReader;
 import it.unicam.cs.mpgc.rpg130730.util.CustomImageLoader;
 import javafx.scene.image.Image;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontPosture;
+import javafx.scene.text.FontWeight;
 
 public final class AssetLibrary {
     public static final String GAME_ICON_PATH = "/images/icon.png";
@@ -32,6 +35,9 @@ public final class AssetLibrary {
     private static final String ENTITY_INFO_SUFFIX = "/animations.json";
     private static final Map<String, Image> ANIMATION_SPRITES = new HashMap<String, Image>();
     private static final Map<String, Animation> ANIMATIONS = new HashMap<String, Animation>();
+
+    public static final Font TITLE_FONT = font("Fira Sans", FontWeight.BOLD, FontPosture.REGULAR, 64);
+    public static final Font GUI_FONT = font("Fira Sans", FontWeight.BOLD, FontPosture.REGULAR, 32);
 
     public static void initialize() {
         CustomFileReader fr = new CustomFileReader();
@@ -116,5 +122,16 @@ public final class AssetLibrary {
         if (animation == null)
             throw new NullPointerException(animation + " is not a valid animation");
         return animation;
+    }
+
+    public static Font font(String family, FontWeight weight, FontPosture posture, double size) {
+        Font font = Font.font(family, weight, posture, size);
+        if (font == null) {
+            Font defaultFont = Font.getDefault();
+            if (defaultFont == null)
+                throw new NullPointerException(defaultFont + " is null :(");
+            return defaultFont;
+        }
+        return font;
     }
 }

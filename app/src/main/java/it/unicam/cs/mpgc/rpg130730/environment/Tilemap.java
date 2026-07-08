@@ -15,10 +15,9 @@ import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Rectangle;
 
 public class Tilemap extends GridPane {
-    private Tile[][] tileGrid = new Tile[(int) Launcher.TILEMAP_DIMENSIONS.y()][(int) Launcher.TILEMAP_DIMENSIONS.x()];
+    private Tile[][] tileGrid = instantiateTiles();
 
     public Tilemap() {
-        instantiateTiles();
     }
 
     public Tilemap(LevelData levelData) {
@@ -26,14 +25,16 @@ public class Tilemap extends GridPane {
         changeTilemapTo(levelData);
     }
 
-    private void instantiateTiles() {
+    private Tile[][] instantiateTiles() {
+        Tile[][] tg = new Tile[(int) Launcher.TILEMAP_DIMENSIONS.y()][(int) Launcher.TILEMAP_DIMENSIONS.x()];
         for (int i = 0; i < Launcher.TILEMAP_DIMENSIONS.y(); i++) {
             for (int j = 0; j < Launcher.TILEMAP_DIMENSIONS.x(); j++) {
                 Tile newTile = new Tile();
-                tileGrid[i][j] = newTile;
+                tg[i][j] = newTile;
                 add(newTile, j, i);
             }
         }
+        return tg;
     }
 
     public void changeTilemapTo(LevelData levelData) {

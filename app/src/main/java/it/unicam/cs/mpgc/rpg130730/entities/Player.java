@@ -3,7 +3,6 @@ package it.unicam.cs.mpgc.rpg130730.entities;
 import it.unicam.cs.mpgc.rpg130730.AssetLibrary;
 import it.unicam.cs.mpgc.rpg130730.GameLoop;
 import it.unicam.cs.mpgc.rpg130730.InputMap;
-import it.unicam.cs.mpgc.rpg130730.Launcher;
 import it.unicam.cs.mpgc.rpg130730.entities.AnimationPlayer.Animation;
 import it.unicam.cs.mpgc.rpg130730.InputMap.KeyBind;
 import it.unicam.cs.mpgc.rpg130730.util.Vector2;
@@ -47,7 +46,6 @@ public class Player extends Entity {
 
     private void checkEnemyCollision() {
         // TODO
-
     }
 
     private Vector2 getMovementInput() {
@@ -64,11 +62,11 @@ public class Player extends Entity {
 
     @Override
     public void setHealth(double health) {
-        if (health <= 0)
-            gameOver();
-
         super.setHealth(health);
-        Launcher.getGUI().updateBar(health / DEFAULT_PLAYER_HEALTH);
+
+        if (health <= 0) {
+            gameOver();
+        }
     }
 
     private void handleAnimation() {
@@ -89,6 +87,9 @@ public class Player extends Entity {
         if (ap.getCurrAnimation().equals(newAnim)) {
             return;
         }
+
+        // TODO DEBUG
+        setHealth(getHealth() - 1);
 
         ap.changeTo(newAnim);
     }
@@ -113,7 +114,6 @@ public class Player extends Entity {
     }
 
     private void gameOver() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'gameOver'");
+        System.out.println("You died");
     }
 }

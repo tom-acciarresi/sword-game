@@ -31,7 +31,7 @@ public abstract class Entity extends StackPane implements Updatable {
 
         getChildren().add(getSprite());
 
-        setPosition(Launcher.WINDOW_CENTER);
+        setPosition(Launcher.LEVEL_CENTER);
     }
 
     public Entity(Vector2 position) {

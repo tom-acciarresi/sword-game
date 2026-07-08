@@ -5,20 +5,29 @@ A "simple" 2D Zelda-like game
 <img src="images/game_screenshot.png" width="1920">
 
 ## Prerequisites for running the game
-- Java 25
-- Gradle
+- Java 25 or newer
 
 ## How to run the game
 
-Clone repo
+### 1. Download the repository in whatever way you wish
+
+### 2. Change working directory to the game's directory
 ```bash
-git clone "https://github.com/tom-acciarresi/sword-game.git"
+cd sword-game
 ```
 
-Run game
+### 3. Run the game
+
+Run game on windows
 ```bash
-cd sword-game &&
-gradle run
+./gradlew run
+```
+
+OR
+
+Run game on linux
+```bash
+./gradle run
 ```
 
 ## Controls
