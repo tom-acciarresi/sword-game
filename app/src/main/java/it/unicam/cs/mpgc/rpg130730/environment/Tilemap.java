@@ -1,8 +1,8 @@
 package it.unicam.cs.mpgc.rpg130730.environment;
 
-import java.util.List;
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.stream.Stream;
+
 import it.unicam.cs.mpgc.rpg130730.AssetLibrary;
 import it.unicam.cs.mpgc.rpg130730.entities.CollisionHandler;
 import it.unicam.cs.mpgc.rpg130730.environment.SceneManager.LevelData;
@@ -16,6 +16,7 @@ import javafx.scene.shape.Rectangle;
 public class Tilemap extends GridPane {
     public static final int TILE_SIZE = 64;
     public static final Vector2 TILEMAP_DIMENSIONS = new Vector2(12, 10);
+    public static final int TILE_AMOUNT = (int) (TILEMAP_DIMENSIONS.x() * TILEMAP_DIMENSIONS.y());
 
     private Tile[][] tileGrid = instantiateTiles();
 
@@ -40,28 +41,32 @@ public class Tilemap extends GridPane {
     }
 
     public void changeTilemapTo(LevelData levelData) {
-        int i = 0;
         String levelString = AssetLibrary.getLevelData(levelData.filename());
-        int[] levelBitMap = Arrays.stream(levelString.split(" ")).mapToInt(Integer::parseInt).toArray();
-        for (Tile currTile : getListOfTiles()) {
-            currTile.changeTo(levelBitMap[i++]);
+        int[] levelBitMap = Arrays.stream(levelString.split(" ")).parallel().mapToInt(Integer::parseInt).toArray();
+
+        Tile[] tiles = getListOfTiles();
+        for (int i = 0; i < TILE_AMOUNT; i++) {
+            Tile currTile = tiles[i];
+            if (currTile.getInfo().canCollide)
+                CollisionHandler.removeCollidableTile(currTile);
+
+            currTile.changeTo(levelBitMap[i]);
+
             if (currTile.getInfo().canCollide)
                 CollisionHandler.addCollidableTile(currTile);
         }
     }
 
     public void setTileTo(Vector2 coords, int index) {
-        tileGrid[(int) coords.x()][(int) coords.y()].changeTo(index);
+        tileGrid[(int) coords.y()][(int) coords.x()].changeTo(index);
     }
 
-    public List<Tile> getListOfTiles() {
-        List<Tile> list = new ArrayList<Tile>();
-        for (int i = 0; i < TILEMAP_DIMENSIONS.y(); i++) {
-            for (int j = 0; j < TILEMAP_DIMENSIONS.x(); j++) {
-                list.add(tileGrid[i][j]);
-            }
-        }
-        return list;
+    public Tile[] getListOfTiles() {
+        Tile[] arr = Stream.of(tileGrid).flatMap(Stream::of).toArray(Tile[]::new);
+        if (arr == null)
+            throw new NullPointerException(arr + " is null");
+
+        return arr;
     }
 
     public class Tile extends StackPane {

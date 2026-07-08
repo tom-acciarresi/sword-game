@@ -36,9 +36,7 @@ public final class GameLoop {
     private static void updateObjects(double timeDelta) {
         GameLoop.timeDelta = timeDelta;
 
-        for (Updatable object : objectsToUpdate) {
-            object.update(timeDelta);
-        }
+        objectsToUpdate.stream().forEach(o -> o.update(timeDelta));
     }
 
     public interface Updatable {

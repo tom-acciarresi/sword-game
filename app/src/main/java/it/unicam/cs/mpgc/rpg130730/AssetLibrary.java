@@ -1,6 +1,7 @@
 package it.unicam.cs.mpgc.rpg130730;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -41,15 +42,22 @@ public final class AssetLibrary {
     public static final Font GUI_FONT = font("Fira Sans", FontWeight.BOLD, FontPosture.REGULAR, 32);
 
     public static void initialize() {
-        CustomFileReader fr = new CustomFileReader();
-        CustomImageLoader il = new CustomImageLoader();
+        Runnable task = new Runnable() {
+            @Override
+            public void run() {
+                CustomFileReader fr = new CustomFileReader();
+                CustomImageLoader il = new CustomImageLoader();
 
-        loadTileSprites(il, fr);
+                loadTileSprites(il, fr);
 
-        loadLevelData(fr);
+                loadLevelData(fr);
 
-        loadEntitySprites("knight", il, fr);
-        loadEntitySprites("pig", il, fr);
+                loadEntitySprites("knight", il, fr);
+                loadEntitySprites("pig", il, fr);
+            }
+        };
+        Thread t1 = new Thread(task);
+        t1.run();
     }
 
     private static void loadTileSprites(CustomImageLoader il, CustomFileReader fr) {
@@ -57,23 +65,22 @@ public final class AssetLibrary {
         String fileOut = fr.read(TILE_INFO_FILE);
         List<Map<String, String>> arr = gson.fromJson(fileOut, new TypeToken<List<Map<String, String>>>() {
         });
-        for (Map<String, String> tile : arr) {
-            Integer index = Integer.valueOf(tile.get("index"));
-            String fileName = tile.get("fileName");
-            boolean collides = Boolean.valueOf(tile.get("collides"));
+        arr.parallelStream().forEach(t -> {
+            Integer index = Integer.valueOf(t.get("index"));
+            String fileName = t.get("fileName");
+            boolean collides = Boolean.valueOf(t.get("collides"));
             TILE_SPRITES.put(fileName, il.load(TILE_DIR_PREFIX + fileName));
             if (fileName == null)
                 throw new NullPointerException(fileName + " is not a valid file name");
             Image image = getTileSprite(fileName);
             TILE_INFO.put(index, new TileInfo(index, image, collides));
-        }
+        });
     }
 
     private static void loadLevelData(CustomFileReader fr) {
-        for (LevelData level : LevelData.ROOM_1.getDeclaringClass().getEnumConstants()) {
-            LEVEL_DATA.put(level.filename(),
-                    fr.read(LEVEL_DIR_PREFIX + level.filename()).replaceAll("\r\n|[\r\n]", " "));
-        }
+        Arrays.stream(LevelData.ROOM_1.getDeclaringClass().getEnumConstants()).parallel().forEach(l -> {
+            LEVEL_DATA.put(l.filename(), fr.read(LEVEL_DIR_PREFIX + l.filename()).replaceAll("\r\n|[\r\n]", " "));
+        });
     }
 
     private static void loadEntitySprites(String entityIdentifier, CustomImageLoader il, CustomFileReader fr) {
@@ -82,20 +89,24 @@ public final class AssetLibrary {
         TypeToken<List<Map<String, Object>>> typeOfT = new TypeToken<List<Map<String, Object>>>() {
         };
         List<Map<String, Object>> arr = gson.fromJson(fileOut, typeOfT);
-        for (Map<String, Object> animation : arr) {
-            String key = entityIdentifier + "/" + (String) animation.get("name");
-            // MULTI-TRACK DRIFTING!!
-            int fps = (int) (double) animation.get("fps");
+        arr.parallelStream().forEach(a -> {
+            String key = entityIdentifier + "/" + (String) a.get("name");
+
+            // MULTI-CAST!!
+            int fps = (int) (double) a.get("fps");
 
             @SuppressWarnings("unchecked")
-            ArrayList<String> frameNames = (ArrayList<String>) animation.get("frames");
+            ArrayList<String> frameNames = (ArrayList<String>) a.get("frames");
             List<Image> sprites = new ArrayList<Image>();
-            for (String frameName : frameNames) {
-                ANIMATION_SPRITES.put(frameName, il.load(ENTITY_DIR_PREFIX + entityIdentifier + "/" + frameName));
-                sprites.add(ANIMATION_SPRITES.get(frameName));
-            }
+
+            frameNames.parallelStream().forEachOrdered(s -> {
+                Image frame = il.load(ENTITY_DIR_PREFIX + entityIdentifier + "/" + s);
+                ANIMATION_SPRITES.put(s, frame);
+                sprites.add(frame);
+            });
+
             ANIMATIONS.put(key, new Animation(sprites, fps));
-        }
+        });
     }
 
     private static Image getTileSprite(String s) {

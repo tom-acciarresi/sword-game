@@ -3,7 +3,6 @@ package it.unicam.cs.mpgc.rpg130730.entities;
 import it.unicam.cs.mpgc.rpg130730.AssetLibrary;
 import it.unicam.cs.mpgc.rpg130730.Launcher;
 import it.unicam.cs.mpgc.rpg130730.environment.Tilemap;
-import it.unicam.cs.mpgc.rpg130730.environment.Tilemap.Tile;
 import it.unicam.cs.mpgc.rpg130730.GameLoop.Updatable;
 import it.unicam.cs.mpgc.rpg130730.util.Vector2;
 import javafx.geometry.Bounds;
@@ -55,23 +54,28 @@ public abstract class Entity extends StackPane implements Updatable {
     protected Vector2 checkTileCollision(Vector2 newPos) {
         boolean intersectsX = false;
         boolean intersectsY = false;
-        for (Tile tile : CollisionHandler.getCollTiles()) {
-            Bounds tileBounds = tile.getBoundsInParent();
+
+        intersectsX = CollisionHandler.getCollTiles().parallelStream().anyMatch(t -> {
+            Bounds tileBounds = t.getBoundsInParent();
 
             // Collider's horizontal component
             double newX = newPos.x() + COLLIDER_OFFSET.x();
             double oldY = getPosition().y() + COLLIDER_OFFSET.y();
-            Bounds boundsX = new Rectangle(newX, oldY, COLLIDER_SIZE.x(), COLLIDER_SIZE.y()).getBoundsInParent();
-            if (tileBounds.intersects(boundsX))
-                intersectsX = true;
+            Bounds boundsX = new Rectangle(newX, oldY, COLLIDER_SIZE.x(),
+                    COLLIDER_SIZE.y()).getBoundsInParent();
+            return tileBounds.intersects(boundsX);
+        });
+
+        intersectsY = CollisionHandler.getCollTiles().parallelStream().anyMatch(t -> {
+            Bounds tileBounds = t.getBoundsInParent();
 
             // Collider's vertical component
             double oldX = getPosition().x() + COLLIDER_OFFSET.x();
             double newY = newPos.y() + COLLIDER_OFFSET.y();
-            Bounds boundsY = new Rectangle(oldX, newY, COLLIDER_SIZE.x(), COLLIDER_SIZE.y()).getBoundsInParent();
-            if (tileBounds.intersects(boundsY))
-                intersectsY = true;
-        }
+            Bounds boundsY = new Rectangle(oldX, newY, COLLIDER_SIZE.x(),
+                    COLLIDER_SIZE.y()).getBoundsInParent();
+            return tileBounds.intersects(boundsY);
+        });
 
         // Don't update X if colliding horizontally
         // Don't update Y if colliding vertically
