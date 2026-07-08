@@ -39,6 +39,7 @@ public class Tilemap extends GridPane {
 
     public void changeTilemapTo(LevelData levelData) {
         int i = 0;
+        System.out.println(levelData);
         String levelString = AssetLibrary.getLevelData(levelData.filename());
         int[] levelBitMap = Arrays.stream(levelString.split(" ")).mapToInt(Integer::parseInt).toArray();
         for (Tile currTile : getListOfTiles()) {
