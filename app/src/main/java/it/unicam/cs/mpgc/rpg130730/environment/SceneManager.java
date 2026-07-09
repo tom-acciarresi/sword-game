@@ -9,13 +9,13 @@ import javafx.scene.Group;
 import javafx.scene.Node;
 
 public final class SceneManager extends Group {
-    public static enum LevelData {
+    public static enum Levels {
         ROOM_1("first_level.txt"),
         ROOM_2("second_level.txt");
 
         private final String filename;
 
-        LevelData(String filename) {
+        Levels(String filename) {
             this.filename = filename;
         }
 
@@ -44,7 +44,7 @@ public final class SceneManager extends Group {
 
     public void adHocScene() {
         // Instance tiles
-        Tilemap tilemap = new Tilemap(LevelData.ROOM_1);
+        Tilemap tilemap = new Tilemap(Levels.ROOM_1);
         // TODO "set layout" probably bad
         tilemap.setLayoutY(GUI.GUI_SIZE.y());
 

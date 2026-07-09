@@ -1,5 +1,6 @@
 package it.unicam.cs.mpgc.rpg130730;
 
+import java.nio.file.FileSystems;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -9,21 +10,24 @@ import java.util.Map;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import it.unicam.cs.mpgc.rpg130730.entities.AnimationPlayer.Animation;
-import it.unicam.cs.mpgc.rpg130730.environment.SceneManager.LevelData;
+import it.unicam.cs.mpgc.rpg130730.environment.SceneManager.Levels;
 import it.unicam.cs.mpgc.rpg130730.environment.Tilemap.TileInfo;
-import it.unicam.cs.mpgc.rpg130730.util.CustomFileReader;
-import it.unicam.cs.mpgc.rpg130730.util.CustomImageLoader;
+import it.unicam.cs.mpgc.rpg130730.util.CustomResourceFileReader;
+import it.unicam.cs.mpgc.rpg130730.util.CustomResourceImageLoader;
 import javafx.scene.image.Image;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
 
 public final class AssetLibrary {
+    public static final String RESOURCE_FOLDER_PATH = FileSystems.getDefault().getPath("").toAbsolutePath().toString()
+            + "/src/main/resources";
+
     public static final String GAME_ICON_PATH = "/images/icon.png";
-    public static final Image GAME_ICON = new CustomImageLoader().load(GAME_ICON_PATH);
+    public static final Image GAME_ICON = new CustomResourceImageLoader().load(GAME_ICON_PATH);
 
     public static final String MISSING_SPRITE_PATH = "/images/null.png";
-    public static final Image MISSING_SPRITE = new CustomImageLoader().load(MISSING_SPRITE_PATH);
+    public static final Image MISSING_SPRITE = new CustomResourceImageLoader().load(MISSING_SPRITE_PATH);
 
     private static final String TILE_DIR_PREFIX = "/images/tiles/";
     private static final String TILE_INFO_FILE = "/images/tiles/tiles.json";
@@ -45,8 +49,8 @@ public final class AssetLibrary {
         Runnable task = new Runnable() {
             @Override
             public void run() {
-                CustomFileReader fr = new CustomFileReader();
-                CustomImageLoader il = new CustomImageLoader();
+                CustomResourceFileReader fr = new CustomResourceFileReader();
+                CustomResourceImageLoader il = new CustomResourceImageLoader();
 
                 loadTileSprites(il, fr);
 
@@ -60,7 +64,7 @@ public final class AssetLibrary {
         t1.run();
     }
 
-    private static void loadTileSprites(CustomImageLoader il, CustomFileReader fr) {
+    private static void loadTileSprites(CustomResourceImageLoader il, CustomResourceFileReader fr) {
         Gson gson = new Gson();
         String fileOut = fr.read(TILE_INFO_FILE);
         List<Map<String, String>> arr = gson.fromJson(fileOut, new TypeToken<List<Map<String, String>>>() {
@@ -77,13 +81,14 @@ public final class AssetLibrary {
         });
     }
 
-    private static void loadLevelData(CustomFileReader fr) {
-        Arrays.stream(LevelData.ROOM_1.getDeclaringClass().getEnumConstants()).parallel().forEach(l -> {
+    private static void loadLevelData(CustomResourceFileReader fr) {
+        Arrays.stream(Levels.ROOM_1.getDeclaringClass().getEnumConstants()).parallel().forEach(l -> {
             LEVEL_DATA.put(l.filename(), fr.read(LEVEL_DIR_PREFIX + l.filename()).replaceAll("\r\n|[\r\n]", " "));
         });
     }
 
-    private static void loadEntitySprites(String entityIdentifier, CustomImageLoader il, CustomFileReader fr) {
+    private static void loadEntitySprites(String entityIdentifier, CustomResourceImageLoader il,
+            CustomResourceFileReader fr) {
         Gson gson = new Gson();
         String fileOut = fr.read(ENTITY_DIR_PREFIX + entityIdentifier + ENTITY_INFO_SUFFIX);
         TypeToken<List<Map<String, Object>>> typeOfT = new TypeToken<List<Map<String, Object>>>() {

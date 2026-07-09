@@ -91,6 +91,7 @@ public final class GUI extends Pane {
         }
 
         public void updateBar(double percentage) {
+            // Clamp between 0 and 1
             if (percentage < 0)
                 percentage = 0;
             if (percentage > 1)
