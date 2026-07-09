@@ -1,17 +1,17 @@
 [
     {
         "index": 1,
-        "fileName": "tile1.png",
+        "filename": "tile1.png",
         "collides": "false"
     },
     {
         "index": 2,
-        "fileName": "tile2.png",
+        "filename": "tile2.png",
         "collides": "false"
     },
     {
         "index": 8,
-        "fileName": "wall.png",
+        "filename": "wall.png",
         "collides": "true"
     }
 ]

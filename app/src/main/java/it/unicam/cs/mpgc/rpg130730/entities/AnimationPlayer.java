@@ -1,14 +1,12 @@
 package it.unicam.cs.mpgc.rpg130730.entities;
 
-import java.util.ArrayList;
-import java.util.List;
 import it.unicam.cs.mpgc.rpg130730.AssetLibrary;
 import it.unicam.cs.mpgc.rpg130730.Launcher;
 import it.unicam.cs.mpgc.rpg130730.GameLoop.Updatable;
 import javafx.scene.image.Image;
 
 public final class AnimationPlayer implements Updatable {
-    private Animation currAnimation = new Animation(new ArrayList<Image>(), 0);
+    private Animation currAnimation = new Animation("null", new Image[0], 0);
     private Image currFrame = AssetLibrary.MISSING_SPRITE;
     private int frameIndex;
     private int tickInterval;
@@ -55,16 +53,16 @@ public final class AnimationPlayer implements Updatable {
         return currFrame;
     }
 
-    public record Animation(List<Image> frames, int fps) {
+    public record Animation(String identifier, Image[] frames, int fps) {
         public Image getFrame(int i) {
-            Image image = frames.get(i);
+            Image image = frames[i];
             if (image == null)
                 throw new NullPointerException(image + " is not a valid image");
             return image;
         }
 
         public int getLength() {
-            return frames.size();
+            return frames.length;
         }
     }
 }

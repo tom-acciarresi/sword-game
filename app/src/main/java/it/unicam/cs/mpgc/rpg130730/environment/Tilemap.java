@@ -70,9 +70,9 @@ public class Tilemap extends GridPane {
     }
 
     public class Tile extends StackPane {
-        public static final TileInfo NULL_TILE = new TileInfo(0,
+        public static final TileState NULL_TILE = new TileState(0,
                 AssetLibrary.MISSING_SPRITE, false);
-        private TileInfo info = NULL_TILE;
+        private TileState info = NULL_TILE;
         private Rectangle sprite = new Rectangle(TILE_SIZE, TILE_SIZE,
                 new ImagePattern(info.sprite()));
 
@@ -81,12 +81,12 @@ public class Tilemap extends GridPane {
         }
 
         public void changeTo(int index) {
-            TileInfo tileInfo = AssetLibrary.getTileInfo(index);
+            TileState tileInfo = AssetLibrary.getTileInfo(index);
             info = tileInfo;
             sprite.setFill(new ImagePattern(info.sprite()));
         }
 
-        public TileInfo getInfo() {
+        public TileState getInfo() {
             return info;
         }
 
@@ -96,6 +96,6 @@ public class Tilemap extends GridPane {
         }
     }
 
-    public record TileInfo(int index, Image sprite, boolean canCollide) {
+    public record TileState(int index, Image sprite, boolean canCollide) {
     }
 }

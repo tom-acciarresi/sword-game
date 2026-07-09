@@ -1,17 +1,23 @@
 package it.unicam.cs.mpgc.rpg130730;
 
-import java.nio.file.FileSystems;
-import java.util.ArrayList;
+import java.lang.reflect.Type;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
+import org.jspecify.annotations.Nullable;
+
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
 import it.unicam.cs.mpgc.rpg130730.entities.AnimationPlayer.Animation;
 import it.unicam.cs.mpgc.rpg130730.environment.SceneManager.Levels;
-import it.unicam.cs.mpgc.rpg130730.environment.Tilemap.TileInfo;
+import it.unicam.cs.mpgc.rpg130730.environment.Tilemap.TileState;
 import it.unicam.cs.mpgc.rpg130730.util.CustomResourceFileReader;
 import it.unicam.cs.mpgc.rpg130730.util.CustomResourceImageLoader;
 import javafx.scene.image.Image;
@@ -20,9 +26,6 @@ import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
 
 public final class AssetLibrary {
-    public static final String RESOURCE_FOLDER_PATH = FileSystems.getDefault().getPath("").toAbsolutePath().toString()
-            + "/src/main/resources";
-
     public static final String GAME_ICON_PATH = "/images/icon.png";
     public static final Image GAME_ICON = new CustomResourceImageLoader().load(GAME_ICON_PATH);
 
@@ -32,7 +35,7 @@ public final class AssetLibrary {
     private static final String TILE_DIR_PREFIX = "/images/tiles/";
     private static final String TILE_INFO_FILE = "/images/tiles/tiles.json";
     private static final Map<String, Image> TILE_SPRITES = new HashMap<String, Image>();
-    private static final Map<Integer, TileInfo> TILE_INFO = new HashMap<Integer, TileInfo>();
+    private static final Map<Integer, TileState> TILE_INFO = new HashMap<Integer, TileState>();
 
     private static final String LEVEL_DIR_PREFIX = "/levels/";
     private static final Map<String, String> LEVEL_DATA = new HashMap<String, String>();
@@ -65,20 +68,31 @@ public final class AssetLibrary {
     }
 
     private static void loadTileSprites(CustomResourceImageLoader il, CustomResourceFileReader fr) {
-        Gson gson = new Gson();
+        GsonBuilder gb = new GsonBuilder();
+        gb.registerTypeAdapter(TileState.class, new JsonDeserializer<TileState>() {
+            @Override
+            public TileState deserialize(@Nullable JsonElement json, @Nullable Type typeOfT,
+                    @Nullable JsonDeserializationContext context)
+                    throws JsonParseException {
+                if (json == null)
+                    throw new NullPointerException(json + " is null json");
+                JsonObject jObject = json.getAsJsonObject();
+                int index = jObject.get("index").getAsInt();
+                String filename = jObject.get("filename").getAsString();
+                if (filename == null)
+                    throw new NullPointerException(filename + " is not a valid file name");
+                Image sprite = il.load(TILE_DIR_PREFIX + filename);
+                boolean collides = jObject.get("collides").getAsBoolean();
+                TILE_SPRITES.put(filename, sprite);
+                TileState tileState = new TileState(index, sprite, collides);
+                TILE_INFO.put(index, tileState);
+                return tileState;
+            }
+        });
+        Gson gson = gb.create();
         String fileOut = fr.read(TILE_INFO_FILE);
-        List<Map<String, String>> arr = gson.fromJson(fileOut, new TypeToken<List<Map<String, String>>>() {
-        });
-        arr.parallelStream().forEach(t -> {
-            Integer index = Integer.valueOf(t.get("index"));
-            String fileName = t.get("fileName");
-            boolean collides = Boolean.valueOf(t.get("collides"));
-            TILE_SPRITES.put(fileName, il.load(TILE_DIR_PREFIX + fileName));
-            if (fileName == null)
-                throw new NullPointerException(fileName + " is not a valid file name");
-            Image image = getTileSprite(fileName);
-            TILE_INFO.put(index, new TileInfo(index, image, collides));
-        });
+
+        gson.fromJson(fileOut, TileState[].class);
     }
 
     private static void loadLevelData(CustomResourceFileReader fr) {
@@ -89,40 +103,49 @@ public final class AssetLibrary {
 
     private static void loadEntitySprites(String entityIdentifier, CustomResourceImageLoader il,
             CustomResourceFileReader fr) {
-        Gson gson = new Gson();
-        String fileOut = fr.read(ENTITY_DIR_PREFIX + entityIdentifier + ENTITY_INFO_SUFFIX);
-        TypeToken<List<Map<String, Object>>> typeOfT = new TypeToken<List<Map<String, Object>>>() {
-        };
-        List<Map<String, Object>> arr = gson.fromJson(fileOut, typeOfT);
-        arr.parallelStream().forEach(a -> {
-            String key = entityIdentifier + "/" + (String) a.get("name");
+        GsonBuilder gb = new GsonBuilder();
+        gb.registerTypeAdapter(Animation.class, new JsonDeserializer<Animation>() {
+            @Override
+            public Animation deserialize(@Nullable JsonElement json, @Nullable Type typeOfT,
+                    @Nullable JsonDeserializationContext context)
+                    throws JsonParseException {
+                if (json == null)
+                    throw new NullPointerException(json + " is null json");
+                JsonObject jObject = json.getAsJsonObject();
+                int fps = jObject.get("fps").getAsInt();
+                String name = jObject.get("name").getAsString();
+                if (name == null)
+                    throw new NullPointerException(name + " animation name is null");
+                String identifier = entityIdentifier + "/" + name;
+                JsonArray arr = jObject.get("frames").getAsJsonArray();
+                Image[] frames = new Image[arr.size()];
+                for (int i = 0; i < frames.length; i++) {
+                    String filename = arr.get(i).getAsString();
+                    Image frame = il.load(ENTITY_DIR_PREFIX + entityIdentifier + "/" + filename);
+                    ANIMATION_SPRITES.put(filename, frame);
+                    frames[i] = frame;
+                }
 
-            // MULTI-CAST!!
-            int fps = (int) (double) a.get("fps");
-
-            @SuppressWarnings("unchecked")
-            ArrayList<String> frameNames = (ArrayList<String>) a.get("frames");
-            List<Image> sprites = new ArrayList<Image>();
-
-            frameNames.parallelStream().forEachOrdered(s -> {
-                Image frame = il.load(ENTITY_DIR_PREFIX + entityIdentifier + "/" + s);
-                ANIMATION_SPRITES.put(s, frame);
-                sprites.add(frame);
-            });
-
-            ANIMATIONS.put(key, new Animation(sprites, fps));
+                Animation animation = new Animation(identifier, frames, fps);
+                ANIMATIONS.put(identifier, animation);
+                return animation;
+            }
         });
+        Gson gson = gb.create();
+        String fileOut = fr.read(ENTITY_DIR_PREFIX + entityIdentifier + ENTITY_INFO_SUFFIX);
+
+        gson.fromJson(fileOut, Animation[].class);
     }
 
-    private static Image getTileSprite(String s) {
+    public static Image getTileSprite(String s) {
         Image image = TILE_SPRITES.get(s);
         if (image == null)
             throw new NullPointerException(image + " is not a valid image");
         return image;
     }
 
-    public static TileInfo getTileInfo(int i) {
-        TileInfo info = TILE_INFO.get(i);
+    public static TileState getTileInfo(int i) {
+        TileState info = TILE_INFO.get(i);
         if (info == null)
             throw new NullPointerException(info + " is not valid tile info");
         return info;
