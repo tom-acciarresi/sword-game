@@ -22,7 +22,7 @@ public class Enemy extends Entity {
     private EnemyInfo enemyInfo;
     private AnimationPlayer ap;
 
-    private static final Vector2 INITIAL_DIRECTION = Vector2.DOWN;
+    private static final Vector2 INITIAL_DIRECTION = Vector2.RIGHT;
     private Vector2 currDirection = INITIAL_DIRECTION;
 
     public Enemy(EnemyType type) {
@@ -32,6 +32,9 @@ public class Enemy extends Entity {
         ap = new AnimationPlayer(AssetLibrary.getAnimation(enemyInfo.identifier() + "/idle_down"));
 
         setHealth(enemyInfo.health());
+
+        // TODO tmp
+        CollisionHandler.addEnemy(this);
     }
 
     public Enemy(EnemyType type, Vector2 position) {
@@ -43,10 +46,11 @@ public class Enemy extends Entity {
     public void update(double timeDelta) {
         handleMovement(timeDelta);
         handleAnimation();
+        setViewOrder(-getPosition().y());
     }
 
     private void handleMovement(double timeDelta) {
-        Vector2 posDelta = getPosition().add(currDirection.scalar(150 * timeDelta));
+        Vector2 posDelta = getPosition().plus(currDirection.scalar(150 * timeDelta));
 
         Vector2 oldPos = getPosition();
 

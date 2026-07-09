@@ -21,10 +21,10 @@ public abstract class Entity extends StackPane implements Updatable {
 
     private Vector2 position = Vector2.ZERO;
 
-    private static final Vector2 COLLIDER_SIZE = new Vector2(48, 12);
-    private static final Vector2 COLLIDER_OFFSET = new Vector2(
-            (Tilemap.TILE_SIZE - COLLIDER_SIZE.x()) / 2,
-            Tilemap.TILE_SIZE - COLLIDER_SIZE.y());
+    private Vector2 colliderSize = new Vector2(48, 24);
+    private Vector2 colliderOffset = new Vector2(
+            (Tilemap.TILE_SIZE - colliderSize.x()) / 2,
+            Tilemap.TILE_SIZE - colliderSize.y());
 
     public Entity() {
         subscribeToUpdates();
@@ -48,32 +48,31 @@ public abstract class Entity extends StackPane implements Updatable {
     }
 
     public void move(Vector2 newPos) {
-        setPosition(checkTileCollision(newPos));
+        setPosition(checkTileCollision(newPos, getPosition()));
     }
 
-    protected Vector2 checkTileCollision(Vector2 newPos) {
+    private Vector2 checkTileCollision(Vector2 newPos, Vector2 oldPos) {
+        // Collider's horizontal component
         boolean intersectsX = false;
-        boolean intersectsY = false;
-
-        intersectsX = CollisionHandler.getCollTiles().parallelStream().anyMatch(t -> {
+        Bounds boundsX = new Rectangle(
+                newPos.x() + colliderOffset.x(),
+                oldPos.y() + colliderOffset.y(),
+                colliderSize.x(),
+                colliderSize.y()).getBoundsInParent();
+        intersectsX = CollisionHandler.getCollTiles().stream().anyMatch(t -> {
             Bounds tileBounds = t.getBoundsInParent();
-
-            // Collider's horizontal component
-            double newX = newPos.x() + COLLIDER_OFFSET.x();
-            double oldY = getPosition().y() + COLLIDER_OFFSET.y();
-            Bounds boundsX = new Rectangle(newX, oldY, COLLIDER_SIZE.x(),
-                    COLLIDER_SIZE.y()).getBoundsInParent();
             return tileBounds.intersects(boundsX);
         });
 
-        intersectsY = CollisionHandler.getCollTiles().parallelStream().anyMatch(t -> {
+        // Collider's vertical component
+        boolean intersectsY = false;
+        Bounds boundsY = new Rectangle(
+                oldPos.x() + colliderOffset.x(),
+                newPos.y() + colliderOffset.y(),
+                colliderSize.x(),
+                colliderSize.y()).getBoundsInParent();
+        intersectsY = CollisionHandler.getCollTiles().stream().anyMatch(t -> {
             Bounds tileBounds = t.getBoundsInParent();
-
-            // Collider's vertical component
-            double oldX = getPosition().x() + COLLIDER_OFFSET.x();
-            double newY = newPos.y() + COLLIDER_OFFSET.y();
-            Bounds boundsY = new Rectangle(oldX, newY, COLLIDER_SIZE.x(),
-                    COLLIDER_SIZE.y()).getBoundsInParent();
             return tileBounds.intersects(boundsY);
         });
 
@@ -86,7 +85,7 @@ public abstract class Entity extends StackPane implements Updatable {
         return position;
     }
 
-    protected void setPosition(Vector2 newPos) {
+    public void setPosition(Vector2 newPos) {
         position = newPos;
 
         setTranslateX(position.x());
@@ -97,7 +96,26 @@ public abstract class Entity extends StackPane implements Updatable {
         return sprite;
     }
 
-    protected void setSprite(Image newImage) {
+    public void setSprite(Image newImage) {
         sprite.setFill(new ImagePattern(newImage));
+    }
+
+    public Vector2 getColliderOffset() {
+        return colliderOffset;
+    }
+
+    public Vector2 getColliderSize() {
+        return colliderSize;
+    }
+
+    public Bounds getCollisionBounds() {
+        Bounds bounds = new Rectangle(
+                position.x() + colliderOffset.x(),
+                position.y() + colliderOffset.y(),
+                colliderSize.x(),
+                colliderSize.y()).getBoundsInParent();
+        if (bounds == null)
+            throw new NullPointerException(bounds + " bounds are null");
+        return bounds;
     }
 }

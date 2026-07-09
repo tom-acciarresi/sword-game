@@ -49,27 +49,19 @@ public final class AssetLibrary {
     public static final Font GUI_FONT = font("Fira Sans", FontWeight.BOLD, FontPosture.REGULAR, 32);
 
     public static void initialize() {
-        Runnable task = new Runnable() {
-            @Override
-            public void run() {
-                CustomResourceFileReader fr = new CustomResourceFileReader();
-                CustomResourceImageLoader il = new CustomResourceImageLoader();
+        CustomResourceFileReader fr = new CustomResourceFileReader();
+        CustomResourceImageLoader il = new CustomResourceImageLoader();
 
-                loadTileSprites(il, fr);
+        loadTileSprites(il, fr);
 
-                loadLevelData(fr);
+        loadLevelData(fr);
 
-                loadEntitySprites("knight", il, fr);
-                loadEntitySprites("pig", il, fr);
-            }
-        };
-        Thread t1 = new Thread(task);
-        t1.run();
+        loadEntitySprites("knight", il, fr);
+        loadEntitySprites("pig", il, fr);
     }
 
     private static void loadTileSprites(CustomResourceImageLoader il, CustomResourceFileReader fr) {
-        GsonBuilder gb = new GsonBuilder();
-        gb.registerTypeAdapter(TileState.class, new JsonDeserializer<TileState>() {
+        Gson gson = new GsonBuilder().registerTypeAdapter(TileState.class, new JsonDeserializer<TileState>() {
             @Override
             public TileState deserialize(@Nullable JsonElement json, @Nullable Type typeOfT,
                     @Nullable JsonDeserializationContext context)
@@ -79,8 +71,6 @@ public final class AssetLibrary {
                 JsonObject jObject = json.getAsJsonObject();
                 int index = jObject.get("index").getAsInt();
                 String filename = jObject.get("filename").getAsString();
-                if (filename == null)
-                    throw new NullPointerException(filename + " is not a valid file name");
                 Image sprite = il.load(TILE_DIR_PREFIX + filename);
                 boolean collides = jObject.get("collides").getAsBoolean();
                 TILE_SPRITES.put(filename, sprite);
@@ -88,52 +78,58 @@ public final class AssetLibrary {
                 TILE_INFO.put(index, tileState);
                 return tileState;
             }
-        });
-        Gson gson = gb.create();
-        String fileOut = fr.read(TILE_INFO_FILE);
+        }).create();
 
+        String fileOut = fr.read(TILE_INFO_FILE);
         gson.fromJson(fileOut, TileState[].class);
     }
 
     private static void loadLevelData(CustomResourceFileReader fr) {
-        Arrays.stream(Levels.ROOM_1.getDeclaringClass().getEnumConstants()).parallel().forEach(l -> {
+        Arrays.stream(Levels.ROOM_1.getDeclaringClass().getEnumConstants()).forEach(l -> {
             LEVEL_DATA.put(l.filename(), fr.read(LEVEL_DIR_PREFIX + l.filename()).replaceAll("\r\n|[\r\n]", " "));
         });
     }
 
     private static void loadEntitySprites(String entityIdentifier, CustomResourceImageLoader il,
             CustomResourceFileReader fr) {
-        GsonBuilder gb = new GsonBuilder();
-        gb.registerTypeAdapter(Animation.class, new JsonDeserializer<Animation>() {
+        Gson gson = new GsonBuilder().registerTypeAdapter(Animation.class, new JsonDeserializer<Animation>() {
             @Override
             public Animation deserialize(@Nullable JsonElement json, @Nullable Type typeOfT,
-                    @Nullable JsonDeserializationContext context)
-                    throws JsonParseException {
+                    @Nullable JsonDeserializationContext context) throws JsonParseException {
                 if (json == null)
                     throw new NullPointerException(json + " is null json");
                 JsonObject jObject = json.getAsJsonObject();
-                int fps = jObject.get("fps").getAsInt();
-                String name = jObject.get("name").getAsString();
-                if (name == null)
-                    throw new NullPointerException(name + " animation name is null");
-                String identifier = entityIdentifier + "/" + name;
-                JsonArray arr = jObject.get("frames").getAsJsonArray();
-                Image[] frames = new Image[arr.size()];
-                for (int i = 0; i < frames.length; i++) {
-                    String filename = arr.get(i).getAsString();
-                    Image frame = il.load(ENTITY_DIR_PREFIX + entityIdentifier + "/" + filename);
-                    ANIMATION_SPRITES.put(filename, frame);
-                    frames[i] = frame;
-                }
 
-                Animation animation = new Animation(identifier, frames, fps);
-                ANIMATIONS.put(identifier, animation);
+                int fps = jObject.get("fps").getAsInt();
+
+                String animationName = jObject.get("name").getAsString();
+                String animationIdentifier = entityIdentifier + "/" + animationName;
+
+                JsonArray filenameArray = jObject.get("frames").getAsJsonArray();
+                Image[] frames = new Image[filenameArray.size()];
+
+                for (int i = 0; i < frames.length; i++) {
+                    String filename = filenameArray.get(i).getAsString();
+                    String frameIdentifier = entityIdentifier + "/" + filename;
+                    Image currFrame;
+
+                    if (!ANIMATION_SPRITES.containsKey(frameIdentifier)) {
+                        String filepath = ENTITY_DIR_PREFIX + frameIdentifier;
+                        currFrame = il.load(filepath);
+                        ANIMATION_SPRITES.put(frameIdentifier, currFrame);
+                    } else {
+                        currFrame = ANIMATION_SPRITES.get(frameIdentifier);
+                    }
+
+                    frames[i] = currFrame;
+                }
+                Animation animation = new Animation(animationIdentifier, frames, fps);
+                ANIMATIONS.put(animationIdentifier, animation);
                 return animation;
             }
-        });
-        Gson gson = gb.create();
-        String fileOut = fr.read(ENTITY_DIR_PREFIX + entityIdentifier + ENTITY_INFO_SUFFIX);
+        }).create();
 
+        String fileOut = fr.read(ENTITY_DIR_PREFIX + entityIdentifier + ENTITY_INFO_SUFFIX);
         gson.fromJson(fileOut, Animation[].class);
     }
 

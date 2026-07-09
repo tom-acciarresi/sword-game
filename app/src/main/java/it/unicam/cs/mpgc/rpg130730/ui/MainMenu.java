@@ -2,6 +2,7 @@ package it.unicam.cs.mpgc.rpg130730.ui;
 
 import it.unicam.cs.mpgc.rpg130730.AssetLibrary;
 import it.unicam.cs.mpgc.rpg130730.Launcher;
+import it.unicam.cs.mpgc.rpg130730.persistence.SaveSystem;
 import it.unicam.cs.mpgc.rpg130730.util.Vector2;
 import javafx.scene.control.Button;
 import javafx.scene.layout.StackPane;
@@ -78,7 +79,6 @@ public class MainMenu extends StackPane {
     }
 
     private void continueGame() {
-        // TODO change
-        newGame();
+        SaveSystem.load();
     }
 }

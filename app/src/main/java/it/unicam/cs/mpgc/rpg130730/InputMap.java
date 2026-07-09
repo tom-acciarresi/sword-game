@@ -3,6 +3,7 @@ package it.unicam.cs.mpgc.rpg130730;
 import java.util.HashMap;
 import java.util.Map;
 
+import it.unicam.cs.mpgc.rpg130730.persistence.SaveSystem;
 import javafx.application.Platform;
 import javafx.scene.input.KeyCode;
 import javafx.stage.Stage;
@@ -13,7 +14,11 @@ public final class InputMap {
         DOWN(KeyCode.S),
         UP(KeyCode.W),
         RIGHT(KeyCode.D),
-        LEFT(KeyCode.A);
+        LEFT(KeyCode.A),
+        ATTACK_L(KeyCode.LEFT),
+        ATTACK_R(KeyCode.RIGHT),
+        ATTACK_U(KeyCode.UP),
+        ATTACK_D(KeyCode.DOWN);
 
         private final KeyCode keyCode;
 
@@ -31,16 +36,20 @@ public final class InputMap {
             KeyCode code = e.getCode();
             if (code == null)
                 throw new NullPointerException(code + "is not a valid keycode");
+            if (code == KeyBind.QUIT.keyCode()) {
+                SaveSystem.save();
+                Platform.exit();
+            }
+
             InputMap.setKeyPressed(code, true);
 
-            if (code == KeyBind.QUIT.keyCode())
-                Platform.exit();
         });
 
         stage.getScene().setOnKeyReleased(e -> {
             KeyCode code = e.getCode();
             if (code == null)
                 throw new NullPointerException(code + "is not a valid keycode");
+
             InputMap.setKeyPressed(code, false);
         });
     }

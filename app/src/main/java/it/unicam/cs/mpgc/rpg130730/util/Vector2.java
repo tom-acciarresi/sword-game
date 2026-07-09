@@ -20,16 +20,16 @@ public record Vector2(double x, double y) {
         return new Vector2(x / length, y / length);
     }
 
-    public Vector2 copy() {
-        return new Vector2(x, y);
-    }
-
     public Vector2 invert() {
         return new Vector2(-x, -y);
     }
 
-    public Vector2 add(Vector2 other) {
-        return new Vector2(this.x + other.x, this.y + other.y);
+    public Vector2 plus(Vector2 o) {
+        return new Vector2(this.x + o.x, this.y + o.y);
+    }
+
+    public Vector2 minus(Vector2 o) {
+        return this.plus(o.invert());
     }
 
     public Vector2 scalar(double k) {
@@ -38,6 +38,10 @@ public record Vector2(double x, double y) {
 
     public double dot(Vector2 o) {
         return this.x * o.x + this.y * o.y;
+    }
+
+    public Vector2 distanceTo(Vector2 o) {
+        return new Vector2(o.x - this.x, o.y - this.y);
     }
 
     @Override

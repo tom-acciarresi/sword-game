@@ -6,6 +6,8 @@ import it.unicam.cs.mpgc.rpg130730.InputMap;
 import it.unicam.cs.mpgc.rpg130730.entities.AnimationPlayer.Animation;
 import it.unicam.cs.mpgc.rpg130730.InputMap.KeyBind;
 import it.unicam.cs.mpgc.rpg130730.util.Vector2;
+import javafx.application.Platform;
+import javafx.geometry.Bounds;
 
 public class Player extends Entity {
     private static final int DEFAULT_PLAYER_SPEED = 400; // px/s
@@ -14,6 +16,9 @@ public class Player extends Entity {
     private Vector2 movementInput = Vector2.ZERO;
     private boolean acceptsInput = true;
     private AnimationPlayer ap;
+
+    private final static int HIT_COOLDOWN_FRAMES = 50;
+    private int cooldown = 0;
 
     public Player() {
         super();
@@ -26,9 +31,12 @@ public class Player extends Entity {
         setPosition(position);
     }
 
+    @Override
     public void update(double timeDelta) {
+        checkEnemyCollision();
         handleMovement(timeDelta);
         handleAnimation();
+        setViewOrder(-getPosition().y());
     }
 
     private void handleMovement(double timeDelta) {
@@ -37,15 +45,33 @@ public class Player extends Entity {
             return;
         double movementDelta = DEFAULT_PLAYER_SPEED * GameLoop.getTimeDelta();
         Vector2 deltaPos = new Vector2(movementInput.x() * movementDelta, movementInput.y() * movementDelta);
-        Vector2 newPos = getPosition().add(deltaPos);
-
-        checkEnemyCollision();
+        Vector2 newPos = getPosition().plus(deltaPos);
 
         move(newPos);
     }
 
     private void checkEnemyCollision() {
-        // TODO
+        if (cooldown > 0) {
+            cooldown--;
+            return;
+        }
+
+        Bounds playerBounds = this.getCollisionBounds();
+        boolean collision = CollisionHandler.getEnemies().stream().anyMatch(e -> {
+            Bounds enemyBounds = e.getCollisionBounds();
+
+            return enemyBounds.intersects(playerBounds);
+        });
+
+        if (collision) {
+            cooldown = HIT_COOLDOWN_FRAMES;
+            collide();
+        }
+    }
+
+    private void collide() {
+        // TODO knockback
+        setHealth(getHealth() - 1);
     }
 
     private Vector2 getMovementInput() {
@@ -111,6 +137,6 @@ public class Player extends Entity {
     }
 
     private void gameOver() {
-        System.out.println("You died");
+        Platform.exit();
     }
 }

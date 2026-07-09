@@ -42,7 +42,7 @@ public class Tilemap extends GridPane {
 
     public void changeTilemapTo(Levels levelData) {
         String levelString = AssetLibrary.getLevelData(levelData.filename());
-        int[] levelBitMap = Arrays.stream(levelString.split(" ")).parallel().mapToInt(Integer::parseInt).toArray();
+        int[] levelBitMap = Arrays.stream(levelString.split(" ")).mapToInt(Integer::parseInt).toArray();
 
         Tile[] tiles = getListOfTiles();
         for (int i = 0; i < TILE_AMOUNT; i++) {
@@ -62,7 +62,7 @@ public class Tilemap extends GridPane {
     }
 
     public Tile[] getListOfTiles() {
-        Tile[] arr = Stream.of(tileGrid).flatMap(Stream::of).toArray(Tile[]::new);
+        Tile[] arr = Arrays.stream(tileGrid).flatMap(Stream::of).toArray(Tile[]::new);
         if (arr == null)
             throw new NullPointerException(arr + " is null");
 
