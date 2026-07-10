@@ -40,24 +40,20 @@ public class Tilemap extends GridPane {
     }
 
     public void changeTilemapTo(int[] tileArragementData) {
-        Tile[] tiles = getListOfTiles();
+        Tile[] tiles = getTiles();
         for (int i = 0; i < TILE_AMOUNT; i++) {
             Tile currTile = tiles[i];
             if (currTile.getInfo().canCollide)
                 CollisionHandler.removeCollidableTile(currTile);
 
-            currTile.changeTo(tileArragementData[i]);
+            currTile.changeTileTo(tileArragementData[i]);
 
             if (currTile.getInfo().canCollide)
                 CollisionHandler.addCollidableTile(currTile);
         }
     }
 
-    public void setTileTo(Vector2 coords, int index) {
-        tileGrid[(int) coords.y()][(int) coords.x()].changeTo(index);
-    }
-
-    public Tile[] getListOfTiles() {
+    public Tile[] getTiles() {
         Tile[] arr = Arrays.stream(tileGrid).flatMap(Stream::of).toArray(Tile[]::new);
         if (arr == null)
             throw new NullPointerException(arr + " is null");
@@ -76,7 +72,7 @@ public class Tilemap extends GridPane {
             getChildren().add(sprite);
         }
 
-        public void changeTo(int index) {
+        public void changeTileTo(int index) {
             TileState tileInfo = AssetLibrary.getTileInfo(index);
             info = tileInfo;
             sprite.setFill(new ImagePattern(info.sprite()));

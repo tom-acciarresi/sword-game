@@ -1,8 +1,11 @@
 package it.unicam.cs.mpgc.rpg130730.entities;
 
+import java.util.Set;
+
 import it.unicam.cs.mpgc.rpg130730.AssetLibrary;
 import it.unicam.cs.mpgc.rpg130730.Launcher;
 import it.unicam.cs.mpgc.rpg130730.environment.Tilemap;
+import it.unicam.cs.mpgc.rpg130730.environment.Tilemap.Tile;
 import it.unicam.cs.mpgc.rpg130730.GameLoop.Updatable;
 import it.unicam.cs.mpgc.rpg130730.util.Vector2;
 import javafx.geometry.Bounds;
@@ -52,6 +55,8 @@ public abstract class Entity extends StackPane implements Updatable {
     }
 
     private Vector2 checkTileCollision(Vector2 newPos, Vector2 oldPos) {
+        Set<Tile> collTiles = CollisionHandler.getCollTiles();
+
         // Collider's horizontal component
         boolean intersectsX = false;
         Bounds boundsX = new Rectangle(
@@ -59,7 +64,7 @@ public abstract class Entity extends StackPane implements Updatable {
                 oldPos.y() + colliderOffset.y(),
                 colliderSize.x(),
                 colliderSize.y()).getBoundsInParent();
-        intersectsX = CollisionHandler.getCollTiles().stream().anyMatch(t -> {
+        intersectsX = collTiles.stream().anyMatch(t -> {
             Bounds tileBounds = t.getBoundsInParent();
             return tileBounds.intersects(boundsX);
         });
@@ -71,7 +76,7 @@ public abstract class Entity extends StackPane implements Updatable {
                 newPos.y() + colliderOffset.y(),
                 colliderSize.x(),
                 colliderSize.y()).getBoundsInParent();
-        intersectsY = CollisionHandler.getCollTiles().stream().anyMatch(t -> {
+        intersectsY = collTiles.stream().anyMatch(t -> {
             Bounds tileBounds = t.getBoundsInParent();
             return tileBounds.intersects(boundsY);
         });
@@ -98,14 +103,6 @@ public abstract class Entity extends StackPane implements Updatable {
 
     public void setSprite(Image newImage) {
         sprite.setFill(new ImagePattern(newImage));
-    }
-
-    public Vector2 getColliderOffset() {
-        return colliderOffset;
-    }
-
-    public Vector2 getColliderSize() {
-        return colliderSize;
     }
 
     public Bounds getCollisionBounds() {

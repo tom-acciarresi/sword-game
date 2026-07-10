@@ -8,6 +8,8 @@ import it.unicam.cs.mpgc.rpg130730.InputMap.KeyBind;
 import it.unicam.cs.mpgc.rpg130730.util.Vector2;
 import javafx.application.Platform;
 import javafx.geometry.Bounds;
+import javafx.scene.paint.ImagePattern;
+import javafx.scene.shape.Rectangle;
 
 public class Player extends Entity {
     private static final int DEFAULT_PLAYER_SPEED = 400; // px/s
@@ -15,7 +17,10 @@ public class Player extends Entity {
 
     private Vector2 movementInput = Vector2.ZERO;
     private boolean acceptsInput = true;
+
     private AnimationPlayer ap;
+    private Rectangle sword = new Rectangle(28, 48,
+            new ImagePattern(AssetLibrary.SWORD_SPRITE));
 
     private final static int HIT_COOLDOWN_FRAMES = 50;
     private int cooldown = 0;
@@ -24,6 +29,9 @@ public class Player extends Entity {
         super();
         setHealth(DEFAULT_PLAYER_HEALTH);
         ap = new AnimationPlayer(AssetLibrary.getAnimation("knight/idle_down"));
+
+        sword.setVisible(false);
+        getChildren().add(sword);
     }
 
     public Player(Vector2 position) {
@@ -96,9 +104,11 @@ public class Player extends Entity {
     }
 
     private void handleAnimation() {
+        ap.tick();
         setSprite(ap.getCurrFrame());
 
-        String direction = getPredominantDirection(movementInput);
+        double x = movementInput.x(), y = movementInput.y();
+        String direction = Math.abs(x) > Math.abs(y) ? (x < 0 ? "left" : "right") : (y < 0 ? "up" : "down");
 
         if (!acceptsInput || movementInput == Vector2.ZERO) {
             Animation newAnim = AssetLibrary.getAnimation("knight/idle_" + direction);
@@ -115,25 +125,6 @@ public class Player extends Entity {
         }
 
         ap.changeTo(newAnim);
-    }
-
-    private String getPredominantDirection(Vector2 v) {
-        String direction;
-
-        double x = v.x();
-        double y = v.y();
-        if (Math.abs(x) > Math.abs(y)) {
-            if (x < 0)
-                direction = "left";
-            else
-                direction = "right";
-        } else if (y < 0) {
-            direction = "up";
-        } else {
-            direction = "down";
-        }
-
-        return direction;
     }
 
     private void gameOver() {

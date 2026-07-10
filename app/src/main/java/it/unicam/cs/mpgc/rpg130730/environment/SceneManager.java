@@ -1,9 +1,11 @@
 package it.unicam.cs.mpgc.rpg130730.environment;
 
+import java.util.HashSet;
 import java.util.Map;
-import java.util.Map.Entry;
+import java.util.Set;
 
 import it.unicam.cs.mpgc.rpg130730.AssetLibrary;
+import it.unicam.cs.mpgc.rpg130730.entities.CollisionHandler;
 import it.unicam.cs.mpgc.rpg130730.entities.Enemy;
 import it.unicam.cs.mpgc.rpg130730.entities.Enemy.EnemyType;
 import it.unicam.cs.mpgc.rpg130730.entities.Player;
@@ -29,41 +31,67 @@ public final class SceneManager extends Group {
         }
     }
 
-    // TODO change
+    private static Tilemap tilemap = new Tilemap();
+    private static Set<Enemy> enemies = new HashSet<Enemy>();
+    private static Player player;
+
     public void loadMainMenu() {
         getChildren().add(new MainMenu());
     }
 
-    public void loadFirstLevel() {
-        LevelData FIRST_LEVEL = AssetLibrary.getLevelData(Level.ROOM_2.filename());
-        Tilemap tilemap = new Tilemap(FIRST_LEVEL.tileArrangementData());
+    public void initialize(Level level) {
+        player = new Player();
 
-        tilemap.setLayoutY(GUI.GUI_SIZE.y());
+        loadLevel(level);
 
-        Map<Vector2, EnemyType> enemyData = FIRST_LEVEL.enemyData();
-        Enemy[] enemyArr = new Enemy[enemyData.size()];
-        int i = 0;
-        for (Entry<Vector2, EnemyType> enemy : enemyData.entrySet()) {
-            Vector2 enemyPos = enemy.getKey();
-            EnemyType enemyType = enemy.getValue();
-            @SuppressWarnings("null")
-            Enemy e = new Enemy(enemyType, enemyPos.scalar(Tilemap.TILE_SIZE));
-            e.setLayoutY(GUI.GUI_SIZE.y());
-            enemyArr[i++] = e;
+        Group levelContainer = new Group(tilemap, player);
+        levelContainer.getChildren().addAll(enemies);
+        levelContainer.setLayoutY(GUI.GUI_SIZE.y());
+
+        this.getChildren().addAll(levelContainer, new GUI(player));
+    }
+
+    public void newGame() {
+        initialize(Level.ROOM_1);
+    }
+
+    public void continueGame(
+    // SaveData savedata
+    ) {
+        initialize(
+                // savedata.level();
+                Level.ROOM_2);
+
+        // Other savedata stuffs
+    }
+
+    private void loadTiles(LevelData levelData) {
+        tilemap.changeTilemapTo(levelData.tileArrangementData());
+    }
+
+    private void loadEnemies(Map<Vector2, EnemyType> enemyData) {
+        // Delete old enemies
+        for (Enemy enemy : enemies) {
+            enemy.unsubscribeFromUpdates();
+            CollisionHandler.removeEnemy(enemy);
+            this.getChildren().remove(enemy);
         }
+        enemies.clear();
 
-        Player player = new Player(new Vector2(3, 5).scalar(Tilemap.TILE_SIZE));
-        player.setLayoutY(GUI.GUI_SIZE.y());
-
-        GUI gui = new GUI(player);
-
-        getChildren().add(gui);
-        getChildren().add(tilemap);
-        getChildren().addAll(enemyArr);
-        getChildren().add(player);
+        // Load new enemies
+        enemyData.entrySet().stream().forEach(e -> {
+            EnemyType type = e.getValue();
+            Vector2 pos = e.getKey();
+            Enemy newEnemy = new Enemy(type, pos.scalar(Tilemap.TILE_SIZE));
+            CollisionHandler.addEnemy(newEnemy);
+            enemies.add(newEnemy);
+        });
     }
 
     public void loadLevel(Level level) {
-        // TODO implement
+        LevelData levelData = AssetLibrary.getLevelData(level.filename());
+
+        loadTiles(levelData);
+        loadEnemies(levelData.enemyData());
     }
 }

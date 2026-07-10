@@ -2,8 +2,10 @@ package it.unicam.cs.mpgc.rpg130730.tools;
 
 import static java.util.Map.entry;
 
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.Arrays;
@@ -21,12 +23,12 @@ public final class LevelEditor {
     @SuppressWarnings("null")
     public static void main(String[] args) {
         LevelData lvl1 = new LevelData(
-                LevelData.stringToIntArray(new FileResourceReader().read("/levels/first_level.txt")),
+                LevelData.stringToIntArray(new FileResourceReader().read("/levels/tiles1.txt")),
                 Map.ofEntries(
                         entry(new Vector2(2, 3), EnemyType.PIG)));
 
         LevelData lvl2 = new LevelData(
-                LevelData.stringToIntArray(new FileResourceReader().read("/levels/second_level.txt")),
+                LevelData.stringToIntArray(new FileResourceReader().read("/levels/tiles2.txt")),
                 Map.ofEntries(
                         entry(new Vector2(2, 3), EnemyType.PIG),
                         entry(new Vector2(5, 5), EnemyType.PIG)));
@@ -46,19 +48,19 @@ public final class LevelEditor {
         }
     }
 
-    // public static LevelData loadLevelDataFile(String filename) {
-    // ObjectInputStream ois;
-    // LevelData levelData = null;
-    // try {
-    // ois = new ObjectInputStream(new FileInputStream(LEVELS_DIR + filename));
-    // levelData = (LevelData) ois.readObject();
-    // } catch (IOException | ClassNotFoundException e) {
-    // e.printStackTrace();
-    // }
-    // if (levelData == null)
-    // throw new NullPointerException(levelData + " object is null");
-    // return levelData;
-    // }
+    private static LevelData loadLevelDataFile(String filename) {
+        ObjectInputStream ois;
+        LevelData levelData = null;
+        try {
+            ois = new ObjectInputStream(new FileInputStream(LEVELS_DIR + filename));
+            levelData = (LevelData) ois.readObject();
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        if (levelData == null)
+            throw new NullPointerException(levelData + " object is null");
+        return levelData;
+    }
 
     public record LevelData(int[] tileArrangementData, Map<Vector2, EnemyType> enemyData) implements Serializable {
         public static int[] stringToIntArray(String tiles) {

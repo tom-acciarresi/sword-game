@@ -1,9 +1,20 @@
 {
+    "editor.defaultFormatter": "redhat.java",
+    "editor.formatOnSave": true,
     "files.exclude": {
         "**/package-info.java": true,
         "gradle": true,
         "gradlew": true,
         "gradlew.bat": true
     },
-    "editor.defaultFormatter": "redhat.java",
+    "gradle.javaDebug.cleanOutput": true,
+    "java.configuration.updateBuildConfiguration": "automatic",
+    "java.debug.settings.showHex": false,
+    "java.debug.settings.showLogicalStructure": true,
+    "java.debug.settings.showQualifiedNames": true,
+    "java.dependency.packagePresentation": "hierarchical",
+    "java.help.showReleaseNotes": false,
+    "java.project.encoding": "warning",
+    "java.referencesCodeLens.enabled": true,
+    "java.compile.nullAnalysis.mode": "disabled",
 }

@@ -1,13 +1,13 @@
 package it.unicam.cs.mpgc.rpg130730.entities;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import it.unicam.cs.mpgc.rpg130730.environment.Tilemap.Tile;
 
 public final class CollisionHandler {
-    private static List<Tile> collTiles = new ArrayList<Tile>();
-    private static List<Enemy> enemies = new ArrayList<Enemy>();
+    private static Set<Tile> collTiles = new HashSet<Tile>();
+    private static Set<Enemy> enemies = new HashSet<Enemy>();
 
     public static boolean addCollidableTile(Tile tile) {
         return collTiles.add(tile);
@@ -17,7 +17,7 @@ public final class CollisionHandler {
         return collTiles.remove(tile);
     }
 
-    public static List<Tile> getCollTiles() {
+    public static Set<Tile> getCollTiles() {
         return collTiles;
     }
 
@@ -29,7 +29,7 @@ public final class CollisionHandler {
         return enemies.remove(enemy);
     }
 
-    public static List<Enemy> getEnemies() {
+    public static Set<Enemy> getEnemies() {
         return enemies;
     }
 }

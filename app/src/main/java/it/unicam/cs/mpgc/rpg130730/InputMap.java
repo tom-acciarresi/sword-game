@@ -3,6 +3,7 @@ package it.unicam.cs.mpgc.rpg130730;
 import java.util.HashMap;
 import java.util.Map;
 
+import it.unicam.cs.mpgc.rpg130730.environment.SceneManager.Level;
 import it.unicam.cs.mpgc.rpg130730.persistence.SaveSystem;
 import javafx.application.Platform;
 import javafx.scene.input.KeyCode;
@@ -39,6 +40,11 @@ public final class InputMap {
             if (code == KeyBind.QUIT.keyCode()) {
                 SaveSystem.save();
                 Platform.exit();
+            }
+
+            // TODO just for debug
+            if (code == KeyCode.P) {
+                Launcher.getSceneManager().loadLevel(Level.ROOM_1);
             }
 
             InputMap.setKeyPressed(code, true);

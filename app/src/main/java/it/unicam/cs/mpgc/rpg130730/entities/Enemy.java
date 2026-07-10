@@ -32,9 +32,6 @@ public class Enemy extends Entity {
         ap = new AnimationPlayer(AssetLibrary.getAnimation(enemyInfo.identifier() + "/idle_down"));
 
         setHealth(enemyInfo.health());
-
-        // TODO tmp
-        CollisionHandler.addEnemy(this);
     }
 
     public Enemy(EnemyType type, Vector2 position) {
@@ -62,9 +59,11 @@ public class Enemy extends Entity {
     }
 
     private void handleAnimation() {
+        ap.tick();
         setSprite(ap.getCurrFrame());
 
-        String direction = getPredominantDirection(currDirection);
+        double x = currDirection.x(), y = currDirection.y();
+        String direction = Math.abs(x) > Math.abs(y) ? (x < 0 ? "left" : "right") : (y < 0 ? "up" : "down");
 
         if (currDirection == Vector2.ZERO) {
             Animation newAnim = AssetLibrary.getAnimation(enemyInfo.identifier() + "/idle_" + direction);
@@ -81,24 +80,6 @@ public class Enemy extends Entity {
         }
 
         ap.changeTo(newAnim);
-    }
-
-    private String getPredominantDirection(Vector2 v) {
-        String direction;
-
-        double x = v.x(), y = v.y();
-        if (Math.abs(x) > Math.abs(y)) {
-            if (x < 0)
-                direction = "left";
-            else
-                direction = "right";
-        } else if (y < 0) {
-            direction = "up";
-        } else {
-            direction = "down";
-        }
-
-        return direction;
     }
 
     public record EnemyInfo(double health, String identifier) {

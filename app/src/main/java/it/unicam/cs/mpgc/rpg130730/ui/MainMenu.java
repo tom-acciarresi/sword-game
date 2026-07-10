@@ -2,6 +2,7 @@ package it.unicam.cs.mpgc.rpg130730.ui;
 
 import it.unicam.cs.mpgc.rpg130730.AssetLibrary;
 import it.unicam.cs.mpgc.rpg130730.Launcher;
+import it.unicam.cs.mpgc.rpg130730.environment.SceneManager;
 import it.unicam.cs.mpgc.rpg130730.persistence.SaveSystem;
 import it.unicam.cs.mpgc.rpg130730.util.Vector2;
 import javafx.scene.control.Button;
@@ -29,7 +30,8 @@ public class MainMenu extends StackPane {
         this.getChildren().addAll(
                 createTitle(),
                 createNewGameButton(),
-                createContinueButton());
+                createContinueButton(),
+                createAttribution());
     }
 
     private Text createTitle() {
@@ -74,11 +76,28 @@ public class MainMenu extends StackPane {
         return button;
     }
 
+    private Text createAttribution() {
+        Vector2 OFFSET_FROM_CENTER = new Vector2(280, 320);
+        Text selfAdvertising = new Text("A game by Tom");
+        selfAdvertising.setFont(AssetLibrary.TEXT_FONT);
+        selfAdvertising.setFill(Color.LIGHTGRAY);
+        selfAdvertising.setTranslateX(OFFSET_FROM_CENTER.x());
+        selfAdvertising.setTranslateY(OFFSET_FROM_CENTER.y());
+        return selfAdvertising;
+    }
+
     private void newGame() {
-        Launcher.getSceneManager().loadFirstLevel();
+        SceneManager sceneManager = Launcher.getSceneManager();
+        System.out.println(sceneManager.getChildren());
+        sceneManager.newGame();
+        sceneManager.getChildren().remove(this);
     }
 
     private void continueGame() {
+        SceneManager sceneManager = Launcher.getSceneManager();
+        // SaveData savedata =
         SaveSystem.load();
+        // sceneManager.load(savedata);
+        sceneManager.getChildren().remove(this);
     }
 }

@@ -2,10 +2,9 @@ package it.unicam.cs.mpgc.rpg130730.entities;
 
 import it.unicam.cs.mpgc.rpg130730.AssetLibrary;
 import it.unicam.cs.mpgc.rpg130730.Launcher;
-import it.unicam.cs.mpgc.rpg130730.GameLoop.Updatable;
 import javafx.scene.image.Image;
 
-public final class AnimationPlayer implements Updatable {
+public final class AnimationPlayer {
     private Animation currAnimation = new Animation("null", new Image[0], 0);
     private Image currFrame = AssetLibrary.MISSING_SPRITE;
     private int frameIndex;
@@ -13,7 +12,6 @@ public final class AnimationPlayer implements Updatable {
     private int ticksLeft;
 
     public AnimationPlayer(Animation startingAnimation) {
-        subscribeToUpdates();
         changeTo(startingAnimation);
     }
 
@@ -33,8 +31,7 @@ public final class AnimationPlayer implements Updatable {
         setFrameIndex(frameIndex + 1);
     }
 
-    @Override
-    public void update(double timeDelta) {
+    public void tick() {
         if (currAnimation.fps() == 0)
             return;
         if (ticksLeft-- <= 0) {

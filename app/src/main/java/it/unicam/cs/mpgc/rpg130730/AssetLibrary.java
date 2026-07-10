@@ -42,6 +42,8 @@ public final class AssetLibrary {
     private static final String LEVEL_DIR_PREFIX = "/levels/";
     private static final Map<String, LevelData> LEVEL_DATA = new HashMap<String, LevelData>();
 
+    private static final String SWORD_SPRITE_PATH = "/images/entities/knight/sword.png";
+    public static final Image SWORD_SPRITE = new ImageResourceLoader().load(SWORD_SPRITE_PATH);
     private static final String ENTITY_DIR_PREFIX = "/images/entities/";
     private static final String ENTITY_INFO_SUFFIX = "/animations.json";
     private static final Map<String, Image> ANIMATION_SPRITES = new HashMap<String, Image>();
@@ -49,6 +51,7 @@ public final class AssetLibrary {
 
     public static final Font TITLE_FONT = font("Fira Sans", FontWeight.BOLD, FontPosture.REGULAR, 64);
     public static final Font GUI_FONT = font("Fira Sans", FontWeight.BOLD, FontPosture.REGULAR, 32);
+    public static final Font TEXT_FONT = font("Sans", FontWeight.NORMAL, FontPosture.REGULAR, 24);
 
     public static void initialize() {
         FileResourceReader fr = new FileResourceReader();
@@ -136,12 +139,12 @@ public final class AssetLibrary {
         });
     }
 
-    public static Image getTileSprite(String s) {
-        Image image = TILE_SPRITES.get(s);
-        if (image == null)
-            throw new NullPointerException(image + " is not a valid image");
-        return image;
-    }
+    // public static Image getTileSprite(String s) {
+    // Image image = TILE_SPRITES.get(s);
+    // if (image == null)
+    // throw new NullPointerException(image + " is not a valid image");
+    // return image;
+    // }
 
     public static TileState getTileInfo(int i) {
         TileState info = TILE_INFO.get(i);

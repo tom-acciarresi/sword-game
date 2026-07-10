@@ -21,14 +21,23 @@ public final class Launcher extends Application {
     public static final int TARGET_FRAMERATE = 60;
 
     private static final Stage stage = new Stage();
-    private static final SceneManager sm = new SceneManager();
+    private static SceneManager sm;
 
     @Override
     public void start(@Nullable Stage defaultStage) {
+        // Load assets
+        AssetLibrary.initialize();
+
+        // Create root for scene tree
+        sm = new SceneManager();
+
+        // Create window
         initializeStage();
 
-        AssetLibrary.initialize();
+        // Start reading input
         InputMap.initialize(stage);
+
+        // Start game loop
         GameLoop.initialize();
 
         // Load main menu

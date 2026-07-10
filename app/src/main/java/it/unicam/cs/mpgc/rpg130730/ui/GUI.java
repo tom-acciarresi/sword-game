@@ -5,6 +5,7 @@ import it.unicam.cs.mpgc.rpg130730.Launcher;
 import it.unicam.cs.mpgc.rpg130730.GameLoop.Updatable;
 import it.unicam.cs.mpgc.rpg130730.entities.Player;
 import it.unicam.cs.mpgc.rpg130730.util.Vector2;
+import javafx.scene.Group;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
@@ -15,11 +16,14 @@ public final class GUI extends Pane {
             Launcher.LEVEL_SIZE.x(),
             64);
 
-    private HealthBar hb;
+    private static final Vector2 HP_BAR_POS = new Vector2(624, 16);
 
     public GUI(Player p) {
         createBackground();
-        hb = new HealthBar(p);
+        HealthBar healthBar = new HealthBar(p);
+        healthBar.setLayoutX(HP_BAR_POS.x());
+        healthBar.setLayoutY(HP_BAR_POS.y());
+        this.getChildren().add(healthBar);
     }
 
     private void createBackground() {
@@ -28,12 +32,7 @@ public final class GUI extends Pane {
         setStyle("-fx-background-color: black");
     }
 
-    public HealthBar getHealthBar() {
-        return hb;
-    }
-
-    public class HealthBar implements Updatable {
-        private static final Vector2 HP_BAR_POS = new Vector2(624, 16);
+    public class HealthBar extends Group implements Updatable {
         private static final Vector2 HP_BAR_SIZE = new Vector2(128, 32);
         private Rectangle healthBarSlider = createHealthBar();
 
@@ -51,15 +50,15 @@ public final class GUI extends Pane {
             Rectangle blackBar = createBlackBar();
             Text hpText = createText();
 
-            getChildren().addAll(slidingRedBar, blackBar, hpText);
+            this.getChildren().addAll(slidingRedBar, blackBar, hpText);
             return slidingRedBar;
         }
 
         // Red bar that slides according to HP
         private Rectangle createSlidingRedBar() {
             Rectangle slidingRedBar = new Rectangle(HP_BAR_SIZE.x(), HP_BAR_SIZE.y(), Color.RED);
-            slidingRedBar.setX(HP_BAR_POS.x() - HP_BAR_SIZE.x());
-            slidingRedBar.setY(HP_BAR_POS.y());
+            slidingRedBar.setX(-HP_BAR_SIZE.x());
+            // Fill to 100%
             slidingRedBar.setTranslateX(HP_BAR_SIZE.x());
             return slidingRedBar;
         }
@@ -67,14 +66,13 @@ public final class GUI extends Pane {
         // Black bar that hides missing part of HP bar
         private Rectangle createBlackBar() {
             Rectangle blackBar = new Rectangle(HP_BAR_SIZE.x(), HP_BAR_SIZE.y(), Color.BLACK);
-            blackBar.setX(HP_BAR_POS.x() - HP_BAR_SIZE.x());
-            blackBar.setY(HP_BAR_POS.y());
+            blackBar.setX(-HP_BAR_SIZE.x());
             return blackBar;
         }
 
         // Text
         private Text createText() {
-            Vector2 TEXT_POS = new Vector2(574, 44);
+            Vector2 TEXT_POS = new Vector2(-50, 28);
             Text hpText = new Text(TEXT_POS.x(), TEXT_POS.y(), "HP");
             hpText.setFont(AssetLibrary.GUI_FONT);
             hpText.setFill(Color.WHITE);
@@ -90,12 +88,9 @@ public final class GUI extends Pane {
             healthPreviousFrame = healthThisFrame;
         }
 
-        public void updateBar(double percentage) {
+        private void updateBar(double percentage) {
             // Clamp between 0 and 1
-            if (percentage < 0)
-                percentage = 0;
-            if (percentage > 1)
-                percentage = 1;
+            percentage = percentage > 1 ? 1 : (percentage < 0 ? 0 : percentage);
 
             healthBarSlider.setTranslateX(percentage * HP_BAR_SIZE.x());
         }
