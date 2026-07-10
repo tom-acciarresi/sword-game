@@ -1,7 +1,5 @@
 package it.unicam.cs.mpgc.rpg130730;
 
-import java.io.IOException;
-
 import org.jspecify.annotations.Nullable;
 
 import it.unicam.cs.mpgc.rpg130730.environment.SceneManager;
@@ -26,7 +24,7 @@ public final class Launcher extends Application {
     private static final SceneManager sm = new SceneManager();
 
     @Override
-    public void start(@Nullable Stage defaultStage) throws IOException {
+    public void start(@Nullable Stage defaultStage) {
         initializeStage();
 
         AssetLibrary.initialize();

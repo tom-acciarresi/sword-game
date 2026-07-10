@@ -1,6 +1,8 @@
 package it.unicam.cs.mpgc.rpg130730.util;
 
-public record Vector2(double x, double y) {
+import java.io.Serializable;
+
+public record Vector2(double x, double y) implements Serializable {
     public static final Vector2 ZERO = new Vector2(0.0, 0.0),
             LEFT = new Vector2(-1.0, 0.0),
             RIGHT = new Vector2(1.0, 0.0),

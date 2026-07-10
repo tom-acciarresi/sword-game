@@ -84,6 +84,7 @@ public final class AssetLibrary {
         gson.fromJson(fileOut, TileState[].class);
     }
 
+    // TODO change
     private static void loadLevelData(CustomResourceFileReader fr) {
         Arrays.stream(Levels.ROOM_1.getDeclaringClass().getEnumConstants()).forEach(l -> {
             LEVEL_DATA.put(l.filename(), fr.read(LEVEL_DIR_PREFIX + l.filename()).replaceAll("\r\n|[\r\n]", " "));

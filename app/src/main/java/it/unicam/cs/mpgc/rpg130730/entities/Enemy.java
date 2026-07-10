@@ -22,7 +22,7 @@ public class Enemy extends Entity {
     private EnemyInfo enemyInfo;
     private AnimationPlayer ap;
 
-    private static final Vector2 INITIAL_DIRECTION = Vector2.RIGHT;
+    private static final Vector2 INITIAL_DIRECTION = System.currentTimeMillis() % 2 == 0 ? Vector2.RIGHT : Vector2.DOWN;
     private Vector2 currDirection = INITIAL_DIRECTION;
 
     public Enemy(EnemyType type) {
