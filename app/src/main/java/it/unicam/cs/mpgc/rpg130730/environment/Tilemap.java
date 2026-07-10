@@ -5,7 +5,6 @@ import java.util.stream.Stream;
 
 import it.unicam.cs.mpgc.rpg130730.AssetLibrary;
 import it.unicam.cs.mpgc.rpg130730.entities.CollisionHandler;
-import it.unicam.cs.mpgc.rpg130730.environment.SceneManager.Levels;
 import it.unicam.cs.mpgc.rpg130730.util.Vector2;
 import javafx.scene.image.Image;
 import javafx.scene.layout.GridPane;
@@ -23,9 +22,9 @@ public class Tilemap extends GridPane {
     public Tilemap() {
     }
 
-    public Tilemap(Levels levelData) {
+    public Tilemap(int[] tileArragementData) {
         this();
-        changeTilemapTo(levelData);
+        changeTilemapTo(tileArragementData);
     }
 
     private Tile[][] instantiateTiles() {
@@ -40,17 +39,14 @@ public class Tilemap extends GridPane {
         return tg;
     }
 
-    public void changeTilemapTo(Levels levelData) {
-        String levelString = AssetLibrary.getLevelData(levelData.filename());
-        int[] levelBitMap = Arrays.stream(levelString.split(" ")).mapToInt(Integer::parseInt).toArray();
-
+    public void changeTilemapTo(int[] tileArragementData) {
         Tile[] tiles = getListOfTiles();
         for (int i = 0; i < TILE_AMOUNT; i++) {
             Tile currTile = tiles[i];
             if (currTile.getInfo().canCollide)
                 CollisionHandler.removeCollidableTile(currTile);
 
-            currTile.changeTo(levelBitMap[i]);
+            currTile.changeTo(tileArragementData[i]);
 
             if (currTile.getInfo().canCollide)
                 CollisionHandler.addCollidableTile(currTile);

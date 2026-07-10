@@ -5,7 +5,7 @@ import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-public final class CustomResourceFileReader {
+public final class FileResourceReader {
     public String read(String filepath) {
         try {
             String data = Files.newBufferedReader(Path.of(getClass().getResource(filepath).toURI())).readAllAsString();

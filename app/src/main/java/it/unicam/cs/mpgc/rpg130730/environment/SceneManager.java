@@ -1,21 +1,26 @@
 package it.unicam.cs.mpgc.rpg130730.environment;
 
+import java.util.Map;
+import java.util.Map.Entry;
+
+import it.unicam.cs.mpgc.rpg130730.AssetLibrary;
 import it.unicam.cs.mpgc.rpg130730.entities.Enemy;
+import it.unicam.cs.mpgc.rpg130730.entities.Enemy.EnemyType;
 import it.unicam.cs.mpgc.rpg130730.entities.Player;
+import it.unicam.cs.mpgc.rpg130730.tools.LevelEditor.LevelData;
 import it.unicam.cs.mpgc.rpg130730.ui.GUI;
 import it.unicam.cs.mpgc.rpg130730.ui.MainMenu;
 import it.unicam.cs.mpgc.rpg130730.util.Vector2;
 import javafx.scene.Group;
-import javafx.scene.Node;
 
 public final class SceneManager extends Group {
-    public static enum Levels {
-        ROOM_1("first_level.txt"),
-        ROOM_2("second_level.txt");
+    public static enum Level {
+        ROOM_1("level1.dat"),
+        ROOM_2("level2.dat");
 
         private final String filename;
 
-        Levels(String filename) {
+        Level(String filename) {
             this.filename = filename;
         }
 
@@ -24,41 +29,41 @@ public final class SceneManager extends Group {
         }
     }
 
-    public void add(Node node) {
-        getChildren().add(node);
-    }
-
-    public void remove(Node node) {
-        getChildren().remove(node);
-    }
-
-    public void replace(Node previous, Node next) {
-        remove(previous);
-        add(next);
-    }
-
     // TODO change
     public void loadMainMenu() {
-        add(new MainMenu());
+        getChildren().add(new MainMenu());
     }
 
-    public void adHocScene() {
-        // Instance tiles
-        Tilemap tilemap = new Tilemap(Levels.ROOM_1);
-        // TODO "set layout" probably bad
+    public void loadFirstLevel() {
+        LevelData FIRST_LEVEL = AssetLibrary.getLevelData(Level.ROOM_2.filename());
+        Tilemap tilemap = new Tilemap(FIRST_LEVEL.tileArrangementData());
+
         tilemap.setLayoutY(GUI.GUI_SIZE.y());
 
-        // Instance enemy
-        Enemy pig_enemy = new Enemy(Enemy.EnemyType.PIG, new Vector2(2, 3).scalar(Tilemap.TILE_SIZE));
-        pig_enemy.setLayoutY(GUI.GUI_SIZE.y());
+        Map<Vector2, EnemyType> enemyData = FIRST_LEVEL.enemyData();
+        Enemy[] enemyArr = new Enemy[enemyData.size()];
+        int i = 0;
+        for (Entry<Vector2, EnemyType> enemy : enemyData.entrySet()) {
+            Vector2 enemyPos = enemy.getKey();
+            EnemyType enemyType = enemy.getValue();
+            @SuppressWarnings("null")
+            Enemy e = new Enemy(enemyType, enemyPos.scalar(Tilemap.TILE_SIZE));
+            e.setLayoutY(GUI.GUI_SIZE.y());
+            enemyArr[i++] = e;
+        }
 
-        // Instance player
         Player player = new Player(new Vector2(3, 5).scalar(Tilemap.TILE_SIZE));
         player.setLayoutY(GUI.GUI_SIZE.y());
 
-        add(new GUI(player));
-        add(tilemap);
-        add(pig_enemy);
-        add(player);
+        GUI gui = new GUI(player);
+
+        getChildren().add(gui);
+        getChildren().add(tilemap);
+        getChildren().addAll(enemyArr);
+        getChildren().add(player);
+    }
+
+    public void loadLevel(Level level) {
+        // TODO implement
     }
 }

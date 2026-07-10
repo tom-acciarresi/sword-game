@@ -75,7 +75,7 @@ public class MainMenu extends StackPane {
     }
 
     private void newGame() {
-        Launcher.getSceneManager().adHocScene();
+        Launcher.getSceneManager().loadFirstLevel();
     }
 
     private void continueGame() {

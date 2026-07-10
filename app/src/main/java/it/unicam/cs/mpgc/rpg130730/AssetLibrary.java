@@ -16,10 +16,12 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import it.unicam.cs.mpgc.rpg130730.entities.AnimationPlayer.Animation;
-import it.unicam.cs.mpgc.rpg130730.environment.SceneManager.Levels;
+import it.unicam.cs.mpgc.rpg130730.environment.SceneManager.Level;
 import it.unicam.cs.mpgc.rpg130730.environment.Tilemap.TileState;
-import it.unicam.cs.mpgc.rpg130730.util.CustomResourceFileReader;
-import it.unicam.cs.mpgc.rpg130730.util.CustomResourceImageLoader;
+import it.unicam.cs.mpgc.rpg130730.tools.LevelEditor.LevelData;
+import it.unicam.cs.mpgc.rpg130730.util.FileResourceReader;
+import it.unicam.cs.mpgc.rpg130730.util.ImageResourceLoader;
+import it.unicam.cs.mpgc.rpg130730.util.ObjectResourceDeserializer;
 import javafx.scene.image.Image;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
@@ -27,10 +29,10 @@ import javafx.scene.text.FontWeight;
 
 public final class AssetLibrary {
     public static final String GAME_ICON_PATH = "/images/icon.png";
-    public static final Image GAME_ICON = new CustomResourceImageLoader().load(GAME_ICON_PATH);
+    public static final Image GAME_ICON = new ImageResourceLoader().load(GAME_ICON_PATH);
 
     public static final String MISSING_SPRITE_PATH = "/images/null.png";
-    public static final Image MISSING_SPRITE = new CustomResourceImageLoader().load(MISSING_SPRITE_PATH);
+    public static final Image MISSING_SPRITE = new ImageResourceLoader().load(MISSING_SPRITE_PATH);
 
     private static final String TILE_DIR_PREFIX = "/images/tiles/";
     private static final String TILE_INFO_FILE = "/images/tiles/tiles.json";
@@ -38,7 +40,7 @@ public final class AssetLibrary {
     private static final Map<Integer, TileState> TILE_INFO = new HashMap<Integer, TileState>();
 
     private static final String LEVEL_DIR_PREFIX = "/levels/";
-    private static final Map<String, String> LEVEL_DATA = new HashMap<String, String>();
+    private static final Map<String, LevelData> LEVEL_DATA = new HashMap<String, LevelData>();
 
     private static final String ENTITY_DIR_PREFIX = "/images/entities/";
     private static final String ENTITY_INFO_SUFFIX = "/animations.json";
@@ -49,18 +51,19 @@ public final class AssetLibrary {
     public static final Font GUI_FONT = font("Fira Sans", FontWeight.BOLD, FontPosture.REGULAR, 32);
 
     public static void initialize() {
-        CustomResourceFileReader fr = new CustomResourceFileReader();
-        CustomResourceImageLoader il = new CustomResourceImageLoader();
+        FileResourceReader fr = new FileResourceReader();
+        ImageResourceLoader il = new ImageResourceLoader();
+        ObjectResourceDeserializer od = new ObjectResourceDeserializer();
 
         loadTileSprites(il, fr);
 
-        loadLevelData(fr);
-
         loadEntitySprites("knight", il, fr);
         loadEntitySprites("pig", il, fr);
+
+        loadLevelData(od);
     }
 
-    private static void loadTileSprites(CustomResourceImageLoader il, CustomResourceFileReader fr) {
+    private static void loadTileSprites(ImageResourceLoader il, FileResourceReader fr) {
         Gson gson = new GsonBuilder().registerTypeAdapter(TileState.class, new JsonDeserializer<TileState>() {
             @Override
             public TileState deserialize(@Nullable JsonElement json, @Nullable Type typeOfT,
@@ -84,15 +87,8 @@ public final class AssetLibrary {
         gson.fromJson(fileOut, TileState[].class);
     }
 
-    // TODO change
-    private static void loadLevelData(CustomResourceFileReader fr) {
-        Arrays.stream(Levels.ROOM_1.getDeclaringClass().getEnumConstants()).forEach(l -> {
-            LEVEL_DATA.put(l.filename(), fr.read(LEVEL_DIR_PREFIX + l.filename()).replaceAll("\r\n|[\r\n]", " "));
-        });
-    }
-
-    private static void loadEntitySprites(String entityIdentifier, CustomResourceImageLoader il,
-            CustomResourceFileReader fr) {
+    private static void loadEntitySprites(String entityIdentifier, ImageResourceLoader il,
+            FileResourceReader fr) {
         Gson gson = new GsonBuilder().registerTypeAdapter(Animation.class, new JsonDeserializer<Animation>() {
             @Override
             public Animation deserialize(@Nullable JsonElement json, @Nullable Type typeOfT,
@@ -134,6 +130,12 @@ public final class AssetLibrary {
         gson.fromJson(fileOut, Animation[].class);
     }
 
+    private static void loadLevelData(ObjectResourceDeserializer od) {
+        Arrays.stream(Level.ROOM_1.getDeclaringClass().getEnumConstants()).forEach(l -> {
+            LEVEL_DATA.put(l.filename(), od.read(LEVEL_DIR_PREFIX + l.filename()));
+        });
+    }
+
     public static Image getTileSprite(String s) {
         Image image = TILE_SPRITES.get(s);
         if (image == null)
@@ -148,8 +150,8 @@ public final class AssetLibrary {
         return info;
     }
 
-    public static String getLevelData(String s) {
-        String levelData = LEVEL_DATA.get(s);
+    public static LevelData getLevelData(String s) {
+        LevelData levelData = LEVEL_DATA.get(s);
         if (levelData == null)
             throw new NullPointerException(levelData + " is not valid level data");
         return levelData;
