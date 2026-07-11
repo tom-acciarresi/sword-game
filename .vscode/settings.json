@@ -16,5 +16,5 @@
     "java.help.showReleaseNotes": false,
     "java.project.encoding": "warning",
     "java.referencesCodeLens.enabled": true,
-    "java.compile.nullAnalysis.mode": "disabled",
+    "java.compile.nullAnalysis.mode": "automatic",
 }

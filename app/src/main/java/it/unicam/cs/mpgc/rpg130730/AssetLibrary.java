@@ -14,7 +14,7 @@ import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParseException;
+
 import it.unicam.cs.mpgc.rpg130730.entities.AnimationPlayer.Animation;
 import it.unicam.cs.mpgc.rpg130730.environment.SceneManager.Level;
 import it.unicam.cs.mpgc.rpg130730.environment.Tilemap.TileState;
@@ -28,30 +28,31 @@ import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
 
 public final class AssetLibrary {
-    public static final String GAME_ICON_PATH = "/images/icon.png";
-    public static final Image GAME_ICON = new ImageResourceLoader().load(GAME_ICON_PATH);
+    private static final String APP_ICON_PATH = "/images/icon.png",
+            MISSING_SPRITE_PATH = "/images/null.png",
+            SWORD_SPRITE_PATH = "/images/entities/knight/sword.png",
+            TILE_DIR_PREFIX = "/images/tiles/", TILE_INFO_FILE = "/images/tiles/tiles.json",
+            LEVEL_DIR_PREFIX = "/levels/",
+            ENTITY_DIR_PREFIX = "/images/entities/", ENTITY_INFO_SUFFIX = "/animations.json";
 
-    public static final String MISSING_SPRITE_PATH = "/images/null.png";
+    public static final Image APP_ICON = new ImageResourceLoader().load(APP_ICON_PATH);
+
     public static final Image MISSING_SPRITE = new ImageResourceLoader().load(MISSING_SPRITE_PATH);
 
-    private static final String TILE_DIR_PREFIX = "/images/tiles/";
-    private static final String TILE_INFO_FILE = "/images/tiles/tiles.json";
+    public static final Image SWORD_SPRITE = new ImageResourceLoader().load(SWORD_SPRITE_PATH);
+
     private static final Map<String, Image> TILE_SPRITES = new HashMap<String, Image>();
     private static final Map<Integer, TileState> TILE_INFO = new HashMap<Integer, TileState>();
 
-    private static final String LEVEL_DIR_PREFIX = "/levels/";
     private static final Map<String, LevelData> LEVEL_DATA = new HashMap<String, LevelData>();
 
-    private static final String SWORD_SPRITE_PATH = "/images/entities/knight/sword.png";
-    public static final Image SWORD_SPRITE = new ImageResourceLoader().load(SWORD_SPRITE_PATH);
-    private static final String ENTITY_DIR_PREFIX = "/images/entities/";
-    private static final String ENTITY_INFO_SUFFIX = "/animations.json";
     private static final Map<String, Image> ANIMATION_SPRITES = new HashMap<String, Image>();
     private static final Map<String, Animation> ANIMATIONS = new HashMap<String, Animation>();
 
-    public static final Font TITLE_FONT = font("Fira Sans", FontWeight.BOLD, FontPosture.REGULAR, 64);
-    public static final Font GUI_FONT = font("Fira Sans", FontWeight.BOLD, FontPosture.REGULAR, 32);
-    public static final Font TEXT_FONT = font("Sans", FontWeight.NORMAL, FontPosture.REGULAR, 24);
+    @Nullable
+    public static final Font TITLE_FONT = font("Fira Sans", FontWeight.BOLD, FontPosture.REGULAR, 64),
+            GUI_FONT = font("Fira Sans", FontWeight.BOLD, FontPosture.REGULAR, 32),
+            TEXT_FONT = font("Sans", FontWeight.NORMAL, FontPosture.REGULAR, 24);
 
     public static void initialize() {
         FileResourceReader fr = new FileResourceReader();
@@ -67,84 +68,77 @@ public final class AssetLibrary {
     }
 
     private static void loadTileSprites(ImageResourceLoader il, FileResourceReader fr) {
-        Gson gson = new GsonBuilder().registerTypeAdapter(TileState.class, new JsonDeserializer<TileState>() {
-            @Override
-            public TileState deserialize(@Nullable JsonElement json, @Nullable Type typeOfT,
-                    @Nullable JsonDeserializationContext context)
-                    throws JsonParseException {
-                if (json == null)
-                    throw new NullPointerException(json + " is null json");
-                JsonObject jObject = json.getAsJsonObject();
-                int index = jObject.get("index").getAsInt();
-                String filename = jObject.get("filename").getAsString();
-                Image sprite = il.load(TILE_DIR_PREFIX + filename);
-                boolean collides = jObject.get("collides").getAsBoolean();
-                TILE_SPRITES.put(filename, sprite);
-                TileState tileState = new TileState(index, sprite, collides);
-                TILE_INFO.put(index, tileState);
-                return tileState;
-            }
-        }).create();
+        Gson gson = new GsonBuilder()
+                .registerTypeAdapter(TileState.class, (JsonDeserializer<TileState>) (JsonElement json,
+                        Type typeOfT, JsonDeserializationContext context) -> {
+                    JsonObject jObject = json.getAsJsonObject();
 
-        String fileOut = fr.read(TILE_INFO_FILE);
-        gson.fromJson(fileOut, TileState[].class);
+                    int index = jObject.get("index").getAsInt();
+                    String filename = jObject.get("filename").getAsString();
+                    Image sprite = il.load(TILE_DIR_PREFIX + filename);
+                    boolean collides = jObject.get("collides").getAsBoolean();
+
+                    TileState tileState = new TileState(index, sprite, collides);
+
+                    TILE_SPRITES.put(filename, sprite);
+                    TILE_INFO.put(index, tileState);
+                    return tileState;
+                }).create();
+
+        String tileInfoFile = fr.read(TILE_INFO_FILE);
+        gson.fromJson(tileInfoFile, TileState[].class);
     }
 
     private static void loadEntitySprites(String entityIdentifier, ImageResourceLoader il,
             FileResourceReader fr) {
-        Gson gson = new GsonBuilder().registerTypeAdapter(Animation.class, new JsonDeserializer<Animation>() {
-            @Override
-            public Animation deserialize(@Nullable JsonElement json, @Nullable Type typeOfT,
-                    @Nullable JsonDeserializationContext context) throws JsonParseException {
-                if (json == null)
-                    throw new NullPointerException(json + " is null json");
-                JsonObject jObject = json.getAsJsonObject();
+        Gson gson = new GsonBuilder()
+                .registerTypeAdapter(Animation.class, (JsonDeserializer<Animation>) (JsonElement json,
+                        Type typeOfT, JsonDeserializationContext context) -> {
+                    JsonObject jObject = json.getAsJsonObject();
 
-                int fps = jObject.get("fps").getAsInt();
+                    int fps = jObject.get("fps").getAsInt();
 
-                String animationName = jObject.get("name").getAsString();
-                String animationIdentifier = entityIdentifier + "/" + animationName;
+                    String animationName = jObject.get("name").getAsString();
+                    String animationIdentifier = entityIdentifier + "/" + animationName;
 
-                JsonArray filenameArray = jObject.get("frames").getAsJsonArray();
-                Image[] frames = new Image[filenameArray.size()];
+                    JsonArray filenameArray = jObject.get("frames").getAsJsonArray();
+                    Image[] frames = new Image[filenameArray.size()];
 
-                for (int i = 0; i < frames.length; i++) {
-                    String filename = filenameArray.get(i).getAsString();
-                    String frameIdentifier = entityIdentifier + "/" + filename;
-                    Image currFrame;
+                    for (int i = 0; i < frames.length; i++) {
+                        String filename = filenameArray.get(i).getAsString();
+                        String frameIdentifier = entityIdentifier + "/" + filename;
+                        Image currFrame;
 
-                    if (!ANIMATION_SPRITES.containsKey(frameIdentifier)) {
-                        String filepath = ENTITY_DIR_PREFIX + frameIdentifier;
-                        currFrame = il.load(filepath);
-                        ANIMATION_SPRITES.put(frameIdentifier, currFrame);
-                    } else {
-                        currFrame = ANIMATION_SPRITES.get(frameIdentifier);
+                        // Don't load same sprite twice
+                        if (!ANIMATION_SPRITES.containsKey(frameIdentifier)) {
+                            String filepath = ENTITY_DIR_PREFIX + frameIdentifier;
+                            currFrame = il.load(filepath);
+                            ANIMATION_SPRITES.put(frameIdentifier, currFrame);
+                        } else {
+                            currFrame = ANIMATION_SPRITES.get(frameIdentifier);
+                        }
+
+                        frames[i] = currFrame;
                     }
 
-                    frames[i] = currFrame;
-                }
-                Animation animation = new Animation(animationIdentifier, frames, fps);
-                ANIMATIONS.put(animationIdentifier, animation);
-                return animation;
-            }
-        }).create();
+                    Animation animation = new Animation(animationIdentifier, frames, fps);
+                    ANIMATIONS.put(animationIdentifier, animation);
+                    return animation;
+                }).create();
 
-        String fileOut = fr.read(ENTITY_DIR_PREFIX + entityIdentifier + ENTITY_INFO_SUFFIX);
-        gson.fromJson(fileOut, Animation[].class);
+        String animationsFile = fr.read(ENTITY_DIR_PREFIX + entityIdentifier + ENTITY_INFO_SUFFIX);
+        gson.fromJson(animationsFile, Animation[].class);
     }
 
     private static void loadLevelData(ObjectResourceDeserializer od) {
-        Arrays.stream(Level.ROOM_1.getDeclaringClass().getEnumConstants()).forEach(l -> {
-            LEVEL_DATA.put(l.filename(), od.read(LEVEL_DIR_PREFIX + l.filename()));
+        Level[] levels = Level.ROOM_1.getDeclaringClass().getEnumConstants();
+
+        Arrays.stream(levels).forEach(l -> {
+            String levelFilename = l.filename();
+            LevelData levelData = od.read(LEVEL_DIR_PREFIX + levelFilename);
+            LEVEL_DATA.put(levelFilename, levelData);
         });
     }
-
-    // public static Image getTileSprite(String s) {
-    // Image image = TILE_SPRITES.get(s);
-    // if (image == null)
-    // throw new NullPointerException(image + " is not a valid image");
-    // return image;
-    // }
 
     public static TileState getTileInfo(int i) {
         TileState info = TILE_INFO.get(i);
@@ -167,14 +161,7 @@ public final class AssetLibrary {
         return animation;
     }
 
-    public static Font font(String family, FontWeight weight, FontPosture posture, double size) {
-        Font font = Font.font(family, weight, posture, size);
-        if (font == null) {
-            Font defaultFont = Font.getDefault();
-            if (defaultFont == null)
-                throw new NullPointerException(defaultFont + " is null :(");
-            return defaultFont;
-        }
-        return font;
+    public static @Nullable Font font(String family, FontWeight weight, FontPosture posture, double size) {
+        return Font.font(family, weight, posture, size);
     }
 }

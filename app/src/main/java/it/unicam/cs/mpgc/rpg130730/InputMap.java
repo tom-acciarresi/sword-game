@@ -4,9 +4,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import it.unicam.cs.mpgc.rpg130730.environment.SceneManager.Level;
-import it.unicam.cs.mpgc.rpg130730.persistence.SaveSystem;
-import javafx.application.Platform;
+import javafx.event.EventHandler;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
 
 public final class InputMap {
@@ -32,35 +32,44 @@ public final class InputMap {
         }
     }
 
+    private static Map<KeyCode, Boolean> currentlyPressedKeys = new HashMap<KeyCode, Boolean>();
+
     public static void initialize(Stage stage) {
-        stage.getScene().setOnKeyPressed(e -> {
+        stage.getScene().setOnKeyPressed(onKeyPressed());
+        stage.getScene().setOnKeyReleased(onKeyReleased());
+    }
+
+    private static EventHandler<? super KeyEvent> onKeyPressed() {
+        return e -> {
             KeyCode code = e.getCode();
             if (code == null)
                 throw new NullPointerException(code + "is not a valid keycode");
+
             if (code == KeyBind.QUIT.keyCode()) {
-                SaveSystem.save();
-                Platform.exit();
+                Launcher.quit();
             }
 
             // TODO just for debug
-            if (code == KeyCode.P) {
+            if (code == KeyCode.DIGIT1) {
                 Launcher.getSceneManager().loadLevel(Level.ROOM_1);
+            }
+            if (code == KeyCode.DIGIT2) {
+                Launcher.getSceneManager().loadLevel(Level.ROOM_2);
             }
 
             InputMap.setKeyPressed(code, true);
+        };
+    }
 
-        });
-
-        stage.getScene().setOnKeyReleased(e -> {
+    private static EventHandler<? super KeyEvent> onKeyReleased() {
+        return e -> {
             KeyCode code = e.getCode();
             if (code == null)
                 throw new NullPointerException(code + "is not a valid keycode");
 
             InputMap.setKeyPressed(code, false);
-        });
+        };
     }
-
-    private static Map<KeyCode, Boolean> currentlyPressedKeys = new HashMap<KeyCode, Boolean>();
 
     public static boolean isKeyPressed(KeyBind keyBind) {
         return currentlyPressedKeys.getOrDefault(keyBind.keyCode(), false);

@@ -18,7 +18,7 @@ public class Player extends Entity {
     private Vector2 movementInput = Vector2.ZERO;
     private boolean acceptsInput = true;
 
-    private AnimationPlayer ap;
+    private AnimationPlayer animationPlayer;
     private Rectangle sword = new Rectangle(28, 48,
             new ImagePattern(AssetLibrary.SWORD_SPRITE));
 
@@ -28,10 +28,10 @@ public class Player extends Entity {
     public Player() {
         super();
         setHealth(DEFAULT_PLAYER_HEALTH);
-        ap = new AnimationPlayer(AssetLibrary.getAnimation("knight/idle_down"));
+        animationPlayer = new AnimationPlayer(AssetLibrary.getAnimation("knight/idle_down"));
 
         sword.setVisible(false);
-        getChildren().add(sword);
+        this.getChildren().add(sword);
     }
 
     public Player(Vector2 position) {
@@ -104,27 +104,27 @@ public class Player extends Entity {
     }
 
     private void handleAnimation() {
-        ap.tick();
-        setSprite(ap.getCurrFrame());
+        animationPlayer.tick();
+        setSprite(animationPlayer.getCurrFrame());
 
         double x = movementInput.x(), y = movementInput.y();
         String direction = Math.abs(x) > Math.abs(y) ? (x < 0 ? "left" : "right") : (y < 0 ? "up" : "down");
 
         if (!acceptsInput || movementInput == Vector2.ZERO) {
             Animation newAnim = AssetLibrary.getAnimation("knight/idle_" + direction);
-            if (ap.getCurrAnimation().equals(newAnim)) {
+            if (animationPlayer.getCurrAnimation().equals(newAnim)) {
                 return;
             }
-            ap.changeTo(newAnim);
+            animationPlayer.changeTo(newAnim);
             return;
         }
 
         Animation newAnim = AssetLibrary.getAnimation("knight/walk_" + direction);
-        if (ap.getCurrAnimation().equals(newAnim)) {
+        if (animationPlayer.getCurrAnimation().equals(newAnim)) {
             return;
         }
 
-        ap.changeTo(newAnim);
+        animationPlayer.changeTo(newAnim);
     }
 
     private void gameOver() {

@@ -33,22 +33,14 @@ public final class SceneManager extends Group {
 
     private static Tilemap tilemap = new Tilemap();
     private static Set<Enemy> enemies = new HashSet<Enemy>();
+
+    @SuppressWarnings("null")
     private static Player player;
 
+    public static Group levelContainer = new Group();
+
     public void loadMainMenu() {
-        getChildren().add(new MainMenu());
-    }
-
-    public void initialize(Level level) {
-        player = new Player();
-
-        loadLevel(level);
-
-        Group levelContainer = new Group(tilemap, player);
-        levelContainer.getChildren().addAll(enemies);
-        levelContainer.setLayoutY(GUI.GUI_SIZE.y());
-
-        this.getChildren().addAll(levelContainer, new GUI(player));
+        this.getChildren().add(new MainMenu());
     }
 
     public void newGame() {
@@ -65,8 +57,26 @@ public final class SceneManager extends Group {
         // Other savedata stuffs
     }
 
+    public void initialize(Level level) {
+        levelContainer = new Group();
+        this.getChildren().add(levelContainer);
+
+        levelContainer.setLayoutY(GUI.GUI_SIZE.y());
+
+        loadLevel(level);
+
+        player = new Player();
+
+        levelContainer.getChildren().addAll(tilemap, player);
+
+        this.getChildren().addAll(new GUI(player));
+    }
+
     private void loadTiles(LevelData levelData) {
-        tilemap.changeTilemapTo(levelData.tileArrangementData());
+        int[] tileArrangementData = levelData.tileArrangementData();
+        if (tileArrangementData == null)
+            throw new NullPointerException(tileArrangementData + " tile data is null");
+        tilemap.changeTilemapTo(tileArrangementData);
     }
 
     private void loadEnemies(Map<Vector2, EnemyType> enemyData) {
@@ -74,17 +84,21 @@ public final class SceneManager extends Group {
         for (Enemy enemy : enemies) {
             enemy.unsubscribeFromUpdates();
             CollisionHandler.removeEnemy(enemy);
-            this.getChildren().remove(enemy);
+            levelContainer.getChildren().remove(enemy);
         }
         enemies.clear();
 
         // Load new enemies
         enemyData.entrySet().stream().forEach(e -> {
             EnemyType type = e.getValue();
+            if (type == null)
+                throw new NullPointerException(type + " enemy type is null");
             Vector2 pos = e.getKey();
             Enemy newEnemy = new Enemy(type, pos.scalar(Tilemap.TILE_SIZE));
             CollisionHandler.addEnemy(newEnemy);
             enemies.add(newEnemy);
+            levelContainer.getChildren().add(newEnemy);
+
         });
     }
 
@@ -92,6 +106,9 @@ public final class SceneManager extends Group {
         LevelData levelData = AssetLibrary.getLevelData(level.filename());
 
         loadTiles(levelData);
-        loadEnemies(levelData.enemyData());
+        Map<Vector2, EnemyType> enemyData = levelData.enemyData();
+        if (enemyData == null)
+            throw new NullPointerException(enemyData + " enemy data is null");
+        loadEnemies(enemyData);
     }
 }

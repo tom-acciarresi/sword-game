@@ -32,7 +32,7 @@ public abstract class Entity extends StackPane implements Updatable {
     public Entity() {
         subscribeToUpdates();
 
-        getChildren().add(getSprite());
+        this.getChildren().add(getSprite());
 
         setPosition(Launcher.LEVEL_CENTER);
     }

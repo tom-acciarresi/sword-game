@@ -34,7 +34,6 @@ public final class GameLoop {
         objectsToUpdate.removeAll(objectsToRemove);
         objectsToRemove.clear();
 
-        System.out.println(objectsToUpdate);
         objectsToUpdate.stream().forEach(o -> o.update(timeDelta));
     }
 

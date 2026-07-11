@@ -15,27 +15,29 @@ import it.unicam.cs.mpgc.rpg130730.entities.Enemy.EnemyType;
 import it.unicam.cs.mpgc.rpg130730.util.FileResourceReader;
 import it.unicam.cs.mpgc.rpg130730.util.Vector2;
 
-@SuppressWarnings("unused")
 public final class LevelEditor {
     // MAY CONTAIN PRIVATE INFO!
     private final static String LEVELS_DIR = "/home/tom/Projects/sword-game/app/src/main/resources/levels/";
 
     @SuppressWarnings("null")
     public static void main(String[] args) {
+        Map<Vector2, EnemyType> enemies;
+
+        enemies = Map.ofEntries(
+                entry(new Vector2(2, 3), EnemyType.PIG));
         LevelData lvl1 = new LevelData(
                 LevelData.stringToIntArray(new FileResourceReader().read("/levels/tiles1.txt")),
-                Map.ofEntries(
-                        entry(new Vector2(2, 3), EnemyType.PIG)));
+                enemies);
 
+        enemies = Map.ofEntries(
+                entry(new Vector2(2, 3), EnemyType.PIG),
+                entry(new Vector2(5, 5), EnemyType.PIG));
         LevelData lvl2 = new LevelData(
                 LevelData.stringToIntArray(new FileResourceReader().read("/levels/tiles2.txt")),
-                Map.ofEntries(
-                        entry(new Vector2(2, 3), EnemyType.PIG),
-                        entry(new Vector2(5, 5), EnemyType.PIG)));
+                enemies);
 
         LevelEditor.createLevelDataFile("level1.dat", lvl1);
         LevelEditor.createLevelDataFile("level2.dat", lvl2);
-        // System.out.println(LevelEditor.loadLevelDataFile("level1.dat"));
     }
 
     private static void createLevelDataFile(String filename, LevelData data) {
@@ -48,6 +50,7 @@ public final class LevelEditor {
         }
     }
 
+    @SuppressWarnings("unused")
     private static LevelData loadLevelDataFile(String filename) {
         ObjectInputStream ois;
         LevelData levelData = null;

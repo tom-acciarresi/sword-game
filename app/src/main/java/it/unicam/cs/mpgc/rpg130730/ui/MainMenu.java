@@ -88,7 +88,6 @@ public class MainMenu extends StackPane {
 
     private void newGame() {
         SceneManager sceneManager = Launcher.getSceneManager();
-        System.out.println(sceneManager.getChildren());
         sceneManager.newGame();
         sceneManager.getChildren().remove(this);
     }
