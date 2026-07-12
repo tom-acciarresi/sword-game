@@ -1,10 +1,10 @@
 package it.unicam.cs.mpgc.rpg130730.ui;
 
 import it.unicam.cs.mpgc.rpg130730.AssetLibrary;
-import it.unicam.cs.mpgc.rpg130730.InputMap.KeyBind;
+import it.unicam.cs.mpgc.rpg130730.KeyBind;
 import it.unicam.cs.mpgc.rpg130730.Launcher;
+import it.unicam.cs.mpgc.rpg130730.persistence.SaveData;
 import it.unicam.cs.mpgc.rpg130730.persistence.SaveSystem;
-import it.unicam.cs.mpgc.rpg130730.persistence.SaveSystem.SaveData;
 import it.unicam.cs.mpgc.rpg130730.util.datatypes.Vector2;
 import javafx.scene.control.Button;
 import javafx.scene.layout.StackPane;
@@ -15,7 +15,7 @@ public class MainMenu extends StackPane {
     // #region constants
     public static final Vector2 MAIN_MENU_SIZE = new Vector2(
             Launcher.LEVEL_SIZE.x(),
-            Launcher.LEVEL_SIZE.y() + GUI.GUI_SIZE.y());
+            Launcher.LEVEL_SIZE.y() + UI.GUI_SIZE.y());
     // #endregion
 
     // #region constructors

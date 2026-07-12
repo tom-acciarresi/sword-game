@@ -3,7 +3,7 @@ package it.unicam.cs.mpgc.rpg130730.environment;
 import java.io.Serializable;
 import java.util.Map;
 
-import it.unicam.cs.mpgc.rpg130730.entities.Enemy.EnemyType;
+import it.unicam.cs.mpgc.rpg130730.entities.EnemyType;
 import it.unicam.cs.mpgc.rpg130730.util.datatypes.Vector2;
 
 public record LevelData(int[] tileArrangementData, Map<Vector2, EnemyType> enemyData) implements Serializable {

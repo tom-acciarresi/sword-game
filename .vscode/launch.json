@@ -7,6 +7,13 @@
             "request": "launch",
             "mainClass": "it.unicam.cs.mpgc.rpg130730.Main",
             "projectName": "app"
+        },
+        {
+            "type": "java",
+            "name": "LevelEditor",
+            "request": "launch",
+            "mainClass": "it.unicam.cs.mpgc.rpg130730.util.tools.LevelEditor",
+            "projectName": "app"
         }
     ]
 }

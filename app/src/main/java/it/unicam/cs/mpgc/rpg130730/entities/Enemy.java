@@ -3,25 +3,10 @@ package it.unicam.cs.mpgc.rpg130730.entities;
 import java.util.Random;
 
 import it.unicam.cs.mpgc.rpg130730.AssetLibrary;
-import it.unicam.cs.mpgc.rpg130730.entities.AnimationPlayer.Animation;
 import it.unicam.cs.mpgc.rpg130730.util.datatypes.Vector2;
 
 public class Enemy extends Character2D {
-    public enum EnemyType {
-        PIG(new EnemyInfo(1, "pig"));
-
-        private final EnemyInfo info;
-
-        EnemyType(EnemyInfo info) {
-            this.info = info;
-        }
-
-        public EnemyInfo info() {
-            return info;
-        }
-    }
-
-    private EnemyInfo enemyInfo;
+    private EnemyData enemyData;
     private AnimationPlayer animationPlayer;
 
     private Vector2 initialDirection;
@@ -37,11 +22,11 @@ public class Enemy extends Character2D {
                 : (randBoolean ? Vector2.UP : Vector2.DOWN);
         currDirection = initialDirection;
 
-        enemyInfo = type.info();
-        animationPlayer = new AnimationPlayer(AssetLibrary.getAnimation(enemyInfo.identifier() + "/idle_down"));
+        enemyData = type.info();
+        animationPlayer = new AnimationPlayer(AssetLibrary.getAnimation(enemyData.identifier() + "/idle_down"));
         setSprite(animationPlayer.getCurrFrame());
 
-        setHealth(enemyInfo.health());
+        setHealth(enemyData.health());
     }
 
     public Enemy(EnemyType type, Vector2 position) {
@@ -78,7 +63,7 @@ public class Enemy extends Character2D {
         String direction = Math.abs(x) > Math.abs(y) ? (x < 0 ? "left" : "right") : (y < 0 ? "up" : "down");
 
         if (currDirection == Vector2.ZERO) {
-            Animation newAnim = AssetLibrary.getAnimation(enemyInfo.identifier() + "/idle_" + direction);
+            Animation newAnim = AssetLibrary.getAnimation(enemyData.identifier() + "/idle_" + direction);
             if (animationPlayer.getCurrAnimation().equals(newAnim)) {
                 return;
             }
@@ -86,18 +71,11 @@ public class Enemy extends Character2D {
             return;
         }
 
-        Animation newAnim = AssetLibrary.getAnimation(enemyInfo.identifier() + "/walk_" + direction);
+        Animation newAnim = AssetLibrary.getAnimation(enemyData.identifier() + "/walk_" + direction);
         if (animationPlayer.getCurrAnimation().equals(newAnim)) {
             return;
         }
 
         animationPlayer.changeTo(newAnim);
-    }
-
-    public record EnemyInfo(double health, String identifier) {
-        @Override
-        public final @org.jspecify.annotations.Nullable String toString() {
-            return String.format("health:%.1f, type:%s", health, identifier);
-        }
     }
 }

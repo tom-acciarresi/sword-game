@@ -3,11 +3,10 @@ package it.unicam.cs.mpgc.rpg130730.entities;
 import it.unicam.cs.mpgc.rpg130730.AssetLibrary;
 import it.unicam.cs.mpgc.rpg130730.GameLoop;
 import it.unicam.cs.mpgc.rpg130730.InputMap;
+import it.unicam.cs.mpgc.rpg130730.KeyBind;
 import it.unicam.cs.mpgc.rpg130730.Launcher;
-import it.unicam.cs.mpgc.rpg130730.entities.AnimationPlayer.Animation;
 import it.unicam.cs.mpgc.rpg130730.persistence.SaveSystem;
 import it.unicam.cs.mpgc.rpg130730.util.datatypes.Vector2;
-import it.unicam.cs.mpgc.rpg130730.InputMap.KeyBind;
 import javafx.geometry.BoundingBox;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Rectangle;
@@ -95,7 +94,7 @@ public class Player extends Character2D {
         }
 
         BoundingBox playerBounds = this.getCollisionBounds();
-        boolean collision = CollisionHandler.getEnemies().stream().anyMatch(e -> {
+        boolean collision = CollisionSystem.getEnemies().stream().anyMatch(e -> {
             BoundingBox enemyBounds = e.getCollisionBounds();
 
             return enemyBounds.intersects(playerBounds);

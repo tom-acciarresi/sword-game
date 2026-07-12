@@ -4,11 +4,11 @@ import java.util.Set;
 
 import it.unicam.cs.mpgc.rpg130730.AssetLibrary;
 import it.unicam.cs.mpgc.rpg130730.Launcher;
+import it.unicam.cs.mpgc.rpg130730.Updatable;
 import it.unicam.cs.mpgc.rpg130730.environment.SceneManager;
-import it.unicam.cs.mpgc.rpg130730.environment.Tilemap;
-import it.unicam.cs.mpgc.rpg130730.environment.Tilemap.Tile;
+import it.unicam.cs.mpgc.rpg130730.environment.Tile;
+import it.unicam.cs.mpgc.rpg130730.environment.TileGrid;
 import it.unicam.cs.mpgc.rpg130730.util.datatypes.Vector2;
-import it.unicam.cs.mpgc.rpg130730.GameLoop.Updatable;
 import javafx.geometry.BoundingBox;
 import javafx.geometry.Bounds;
 import javafx.scene.image.Image;
@@ -20,16 +20,16 @@ public abstract class Character2D extends StackPane implements Updatable {
     private double health;
 
     private Rectangle sprite = new Rectangle(
-            Tilemap.TILE_SIZE,
-            Tilemap.TILE_SIZE,
+            TileGrid.TILE_SIZE,
+            TileGrid.TILE_SIZE,
             new ImagePattern(AssetLibrary.MISSING_SPRITE));
 
     private Vector2 position = Vector2.ZERO;
 
     private Vector2 colliderSize = new Vector2(48, 24);
     private Vector2 colliderOffset = new Vector2(
-            (Tilemap.TILE_SIZE - colliderSize.x()) / 2,
-            Tilemap.TILE_SIZE - colliderSize.y());
+            (TileGrid.TILE_SIZE - colliderSize.x()) / 2,
+            TileGrid.TILE_SIZE - colliderSize.y());
 
     // #region constructors
     public Character2D() {
@@ -101,11 +101,11 @@ public abstract class Character2D extends StackPane implements Updatable {
                 newPos.x() + colliderOffset.x(),
                 newPos.y() + colliderOffset.y(),
                 colliderSize.x(),
-                colliderSize.y()).intersects(SceneManager.getTilemap().getBoundsInParent()));
+                colliderSize.y()).intersects(SceneManager.getTileMap().getBoundsInParent()));
     }
 
     private Vector2 calculateTileCollision(Vector2 newPos, Vector2 oldPos) {
-        Set<Tile> collTiles = CollisionHandler.getCollTiles();
+        Set<Tile> collTiles = CollisionSystem.getCollTiles();
 
         // Check horizontal collision
         boolean intersectsX = getBoundsX(newPos, oldPos, collTiles);

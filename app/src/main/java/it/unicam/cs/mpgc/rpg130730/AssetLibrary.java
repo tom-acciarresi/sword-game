@@ -15,10 +15,10 @@ import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
-import it.unicam.cs.mpgc.rpg130730.entities.AnimationPlayer.Animation;
+import it.unicam.cs.mpgc.rpg130730.entities.Animation;
+import it.unicam.cs.mpgc.rpg130730.environment.Level;
 import it.unicam.cs.mpgc.rpg130730.environment.LevelData;
-import it.unicam.cs.mpgc.rpg130730.environment.SceneManager.Level;
-import it.unicam.cs.mpgc.rpg130730.environment.Tilemap.TileState;
+import it.unicam.cs.mpgc.rpg130730.environment.TileData;
 import it.unicam.cs.mpgc.rpg130730.util.io.FileResourceReader;
 import it.unicam.cs.mpgc.rpg130730.util.io.ImageResourceLoader;
 import it.unicam.cs.mpgc.rpg130730.util.io.ObjectResourceDeserializer;
@@ -43,7 +43,7 @@ public class AssetLibrary {
     public static final Image SWORD_SPRITE = new ImageResourceLoader().load(SWORD_SPRITE_PATH);
 
     private static final Map<String, Image> TILE_SPRITES = new HashMap<String, Image>();
-    private static final Map<Integer, TileState> TILE_INFO = new HashMap<Integer, TileState>();
+    private static final Map<Integer, TileData> TILE_INFO = new HashMap<Integer, TileData>();
 
     private static final Map<String, LevelData> LEVEL_DATA = new HashMap<String, LevelData>();
 
@@ -57,8 +57,8 @@ public class AssetLibrary {
     // #endregion
 
     // #region set-get
-    public static TileState getTileInfo(int i) {
-        TileState info = TILE_INFO.get(i);
+    public static TileData getTileInfo(int i) {
+        TileData info = TILE_INFO.get(i);
         if (info == null)
             throw new NullPointerException(info + " is not valid tile info");
         return info;
@@ -98,7 +98,7 @@ public class AssetLibrary {
 
     private static void loadTileSprites(ImageResourceLoader il, FileResourceReader fr) {
         Gson gson = new GsonBuilder()
-                .registerTypeAdapter(TileState.class, (JsonDeserializer<TileState>) (JsonElement json,
+                .registerTypeAdapter(TileData.class, (JsonDeserializer<TileData>) (JsonElement json,
                         Type typeOfT, JsonDeserializationContext context) -> {
                     JsonObject jObject = json.getAsJsonObject();
 
@@ -107,15 +107,15 @@ public class AssetLibrary {
                     Image sprite = il.load(TILE_DIR_PREFIX + filename);
                     boolean collides = jObject.get("collides").getAsBoolean();
 
-                    TileState tileState = new TileState(index, sprite, collides);
+                    TileData tileData = new TileData(index, sprite, collides);
 
                     TILE_SPRITES.put(filename, sprite);
-                    TILE_INFO.put(index, tileState);
-                    return tileState;
+                    TILE_INFO.put(index, tileData);
+                    return tileData;
                 }).create();
 
         String tileInfoFile = fr.read(TILE_INFO_FILE);
-        gson.fromJson(tileInfoFile, TileState[].class);
+        gson.fromJson(tileInfoFile, TileData[].class);
     }
 
     private static void loadEntitySprites(String entityIdentifier, ImageResourceLoader il,

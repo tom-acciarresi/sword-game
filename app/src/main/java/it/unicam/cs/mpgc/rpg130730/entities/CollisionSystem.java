@@ -3,9 +3,9 @@ package it.unicam.cs.mpgc.rpg130730.entities;
 import java.util.HashSet;
 import java.util.Set;
 
-import it.unicam.cs.mpgc.rpg130730.environment.Tilemap.Tile;
+import it.unicam.cs.mpgc.rpg130730.environment.Tile;
 
-public class CollisionHandler {
+public class CollisionSystem {
     private static Set<Tile> collTiles = new HashSet<Tile>();
     private static Set<Enemy> enemies = new HashSet<Enemy>();
 

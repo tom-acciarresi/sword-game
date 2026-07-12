@@ -1,7 +1,7 @@
 package it.unicam.cs.mpgc.rpg130730;
 
 import it.unicam.cs.mpgc.rpg130730.environment.SceneManager;
-import it.unicam.cs.mpgc.rpg130730.environment.Tilemap;
+import it.unicam.cs.mpgc.rpg130730.environment.TileGrid;
 import it.unicam.cs.mpgc.rpg130730.persistence.SaveSystem;
 import it.unicam.cs.mpgc.rpg130730.util.datatypes.Vector2;
 import javafx.stage.Stage;
@@ -11,10 +11,10 @@ public class Launcher extends javafx.application.Application {
     private static final boolean IS_RESIZABLE = false;
     public static final String APPLICATION_TITLE = "Sword Game";
 
-    public static final Vector2 LEVEL_SIZE = Tilemap.TILEMAP_DIMENSIONS.scalar(Tilemap.TILE_SIZE);
+    public static final Vector2 LEVEL_SIZE = TileGrid.TILEMAP_DIMENSIONS.scalar(TileGrid.TILE_SIZE);
     public static final Vector2 LEVEL_CENTER = new Vector2(
-            LEVEL_SIZE.x() / 2 - Tilemap.TILE_SIZE / 2,
-            LEVEL_SIZE.y() / 2 - Tilemap.TILE_SIZE / 2);
+            LEVEL_SIZE.x() / 2 - TileGrid.TILE_SIZE / 2,
+            LEVEL_SIZE.y() / 2 - TileGrid.TILE_SIZE / 2);
 
     public static final int TARGET_FRAMERATE = 60;
     // #endregion

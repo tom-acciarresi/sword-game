@@ -49,24 +49,4 @@ public class AnimationPlayer {
         ticksLeft = tickInterval;
         frameIndex = 0;
     }
-
-    public record Animation(String identifier, Image[] frames, int fps) {
-        // #region set-get
-        private Image getFrame(int i) {
-            Image image = frames[i];
-            if (image == null)
-                throw new NullPointerException(image + " is not a valid image");
-            return image;
-        }
-
-        private int getLength() {
-            return frames.length;
-        }
-        // #endregion
-
-        @Override
-        public final @org.jspecify.annotations.Nullable String toString() {
-            return String.format("name:%s\n%s\nfps: %d", identifier, frames.toString(), fps);
-        }
-    }
 }

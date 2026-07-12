@@ -18,8 +18,8 @@ public class GameLoop {
     public static double getTimeDelta() {
         return timeDelta;
     }
-
     // #endregion
+
     public static void initialize() {
         Timeline loop = new Timeline(new KeyFrame(
                 javafx.util.Duration.seconds(1.0 / Launcher.TARGET_FRAMERATE),
@@ -27,6 +27,14 @@ public class GameLoop {
 
         loop.setCycleCount(Animation.INDEFINITE);
         loop.play();
+    }
+
+    public static void startUpdating(Updatable obj) {
+        objectsToAdd.add(obj);
+    }
+
+    public static void stopUpdating(Updatable obj) {
+        objectsToRemove.add(obj);
     }
 
     private static void updateObjects(double timeDelta) {
@@ -38,17 +46,5 @@ public class GameLoop {
         objectsToRemove.clear();
 
         objectsToUpdate.stream().forEach(o -> o.update(timeDelta));
-    }
-
-    public interface Updatable {
-        default void subscribeToUpdates() {
-            objectsToAdd.add(this);
-        };
-
-        default void unsubscribeFromUpdates() {
-            objectsToRemove.add(this);
-        };
-
-        void update(double timeDelta);
     }
 }

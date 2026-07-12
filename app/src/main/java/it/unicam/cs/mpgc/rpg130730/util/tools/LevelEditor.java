@@ -7,9 +7,9 @@ import java.io.ObjectOutputStream;
 import java.util.Arrays;
 import java.util.Map;
 
-import it.unicam.cs.mpgc.rpg130730.entities.Enemy.EnemyType;
+import it.unicam.cs.mpgc.rpg130730.entities.EnemyType;
 import it.unicam.cs.mpgc.rpg130730.environment.LevelData;
-import it.unicam.cs.mpgc.rpg130730.environment.Tilemap;
+import it.unicam.cs.mpgc.rpg130730.environment.TileGrid;
 import it.unicam.cs.mpgc.rpg130730.util.datatypes.Vector2;
 
 @SuppressWarnings("null")
@@ -67,12 +67,13 @@ public class LevelEditor {
         } catch (java.io.IOException e) {
             e.printStackTrace();
         }
+        System.out.println("Created '" + filename + "'");
     }
 
     private static int[] stringToIntArray(String s) {
         int[] array = Arrays.stream(s.strip().split("\\D+")).mapToInt(Integer::parseInt).toArray();
 
-        if (array.length != Tilemap.TILE_AMOUNT)
+        if (array.length != TileGrid.TILE_AMOUNT)
             throw new IndexOutOfBoundsException();
 
         return array;
