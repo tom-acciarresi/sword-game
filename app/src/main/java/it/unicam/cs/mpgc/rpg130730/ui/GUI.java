@@ -4,14 +4,14 @@ import it.unicam.cs.mpgc.rpg130730.AssetLibrary;
 import it.unicam.cs.mpgc.rpg130730.Launcher;
 import it.unicam.cs.mpgc.rpg130730.GameLoop.Updatable;
 import it.unicam.cs.mpgc.rpg130730.entities.Player;
-import it.unicam.cs.mpgc.rpg130730.util.Vector2;
+import it.unicam.cs.mpgc.rpg130730.util.datatypes.Vector2;
 import javafx.scene.Group;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 
-public final class GUI extends Pane {
+public class GUI extends Pane {
     public static final Vector2 GUI_SIZE = new Vector2(
             Launcher.LEVEL_SIZE.x(),
             64);
@@ -32,14 +32,14 @@ public final class GUI extends Pane {
         setStyle("-fx-background-color: black");
     }
 
-    public class HealthBar extends Group implements Updatable {
+    private class HealthBar extends Group implements Updatable {
         private static final Vector2 HP_BAR_SIZE = new Vector2(128, 32);
         private Rectangle healthBarSlider = createHealthBar();
 
         private Player player;
         private double healthPreviousFrame;
 
-        public HealthBar(Player p) {
+        private HealthBar(Player p) {
             subscribeToUpdates();
             player = p;
             healthPreviousFrame = p.getHealth();

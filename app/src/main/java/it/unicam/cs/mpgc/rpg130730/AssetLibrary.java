@@ -16,18 +16,18 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import it.unicam.cs.mpgc.rpg130730.entities.AnimationPlayer.Animation;
+import it.unicam.cs.mpgc.rpg130730.environment.LevelData;
 import it.unicam.cs.mpgc.rpg130730.environment.SceneManager.Level;
 import it.unicam.cs.mpgc.rpg130730.environment.Tilemap.TileState;
-import it.unicam.cs.mpgc.rpg130730.tools.LevelEditor.LevelData;
-import it.unicam.cs.mpgc.rpg130730.util.FileResourceReader;
-import it.unicam.cs.mpgc.rpg130730.util.ImageResourceLoader;
-import it.unicam.cs.mpgc.rpg130730.util.ObjectResourceDeserializer;
+import it.unicam.cs.mpgc.rpg130730.util.io.FileResourceReader;
+import it.unicam.cs.mpgc.rpg130730.util.io.ImageResourceLoader;
+import it.unicam.cs.mpgc.rpg130730.util.io.ObjectResourceDeserializer;
 import javafx.scene.image.Image;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
 
-public final class AssetLibrary {
+public class AssetLibrary {
     private static final String APP_ICON_PATH = "/images/icon.png",
             MISSING_SPRITE_PATH = "/images/null.png",
             SWORD_SPRITE_PATH = "/images/entities/knight/sword.png",

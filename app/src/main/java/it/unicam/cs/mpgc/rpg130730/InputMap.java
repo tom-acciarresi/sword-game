@@ -7,9 +7,8 @@ import it.unicam.cs.mpgc.rpg130730.environment.SceneManager.Level;
 import javafx.event.EventHandler;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
-import javafx.stage.Stage;
 
-public final class InputMap {
+public class InputMap {
     public static enum KeyBind {
         QUIT(KeyCode.ESCAPE),
         DOWN(KeyCode.S),
@@ -34,7 +33,7 @@ public final class InputMap {
 
     private static Map<KeyCode, Boolean> currentlyPressedKeys = new HashMap<KeyCode, Boolean>();
 
-    public static void initialize(Stage stage) {
+    public static void initialize(javafx.stage.Stage stage) {
         stage.getScene().setOnKeyPressed(onKeyPressed());
         stage.getScene().setOnKeyReleased(onKeyReleased());
     }

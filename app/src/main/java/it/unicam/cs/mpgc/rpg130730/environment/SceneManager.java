@@ -9,13 +9,12 @@ import it.unicam.cs.mpgc.rpg130730.entities.CollisionHandler;
 import it.unicam.cs.mpgc.rpg130730.entities.Enemy;
 import it.unicam.cs.mpgc.rpg130730.entities.Enemy.EnemyType;
 import it.unicam.cs.mpgc.rpg130730.entities.Player;
-import it.unicam.cs.mpgc.rpg130730.tools.LevelEditor.LevelData;
 import it.unicam.cs.mpgc.rpg130730.ui.GUI;
 import it.unicam.cs.mpgc.rpg130730.ui.MainMenu;
-import it.unicam.cs.mpgc.rpg130730.util.Vector2;
+import it.unicam.cs.mpgc.rpg130730.util.datatypes.Vector2;
 import javafx.scene.Group;
 
-public final class SceneManager extends Group {
+public class SceneManager extends Group {
     public static enum Level {
         ROOM_1("level1.dat"),
         ROOM_2("level2.dat");
@@ -37,7 +36,7 @@ public final class SceneManager extends Group {
     @SuppressWarnings("null")
     private static Player player;
 
-    public static Group levelContainer = new Group();
+    private static final Group levelContainer = new Group();
 
     public void loadMainMenu() {
         this.getChildren().add(new MainMenu());
@@ -58,7 +57,6 @@ public final class SceneManager extends Group {
     }
 
     public void initialize(Level level) {
-        levelContainer = new Group();
         this.getChildren().add(levelContainer);
 
         levelContainer.setLayoutY(GUI.GUI_SIZE.y());
@@ -74,8 +72,6 @@ public final class SceneManager extends Group {
 
     private void loadTiles(LevelData levelData) {
         int[] tileArrangementData = levelData.tileArrangementData();
-        if (tileArrangementData == null)
-            throw new NullPointerException(tileArrangementData + " tile data is null");
         tilemap.changeTilemapTo(tileArrangementData);
     }
 
@@ -91,8 +87,10 @@ public final class SceneManager extends Group {
         // Load new enemies
         enemyData.entrySet().stream().forEach(e -> {
             EnemyType type = e.getValue();
+
             if (type == null)
                 throw new NullPointerException(type + " enemy type is null");
+
             Vector2 pos = e.getKey();
             Enemy newEnemy = new Enemy(type, pos.scalar(Tilemap.TILE_SIZE));
             CollisionHandler.addEnemy(newEnemy);
@@ -107,8 +105,10 @@ public final class SceneManager extends Group {
 
         loadTiles(levelData);
         Map<Vector2, EnemyType> enemyData = levelData.enemyData();
-        if (enemyData == null)
-            throw new NullPointerException(enemyData + " enemy data is null");
         loadEnemies(enemyData);
+    }
+
+    public static Tilemap getTilemap() {
+        return tilemap;
     }
 }

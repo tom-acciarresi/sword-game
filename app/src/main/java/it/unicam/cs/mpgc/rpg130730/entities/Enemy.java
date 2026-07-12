@@ -4,9 +4,9 @@ import java.util.Random;
 
 import it.unicam.cs.mpgc.rpg130730.AssetLibrary;
 import it.unicam.cs.mpgc.rpg130730.entities.AnimationPlayer.Animation;
-import it.unicam.cs.mpgc.rpg130730.util.Vector2;
+import it.unicam.cs.mpgc.rpg130730.util.datatypes.Vector2;
 
-public class Enemy extends Entity {
+public class Enemy extends Character2D {
     public enum EnemyType {
         PIG(new EnemyInfo(1, "pig"));
 
@@ -24,16 +24,21 @@ public class Enemy extends Entity {
     private EnemyInfo enemyInfo;
     private AnimationPlayer animationPlayer;
 
-    private Vector2 initialDirection = new Random().nextInt() % 2 == 0
-            ? Vector2.LEFT
-            : Vector2.DOWN;
-    private Vector2 currDirection = initialDirection;
+    private Vector2 initialDirection;
+    private Vector2 currDirection;
 
     public Enemy(EnemyType type) {
         super();
 
+        boolean randBoolean = new Random().nextBoolean();
+        initialDirection = randBoolean
+                ? (randBoolean ? Vector2.LEFT : Vector2.RIGHT)
+                : (randBoolean ? Vector2.UP : Vector2.DOWN);
+        currDirection = initialDirection;
+
         enemyInfo = type.info();
         animationPlayer = new AnimationPlayer(AssetLibrary.getAnimation(enemyInfo.identifier() + "/idle_down"));
+        setSprite(animationPlayer.getCurrFrame());
 
         setHealth(enemyInfo.health());
     }

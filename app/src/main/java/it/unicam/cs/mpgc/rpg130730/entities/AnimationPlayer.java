@@ -4,7 +4,7 @@ import it.unicam.cs.mpgc.rpg130730.AssetLibrary;
 import it.unicam.cs.mpgc.rpg130730.Launcher;
 import javafx.scene.image.Image;
 
-public final class AnimationPlayer {
+public class AnimationPlayer {
     private Animation currAnimation = new Animation("null", new Image[0], 0);
     private Image currFrame = AssetLibrary.MISSING_SPRITE;
     private int frameIndex;
@@ -51,14 +51,14 @@ public final class AnimationPlayer {
     }
 
     public record Animation(String identifier, Image[] frames, int fps) {
-        public Image getFrame(int i) {
+        private Image getFrame(int i) {
             Image image = frames[i];
             if (image == null)
                 throw new NullPointerException(image + " is not a valid image");
             return image;
         }
 
-        public int getLength() {
+        private int getLength() {
             return frames.length;
         }
     }

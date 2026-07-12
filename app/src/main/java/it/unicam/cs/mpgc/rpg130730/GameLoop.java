@@ -6,9 +6,8 @@ import java.util.Set;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
-import javafx.util.Duration;
 
-public final class GameLoop {
+public class GameLoop {
     private static Set<Updatable> objectsToUpdate = new HashSet<Updatable>();
     private static Set<Updatable> objectsToAdd = new HashSet<Updatable>();
     private static Set<Updatable> objectsToRemove = new HashSet<Updatable>();
@@ -16,8 +15,10 @@ public final class GameLoop {
     private static double timeDelta;
 
     public static void initialize() {
-        Timeline loop = new Timeline(new KeyFrame(Duration.seconds(1.0 / Launcher.TARGET_FRAMERATE),
+        Timeline loop = new Timeline(new KeyFrame(
+                javafx.util.Duration.seconds(1.0 / Launcher.TARGET_FRAMERATE),
                 e -> updateObjects(1.0 / Launcher.TARGET_FRAMERATE)));
+
         loop.setCycleCount(Animation.INDEFINITE);
         loop.play();
     }

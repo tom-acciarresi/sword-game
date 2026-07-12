@@ -4,7 +4,7 @@ import it.unicam.cs.mpgc.rpg130730.AssetLibrary;
 import it.unicam.cs.mpgc.rpg130730.Launcher;
 import it.unicam.cs.mpgc.rpg130730.environment.SceneManager;
 import it.unicam.cs.mpgc.rpg130730.persistence.SaveSystem;
-import it.unicam.cs.mpgc.rpg130730.util.Vector2;
+import it.unicam.cs.mpgc.rpg130730.util.datatypes.Vector2;
 import javafx.scene.control.Button;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;

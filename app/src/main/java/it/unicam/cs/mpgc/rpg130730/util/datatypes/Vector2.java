@@ -1,4 +1,4 @@
-package it.unicam.cs.mpgc.rpg130730.util;
+package it.unicam.cs.mpgc.rpg130730.util.datatypes;
 
 import java.io.Serializable;
 
@@ -47,7 +47,7 @@ public record Vector2(double x, double y) implements Serializable {
     }
 
     @Override
-    public String toString() {
+    public @org.jspecify.annotations.Nullable String toString() {
         return "(" + String.format("%.2f", x) + ", " + String.format("%.2f", y) + ")";
     }
 }

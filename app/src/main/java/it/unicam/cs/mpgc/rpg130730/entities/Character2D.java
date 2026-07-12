@@ -4,17 +4,19 @@ import java.util.Set;
 
 import it.unicam.cs.mpgc.rpg130730.AssetLibrary;
 import it.unicam.cs.mpgc.rpg130730.Launcher;
+import it.unicam.cs.mpgc.rpg130730.environment.SceneManager;
 import it.unicam.cs.mpgc.rpg130730.environment.Tilemap;
 import it.unicam.cs.mpgc.rpg130730.environment.Tilemap.Tile;
+import it.unicam.cs.mpgc.rpg130730.util.datatypes.Vector2;
 import it.unicam.cs.mpgc.rpg130730.GameLoop.Updatable;
-import it.unicam.cs.mpgc.rpg130730.util.Vector2;
+import javafx.geometry.BoundingBox;
 import javafx.geometry.Bounds;
 import javafx.scene.image.Image;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Rectangle;
 
-public abstract class Entity extends StackPane implements Updatable {
+public abstract class Character2D extends StackPane implements Updatable {
     private double health;
 
     private Rectangle sprite = new Rectangle(
@@ -29,7 +31,7 @@ public abstract class Entity extends StackPane implements Updatable {
             (Tilemap.TILE_SIZE - colliderSize.x()) / 2,
             Tilemap.TILE_SIZE - colliderSize.y());
 
-    public Entity() {
+    public Character2D() {
         subscribeToUpdates();
 
         this.getChildren().add(getSprite());
@@ -37,7 +39,7 @@ public abstract class Entity extends StackPane implements Updatable {
         setPosition(Launcher.LEVEL_CENTER);
     }
 
-    public Entity(Vector2 position) {
+    public Character2D(Vector2 position) {
         this();
         setPosition(position);
     }
@@ -51,31 +53,47 @@ public abstract class Entity extends StackPane implements Updatable {
     }
 
     public void move(Vector2 newPos) {
-        setPosition(checkTileCollision(newPos, getPosition()));
+        setPosition(calculateCollision(newPos, getPosition()));
     }
 
-    private Vector2 checkTileCollision(Vector2 newPos, Vector2 oldPos) {
+    private Vector2 calculateCollision(Vector2 newPos, Vector2 oldPos) {
+        // No going out of bounds
+        if (isOutOfBounds(newPos))
+            return oldPos;
+
+        return calculateTileCollision(newPos, oldPos);
+    }
+
+    private boolean isOutOfBounds(Vector2 newPos) {
+        return !(new BoundingBox(
+                newPos.x() + colliderOffset.x(),
+                newPos.y() + colliderOffset.y(),
+                colliderSize.x(),
+                colliderSize.y()).intersects(SceneManager.getTilemap().getBoundsInParent()));
+    }
+
+    private Vector2 calculateTileCollision(Vector2 newPos, Vector2 oldPos) {
         Set<Tile> collTiles = CollisionHandler.getCollTiles();
 
-        // Collider's horizontal component
+        // Check horizontal collision
         boolean intersectsX = false;
-        Bounds boundsX = new Rectangle(
+        BoundingBox boundsX = new BoundingBox(
                 newPos.x() + colliderOffset.x(),
                 oldPos.y() + colliderOffset.y(),
                 colliderSize.x(),
-                colliderSize.y()).getBoundsInParent();
+                colliderSize.y());
         intersectsX = collTiles.stream().anyMatch(t -> {
             Bounds tileBounds = t.getBoundsInParent();
             return tileBounds.intersects(boundsX);
         });
 
-        // Collider's vertical component
+        // Check vertical collision
         boolean intersectsY = false;
-        Bounds boundsY = new Rectangle(
+        BoundingBox boundsY = new BoundingBox(
                 oldPos.x() + colliderOffset.x(),
                 newPos.y() + colliderOffset.y(),
                 colliderSize.x(),
-                colliderSize.y()).getBoundsInParent();
+                colliderSize.y());
         intersectsY = collTiles.stream().anyMatch(t -> {
             Bounds tileBounds = t.getBoundsInParent();
             return tileBounds.intersects(boundsY);
@@ -105,14 +123,12 @@ public abstract class Entity extends StackPane implements Updatable {
         sprite.setFill(new ImagePattern(newImage));
     }
 
-    public Bounds getCollisionBounds() {
-        Bounds bounds = new Rectangle(
+    public BoundingBox getCollisionBounds() {
+        BoundingBox bounds = new BoundingBox(
                 position.x() + colliderOffset.x(),
                 position.y() + colliderOffset.y(),
                 colliderSize.x(),
-                colliderSize.y()).getBoundsInParent();
-        if (bounds == null)
-            throw new NullPointerException(bounds + " bounds are null");
+                colliderSize.y());
         return bounds;
     }
 }

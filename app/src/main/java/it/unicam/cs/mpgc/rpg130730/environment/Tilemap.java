@@ -5,7 +5,7 @@ import java.util.stream.Stream;
 
 import it.unicam.cs.mpgc.rpg130730.AssetLibrary;
 import it.unicam.cs.mpgc.rpg130730.entities.CollisionHandler;
-import it.unicam.cs.mpgc.rpg130730.util.Vector2;
+import it.unicam.cs.mpgc.rpg130730.util.datatypes.Vector2;
 import javafx.scene.image.Image;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
@@ -55,6 +55,7 @@ public class Tilemap extends GridPane {
 
     public Tile[] getTiles() {
         Tile[] arr = Arrays.stream(tileGrid).flatMap(Stream::of).toArray(Tile[]::new);
+
         if (arr == null)
             throw new NullPointerException(arr + " is null");
 
@@ -62,10 +63,14 @@ public class Tilemap extends GridPane {
     }
 
     public class Tile extends StackPane {
-        public static final TileState NULL_TILE = new TileState(0,
+        public static final TileState NULL_TILE = new TileState(
+                0,
                 AssetLibrary.MISSING_SPRITE, false);
+
         private TileState info = NULL_TILE;
-        private Rectangle sprite = new Rectangle(TILE_SIZE, TILE_SIZE,
+        private Rectangle sprite = new Rectangle(
+                TILE_SIZE,
+                TILE_SIZE,
                 new ImagePattern(info.sprite()));
 
         public Tile() {
@@ -83,7 +88,7 @@ public class Tilemap extends GridPane {
         }
 
         @Override
-        public String toString() {
+        public @org.jspecify.annotations.Nullable String toString() {
             return info + ", " + sprite;
         }
     }

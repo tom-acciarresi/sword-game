@@ -4,14 +4,14 @@ import it.unicam.cs.mpgc.rpg130730.AssetLibrary;
 import it.unicam.cs.mpgc.rpg130730.GameLoop;
 import it.unicam.cs.mpgc.rpg130730.InputMap;
 import it.unicam.cs.mpgc.rpg130730.entities.AnimationPlayer.Animation;
+import it.unicam.cs.mpgc.rpg130730.util.datatypes.Vector2;
 import it.unicam.cs.mpgc.rpg130730.InputMap.KeyBind;
-import it.unicam.cs.mpgc.rpg130730.util.Vector2;
 import javafx.application.Platform;
-import javafx.geometry.Bounds;
+import javafx.geometry.BoundingBox;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Rectangle;
 
-public class Player extends Entity {
+public class Player extends Character2D {
     private static final int DEFAULT_PLAYER_SPEED = 400; // px/s
     public static final int DEFAULT_PLAYER_HEALTH = 5;
 
@@ -29,6 +29,7 @@ public class Player extends Entity {
         super();
         setHealth(DEFAULT_PLAYER_HEALTH);
         animationPlayer = new AnimationPlayer(AssetLibrary.getAnimation("knight/idle_down"));
+        setSprite(animationPlayer.getCurrFrame());
 
         sword.setVisible(false);
         this.getChildren().add(sword);
@@ -64,9 +65,9 @@ public class Player extends Entity {
             return;
         }
 
-        Bounds playerBounds = this.getCollisionBounds();
+        BoundingBox playerBounds = this.getCollisionBounds();
         boolean collision = CollisionHandler.getEnemies().stream().anyMatch(e -> {
-            Bounds enemyBounds = e.getCollisionBounds();
+            BoundingBox enemyBounds = e.getCollisionBounds();
 
             return enemyBounds.intersects(playerBounds);
         });
@@ -85,8 +86,10 @@ public class Player extends Entity {
     private Vector2 getMovementInput() {
         int horizontalAxis = (InputMap.isKeyPressed(KeyBind.LEFT) ? -1 : 0)
                 + (InputMap.isKeyPressed(KeyBind.RIGHT) ? +1 : 0);
+
         int verticalAxis = (InputMap.isKeyPressed(KeyBind.UP) ? -1 : 0)
                 + (InputMap.isKeyPressed(KeyBind.DOWN) ? +1 : 0);
+
         return new Vector2(horizontalAxis, verticalAxis).normalized();
     }
 

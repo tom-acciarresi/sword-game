@@ -5,7 +5,7 @@ import java.util.Set;
 
 import it.unicam.cs.mpgc.rpg130730.environment.Tilemap.Tile;
 
-public final class CollisionHandler {
+public class CollisionHandler {
     private static Set<Tile> collTiles = new HashSet<Tile>();
     private static Set<Enemy> enemies = new HashSet<Enemy>();
 
