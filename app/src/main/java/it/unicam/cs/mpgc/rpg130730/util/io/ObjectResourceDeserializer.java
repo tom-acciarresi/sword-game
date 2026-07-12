@@ -10,10 +10,11 @@ import java.nio.file.StandardOpenOption;
 public class ObjectResourceDeserializer {
     @SuppressWarnings("unchecked")
     public <T> T read(String filepath) {
-        ObjectInputStream ois;
         try {
-            ois = new ObjectInputStream(
-                    Files.newInputStream(Path.of(getClass().getResource(filepath).toURI()), StandardOpenOption.READ));
+            Path resourcePath = Path.of(getClass().getResource(filepath).toURI());
+            ObjectInputStream ois = new ObjectInputStream(Files.newInputStream(
+                    resourcePath,
+                    StandardOpenOption.READ));
             return (T) ois.readObject();
         } catch (IOException | URISyntaxException | ClassNotFoundException e) {
             e.printStackTrace();

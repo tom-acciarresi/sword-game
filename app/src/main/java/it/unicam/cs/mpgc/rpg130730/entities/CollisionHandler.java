@@ -9,6 +9,12 @@ public class CollisionHandler {
     private static Set<Tile> collTiles = new HashSet<Tile>();
     private static Set<Enemy> enemies = new HashSet<Enemy>();
 
+    // #region set-get
+    public static Set<Enemy> getEnemies() {
+        return enemies;
+    }
+    // #endregion
+
     public static boolean addCollidableTile(Tile tile) {
         return collTiles.add(tile);
     }
@@ -27,9 +33,5 @@ public class CollisionHandler {
 
     public static boolean removeEnemy(Enemy enemy) {
         return enemies.remove(enemy);
-    }
-
-    public static Set<Enemy> getEnemies() {
-        return enemies;
     }
 }

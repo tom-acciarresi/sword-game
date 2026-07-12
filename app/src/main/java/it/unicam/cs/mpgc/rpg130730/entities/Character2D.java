@@ -31,6 +31,7 @@ public abstract class Character2D extends StackPane implements Updatable {
             (Tilemap.TILE_SIZE - colliderSize.x()) / 2,
             Tilemap.TILE_SIZE - colliderSize.y());
 
+    // #region constructors
     public Character2D() {
         subscribeToUpdates();
 
@@ -43,65 +44,15 @@ public abstract class Character2D extends StackPane implements Updatable {
         this();
         setPosition(position);
     }
+    // #endregion
 
+    // #region set-get
     public double getHealth() {
         return health;
     }
 
     public void setHealth(double health) {
         this.health = health;
-    }
-
-    public void move(Vector2 newPos) {
-        setPosition(calculateCollision(newPos, getPosition()));
-    }
-
-    private Vector2 calculateCollision(Vector2 newPos, Vector2 oldPos) {
-        // No going out of bounds
-        if (isOutOfBounds(newPos))
-            return oldPos;
-
-        return calculateTileCollision(newPos, oldPos);
-    }
-
-    private boolean isOutOfBounds(Vector2 newPos) {
-        return !(new BoundingBox(
-                newPos.x() + colliderOffset.x(),
-                newPos.y() + colliderOffset.y(),
-                colliderSize.x(),
-                colliderSize.y()).intersects(SceneManager.getTilemap().getBoundsInParent()));
-    }
-
-    private Vector2 calculateTileCollision(Vector2 newPos, Vector2 oldPos) {
-        Set<Tile> collTiles = CollisionHandler.getCollTiles();
-
-        // Check horizontal collision
-        boolean intersectsX = false;
-        BoundingBox boundsX = new BoundingBox(
-                newPos.x() + colliderOffset.x(),
-                oldPos.y() + colliderOffset.y(),
-                colliderSize.x(),
-                colliderSize.y());
-        intersectsX = collTiles.stream().anyMatch(t -> {
-            Bounds tileBounds = t.getBoundsInParent();
-            return tileBounds.intersects(boundsX);
-        });
-
-        // Check vertical collision
-        boolean intersectsY = false;
-        BoundingBox boundsY = new BoundingBox(
-                oldPos.x() + colliderOffset.x(),
-                newPos.y() + colliderOffset.y(),
-                colliderSize.x(),
-                colliderSize.y());
-        intersectsY = collTiles.stream().anyMatch(t -> {
-            Bounds tileBounds = t.getBoundsInParent();
-            return tileBounds.intersects(boundsY);
-        });
-
-        // Don't update X if colliding horizontally
-        // Don't update Y if colliding vertically
-        return new Vector2(intersectsX ? getPosition().x() : newPos.x(), intersectsY ? getPosition().y() : newPos.y());
     }
 
     public Vector2 getPosition() {
@@ -130,5 +81,68 @@ public abstract class Character2D extends StackPane implements Updatable {
                 colliderSize.x(),
                 colliderSize.y());
         return bounds;
+    }
+    // #endregion
+
+    public void move(Vector2 newPos) {
+        setPosition(calculateCollision(newPos, getPosition()));
+    }
+
+    private Vector2 calculateCollision(Vector2 newPos, Vector2 oldPos) {
+        // No going out of bounds
+        if (isOutOfBounds(newPos))
+            return oldPos;
+
+        return calculateTileCollision(newPos, oldPos);
+    }
+
+    private boolean isOutOfBounds(Vector2 newPos) {
+        return !(new BoundingBox(
+                newPos.x() + colliderOffset.x(),
+                newPos.y() + colliderOffset.y(),
+                colliderSize.x(),
+                colliderSize.y()).intersects(SceneManager.getTilemap().getBoundsInParent()));
+    }
+
+    private Vector2 calculateTileCollision(Vector2 newPos, Vector2 oldPos) {
+        Set<Tile> collTiles = CollisionHandler.getCollTiles();
+
+        // Check horizontal collision
+        boolean intersectsX = getBoundsX(newPos, oldPos, collTiles);
+
+        // Check vertical collision
+        boolean intersectsY = getBoundsY(newPos, oldPos, collTiles);
+
+        // Don't update X if colliding horizontally
+        // Don't update Y if colliding vertically
+        return new Vector2(intersectsX ? getPosition().x() : newPos.x(), intersectsY ? getPosition().y() : newPos.y());
+    }
+
+    private boolean getBoundsY(Vector2 newPos, Vector2 oldPos, Set<Tile> collTiles) {
+        boolean intersectsY = false;
+        BoundingBox boundsY = new BoundingBox(
+                oldPos.x() + colliderOffset.x(),
+                newPos.y() + colliderOffset.y(),
+                colliderSize.x(),
+                colliderSize.y());
+        intersectsY = collTiles.stream().anyMatch(t -> {
+            Bounds tileBounds = t.getBoundsInParent();
+            return tileBounds.intersects(boundsY);
+        });
+        return intersectsY;
+    }
+
+    private boolean getBoundsX(Vector2 newPos, Vector2 oldPos, Set<Tile> collTiles) {
+        boolean intersectsX = false;
+        BoundingBox boundsX = new BoundingBox(
+                newPos.x() + colliderOffset.x(),
+                oldPos.y() + colliderOffset.y(),
+                colliderSize.x(),
+                colliderSize.y());
+        intersectsX = collTiles.stream().anyMatch(t -> {
+            Bounds tileBounds = t.getBoundsInParent();
+            return tileBounds.intersects(boundsX);
+        });
+        return intersectsX;
     }
 }

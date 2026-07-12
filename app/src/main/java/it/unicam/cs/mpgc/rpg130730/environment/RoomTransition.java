@@ -1,17 +1,16 @@
 package it.unicam.cs.mpgc.rpg130730.environment;
 
-import it.unicam.cs.mpgc.rpg130730.environment.SceneManager.Level;
-import it.unicam.cs.mpgc.rpg130730.util.datatypes.Vector2;
+// import java.io.Serializable;
 
-public class RoomTransition {
-    private static RoomTeleporter roomTeleporter;
+// import it.unicam.cs.mpgc.rpg130730.environment.SceneManager.Level;
+// import it.unicam.cs.mpgc.rpg130730.util.datatypes.Area2D;
+// import it.unicam.cs.mpgc.rpg130730.util.datatypes.Vector2;
 
-    public RoomTransition(Vector2 fromCoords, Level fromRoom, Vector2 toCoords, Level toRoom,
-            boolean bidirectional) {
-        roomTeleporter = new RoomTeleporter(fromCoords, fromRoom, toCoords, toRoom, bidirectional);
-    }
+// public class RoomTransition {
+// private static Area2D trigger;
 
-    public record RoomTeleporter(Vector2 fromCoords, Level fromRoom, Vector2 toCoords, Level toRoom,
-            boolean bidirectional) {
-    }
-}
+// public record RoomTransitionData(Vector2 fromCoords, Level fromRoom, Vector2
+// toCoords, Level toRoom)
+// implements Serializable {
+// }
+// }

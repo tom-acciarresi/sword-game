@@ -33,30 +33,40 @@ public class InputMap {
 
     private static Map<KeyCode, Boolean> currentlyPressedKeys = new HashMap<KeyCode, Boolean>();
 
-    public static void initialize(javafx.stage.Stage stage) {
-        stage.getScene().setOnKeyPressed(onKeyPressed());
-        stage.getScene().setOnKeyReleased(onKeyReleased());
+    public static void initialize(javafx.scene.Node inputListeningNode) {
+        inputListeningNode.getScene().setOnKeyPressed(onKeyPressed());
+        inputListeningNode.getScene().setOnKeyReleased(onKeyReleased());
     }
+
+    // #region set-get
+    public static boolean isKeyPressed(KeyBind keyBind) {
+        return currentlyPressedKeys.getOrDefault(keyBind.keyCode(), false);
+    }
+
+    private static void setKeyPressed(KeyCode keyCode, boolean b) {
+        currentlyPressedKeys.put(keyCode, b);
+    }
+    // #endregion
 
     private static EventHandler<? super KeyEvent> onKeyPressed() {
         return e -> {
-            KeyCode code = e.getCode();
-            if (code == null)
-                throw new NullPointerException(code + "is not a valid keycode");
+            KeyCode key = e.getCode();
+            if (key == null)
+                throw new NullPointerException(key + "is not a valid keycode");
 
-            if (code == KeyBind.QUIT.keyCode()) {
-                Launcher.quit();
+            if (key == KeyBind.QUIT.keyCode()) {
+                Launcher.saveAndQuit();
             }
 
-            // TODO just for debug
-            if (code == KeyCode.DIGIT1) {
+            // TODO: just for debug
+            if (key == KeyCode.DIGIT1) {
                 Launcher.getSceneManager().loadLevel(Level.ROOM_1);
             }
-            if (code == KeyCode.DIGIT2) {
+            if (key == KeyCode.DIGIT2) {
                 Launcher.getSceneManager().loadLevel(Level.ROOM_2);
             }
 
-            InputMap.setKeyPressed(code, true);
+            InputMap.setKeyPressed(key, true);
         };
     }
 
@@ -68,13 +78,5 @@ public class InputMap {
 
             InputMap.setKeyPressed(code, false);
         };
-    }
-
-    public static boolean isKeyPressed(KeyBind keyBind) {
-        return currentlyPressedKeys.getOrDefault(keyBind.keyCode(), false);
-    }
-
-    private static void setKeyPressed(KeyCode keyCode, boolean b) {
-        currentlyPressedKeys.put(keyCode, b);
     }
 }

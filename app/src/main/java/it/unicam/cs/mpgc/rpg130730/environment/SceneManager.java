@@ -5,9 +5,11 @@ import java.util.Map;
 import java.util.Set;
 
 import it.unicam.cs.mpgc.rpg130730.AssetLibrary;
+import it.unicam.cs.mpgc.rpg130730.InputMap;
 import it.unicam.cs.mpgc.rpg130730.entities.CollisionHandler;
 import it.unicam.cs.mpgc.rpg130730.entities.Enemy;
 import it.unicam.cs.mpgc.rpg130730.entities.Enemy.EnemyType;
+import it.unicam.cs.mpgc.rpg130730.persistence.SaveSystem.SaveData;
 import it.unicam.cs.mpgc.rpg130730.entities.Player;
 import it.unicam.cs.mpgc.rpg130730.ui.GUI;
 import it.unicam.cs.mpgc.rpg130730.ui.MainMenu;
@@ -30,36 +32,51 @@ public class SceneManager extends Group {
         }
     }
 
+    // #region constants
+    private static final Level INITIAL_LEVEL = Level.ROOM_1;
+    // #endregion
+
+    private static Level currLevel = INITIAL_LEVEL;
     private static Tilemap tilemap = new Tilemap();
-    private static Set<Enemy> enemies = new HashSet<Enemy>();
 
     @SuppressWarnings("null")
     private static Player player;
 
-    private static final Group levelContainer = new Group();
+    private static Set<Enemy> loadedEnemies = new HashSet<Enemy>();
+
+    private static Group levelContainer = new Group();
+
+    // #region get-set
+    public static Level getCurrLevel() {
+        return currLevel;
+    }
+
+    public static Tilemap getTilemap() {
+        return tilemap;
+    }
+
+    public static Player getPlayer() {
+        return player;
+    }
+    // #endregion
 
     public void loadMainMenu() {
         this.getChildren().add(new MainMenu());
     }
 
     public void newGame() {
-        initialize(Level.ROOM_1);
+        initialize(INITIAL_LEVEL);
     }
 
-    public void continueGame(
-    // SaveData savedata
-    ) {
-        initialize(
-                // savedata.level();
-                Level.ROOM_2);
+    public void continueGame(SaveData savedata) {
+        initialize(savedata.level());
 
-        // Other savedata stuffs
+        player.setKills(savedata.kills());
+        player.setHealth(savedata.health());
     }
 
     public void initialize(Level level) {
-        this.getChildren().add(levelContainer);
-
-        levelContainer.setLayoutY(GUI.GUI_SIZE.y());
+        createLevelContainer();
 
         loadLevel(level);
 
@@ -68,23 +85,43 @@ public class SceneManager extends Group {
         levelContainer.getChildren().addAll(tilemap, player);
 
         this.getChildren().addAll(new GUI(player));
+
+        // Start reading input
+        InputMap.initialize(this);
     }
 
-    private void loadTiles(LevelData levelData) {
-        int[] tileArrangementData = levelData.tileArrangementData();
-        tilemap.changeTilemapTo(tileArrangementData);
+    public void loadLevel(Level level) {
+        LevelData levelData = AssetLibrary.getLevelData(level.filename());
+
+        currLevel = level;
+        loadTiles(levelData.tileArrangementData());
+        loadEnemies(levelData.enemyData());
+    }
+
+    private void createLevelContainer() {
+        levelContainer.setLayoutY(GUI.GUI_SIZE.y());
+        this.getChildren().add(levelContainer);
+    }
+
+    private void loadTiles(int[] tileData) {
+        tilemap.changeTilemapTo(tileData);
     }
 
     private void loadEnemies(Map<Vector2, EnemyType> enemyData) {
-        // Delete old enemies
-        for (Enemy enemy : enemies) {
+        deleteOldEnemies();
+        loadNewEnemies(enemyData);
+    }
+
+    private void deleteOldEnemies() {
+        for (Enemy enemy : loadedEnemies) {
             enemy.unsubscribeFromUpdates();
             CollisionHandler.removeEnemy(enemy);
             levelContainer.getChildren().remove(enemy);
         }
-        enemies.clear();
+        loadedEnemies.clear();
+    }
 
-        // Load new enemies
+    private void loadNewEnemies(Map<Vector2, EnemyType> enemyData) {
         enemyData.entrySet().stream().forEach(e -> {
             EnemyType type = e.getValue();
 
@@ -94,21 +131,9 @@ public class SceneManager extends Group {
             Vector2 pos = e.getKey();
             Enemy newEnemy = new Enemy(type, pos.scalar(Tilemap.TILE_SIZE));
             CollisionHandler.addEnemy(newEnemy);
-            enemies.add(newEnemy);
+            loadedEnemies.add(newEnemy);
             levelContainer.getChildren().add(newEnemy);
 
         });
-    }
-
-    public void loadLevel(Level level) {
-        LevelData levelData = AssetLibrary.getLevelData(level.filename());
-
-        loadTiles(levelData);
-        Map<Vector2, EnemyType> enemyData = levelData.enemyData();
-        loadEnemies(enemyData);
-    }
-
-    public static Tilemap getTilemap() {
-        return tilemap;
     }
 }

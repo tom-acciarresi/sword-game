@@ -28,6 +28,7 @@ import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
 
 public class AssetLibrary {
+    // #region constants
     private static final String APP_ICON_PATH = "/images/icon.png",
             MISSING_SPRITE_PATH = "/images/null.png",
             SWORD_SPRITE_PATH = "/images/entities/knight/sword.png",
@@ -50,9 +51,37 @@ public class AssetLibrary {
     private static final Map<String, Animation> ANIMATIONS = new HashMap<String, Animation>();
 
     @Nullable
-    public static final Font TITLE_FONT = font("Fira Sans", FontWeight.BOLD, FontPosture.REGULAR, 64),
-            GUI_FONT = font("Fira Sans", FontWeight.BOLD, FontPosture.REGULAR, 32),
-            TEXT_FONT = font("Sans", FontWeight.NORMAL, FontPosture.REGULAR, 24);
+    public static final Font TITLE_FONT = getFont("Fira Sans", FontWeight.BOLD, FontPosture.REGULAR, 64),
+            GUI_FONT = getFont("Fira Sans", FontWeight.BOLD, FontPosture.REGULAR, 32),
+            TEXT_FONT = getFont("Sans", FontWeight.NORMAL, FontPosture.REGULAR, 24);
+    // #endregion
+
+    // #region set-get
+    public static TileState getTileInfo(int i) {
+        TileState info = TILE_INFO.get(i);
+        if (info == null)
+            throw new NullPointerException(info + " is not valid tile info");
+        return info;
+    }
+
+    public static LevelData getLevelData(String s) {
+        LevelData levelData = LEVEL_DATA.get(s);
+        if (levelData == null)
+            throw new NullPointerException(levelData + " is not valid level data");
+        return levelData;
+    }
+
+    public static Animation getAnimation(String s) {
+        Animation animation = ANIMATIONS.get(s);
+        if (animation == null)
+            throw new NullPointerException(animation + " is not a valid animation");
+        return animation;
+    }
+
+    public static @Nullable Font getFont(String family, FontWeight weight, FontPosture posture, double size) {
+        return Font.font(family, weight, posture, size);
+    }
+    // #endregion
 
     public static void initialize() {
         FileResourceReader fr = new FileResourceReader();
@@ -138,30 +167,5 @@ public class AssetLibrary {
             LevelData levelData = od.read(LEVEL_DIR_PREFIX + levelFilename);
             LEVEL_DATA.put(levelFilename, levelData);
         });
-    }
-
-    public static TileState getTileInfo(int i) {
-        TileState info = TILE_INFO.get(i);
-        if (info == null)
-            throw new NullPointerException(info + " is not valid tile info");
-        return info;
-    }
-
-    public static LevelData getLevelData(String s) {
-        LevelData levelData = LEVEL_DATA.get(s);
-        if (levelData == null)
-            throw new NullPointerException(levelData + " is not valid level data");
-        return levelData;
-    }
-
-    public static Animation getAnimation(String s) {
-        Animation animation = ANIMATIONS.get(s);
-        if (animation == null)
-            throw new NullPointerException(animation + " is not a valid animation");
-        return animation;
-    }
-
-    public static @Nullable Font font(String family, FontWeight weight, FontPosture posture, double size) {
-        return Font.font(family, weight, posture, size);
     }
 }

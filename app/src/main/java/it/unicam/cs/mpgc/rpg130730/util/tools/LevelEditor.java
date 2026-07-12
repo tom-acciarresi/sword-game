@@ -14,10 +14,13 @@ import it.unicam.cs.mpgc.rpg130730.util.datatypes.Vector2;
 
 @SuppressWarnings("null")
 public class LevelEditor {
-    // MAY CONTAIN PRIVATE INFO!
-    private final static String LEVELS_DIR = "/home/tom/Projects/sword-game/app/src/main/resources/levels/";
+    // #region constants
+    // FIXME: MAY CONTAIN PRIVATE INFO!
+    private static final String LEVELS_DIR = "/home/tom/Projects/sword-game/app/src/main/resources/levels/";
+    // #endregion
 
     public static void main(String[] args) {
+        // #region level creation
         LevelData lvl1 = new LevelData(
                 stringToIntArray("""
                             8 8 8 8 8 8 8 8 8 8 8 8
@@ -32,7 +35,7 @@ public class LevelEditor {
                             8 8 8 8 8 8 8 8 8 8 8 8
                         """),
                 Map.ofEntries(
-                        entry(new Vector2(2, 3), EnemyType.PIG)));
+                        entry(new Vector2(3, 3), EnemyType.PIG)));
 
         LevelData lvl2 = new LevelData(
                 stringToIntArray("""
@@ -48,18 +51,19 @@ public class LevelEditor {
                             8 8 8 8 8 8 8 8 8 8 8 8
                         """),
                 Map.ofEntries(
-                        entry(new Vector2(2, 3), EnemyType.PIG),
+                        entry(new Vector2(3, 1), EnemyType.PIG),
                         entry(new Vector2(5, 5), EnemyType.PIG)));
+        // # endregion
 
         LevelEditor.createLevelDataFile("level1.dat", lvl1);
         LevelEditor.createLevelDataFile("level2.dat", lvl2);
     }
 
     private static void createLevelDataFile(String filename, LevelData data) {
-        ObjectOutputStream oos;
         try {
-            oos = new ObjectOutputStream(new FileOutputStream(LEVELS_DIR + filename));
+            ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(LEVELS_DIR + filename));
             oos.writeObject(data);
+            oos.close();
         } catch (java.io.IOException e) {
             e.printStackTrace();
         }

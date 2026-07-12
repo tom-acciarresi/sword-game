@@ -1,8 +1,6 @@
 package it.unicam.cs.mpgc.rpg130730.util.datatypes;
 
-import java.io.Serializable;
-
-public record Vector2(double x, double y) implements Serializable {
+public record Vector2(double x, double y) implements java.io.Serializable {
     public static final Vector2 ZERO = new Vector2(0.0, 0.0),
             LEFT = new Vector2(-1.0, 0.0),
             RIGHT = new Vector2(1.0, 0.0),
@@ -48,6 +46,6 @@ public record Vector2(double x, double y) implements Serializable {
 
     @Override
     public @org.jspecify.annotations.Nullable String toString() {
-        return "(" + String.format("%.2f", x) + ", " + String.format("%.2f", y) + ")";
+        return String.format("%.2f, %.2f", x, y);
     }
 }

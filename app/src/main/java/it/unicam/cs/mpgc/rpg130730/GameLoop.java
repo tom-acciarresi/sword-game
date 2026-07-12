@@ -14,6 +14,12 @@ public class GameLoop {
 
     private static double timeDelta;
 
+    // #region set-get
+    public static double getTimeDelta() {
+        return timeDelta;
+    }
+
+    // #endregion
     public static void initialize() {
         Timeline loop = new Timeline(new KeyFrame(
                 javafx.util.Duration.seconds(1.0 / Launcher.TARGET_FRAMERATE),
@@ -21,10 +27,6 @@ public class GameLoop {
 
         loop.setCycleCount(Animation.INDEFINITE);
         loop.play();
-    }
-
-    public static double getTimeDelta() {
-        return timeDelta;
     }
 
     private static void updateObjects(double timeDelta) {

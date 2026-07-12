@@ -1,0 +1,12 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Main",
+            "request": "launch",
+            "mainClass": "it.unicam.cs.mpgc.rpg130730.Main",
+            "projectName": "app"
+        }
+    ]
+}

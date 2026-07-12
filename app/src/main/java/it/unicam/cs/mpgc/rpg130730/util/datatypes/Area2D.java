@@ -27,6 +27,7 @@ public class Area2D extends Rectangle {
     }
     // #endregion
 
+    // #region set-get
     public void setOnAreaEntered(VoidConsumer func) {
         onAreaEnteredProperty = func;
     }
@@ -34,6 +35,7 @@ public class Area2D extends Rectangle {
     public void setOnAreaExited(VoidConsumer func) {
         onAreaExitedProperty = func;
     }
+    // #endregion
 
     public void areaEntered() {
         onAreaEnteredProperty.run();

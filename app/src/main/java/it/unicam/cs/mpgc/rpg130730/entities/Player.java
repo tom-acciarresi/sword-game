@@ -3,17 +3,21 @@ package it.unicam.cs.mpgc.rpg130730.entities;
 import it.unicam.cs.mpgc.rpg130730.AssetLibrary;
 import it.unicam.cs.mpgc.rpg130730.GameLoop;
 import it.unicam.cs.mpgc.rpg130730.InputMap;
+import it.unicam.cs.mpgc.rpg130730.Launcher;
 import it.unicam.cs.mpgc.rpg130730.entities.AnimationPlayer.Animation;
+import it.unicam.cs.mpgc.rpg130730.persistence.SaveSystem;
 import it.unicam.cs.mpgc.rpg130730.util.datatypes.Vector2;
 import it.unicam.cs.mpgc.rpg130730.InputMap.KeyBind;
-import javafx.application.Platform;
 import javafx.geometry.BoundingBox;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Rectangle;
 
 public class Player extends Character2D {
+    // #region constants
     private static final int DEFAULT_PLAYER_SPEED = 400; // px/s
     public static final int DEFAULT_PLAYER_HEALTH = 5;
+    private static final int HIT_COOLDOWN_FRAMES = 30;
+    // #endregion
 
     private Vector2 movementInput = Vector2.ZERO;
     private boolean acceptsInput = true;
@@ -22,8 +26,10 @@ public class Player extends Character2D {
     private Rectangle sword = new Rectangle(28, 48,
             new ImagePattern(AssetLibrary.SWORD_SPRITE));
 
-    private final static int HIT_COOLDOWN_FRAMES = 50;
     private int cooldown = 0;
+
+    // TODO: count kills
+    private int kills = 0;
 
     public Player() {
         super();
@@ -40,12 +46,35 @@ public class Player extends Character2D {
         setPosition(position);
     }
 
+    // #region get-set
+    @Override
+    public void setHealth(double health) {
+        super.setHealth(health);
+
+        if (health <= 0) {
+            System.out.println("You died!!!");
+            gameOver();
+        }
+    }
+
+    public void setAcceptsInput(boolean acceptsInput) {
+        this.acceptsInput = acceptsInput;
+    }
+
+    public void setKills(int kills) {
+        this.kills = kills;
+    }
+
+    public int getKills() {
+        return kills;
+    }
+    // #endregion
+
     @Override
     public void update(double timeDelta) {
-        checkEnemyCollision();
         handleMovement(timeDelta);
         handleAnimation();
-        setViewOrder(-getPosition().y());
+        checkEnemyCollision();
     }
 
     private void handleMovement(double timeDelta) {
@@ -79,7 +108,7 @@ public class Player extends Character2D {
     }
 
     private void collide() {
-        // TODO knockback
+        // TODO: knockback
         setHealth(getHealth() - 1);
     }
 
@@ -93,20 +122,9 @@ public class Player extends Character2D {
         return new Vector2(horizontalAxis, verticalAxis).normalized();
     }
 
-    public void setAcceptsInput(boolean acceptsInput) {
-        this.acceptsInput = acceptsInput;
-    }
-
-    @Override
-    public void setHealth(double health) {
-        super.setHealth(health);
-
-        if (health <= 0) {
-            gameOver();
-        }
-    }
-
     private void handleAnimation() {
+        setViewOrder(-getPosition().y());
+
         animationPlayer.tick();
         setSprite(animationPlayer.getCurrFrame());
 
@@ -131,6 +149,7 @@ public class Player extends Character2D {
     }
 
     private void gameOver() {
-        Platform.exit();
+        SaveSystem.deleteSave();
+        Launcher.quitWithoutSaving();
     }
 }

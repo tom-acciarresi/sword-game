@@ -11,8 +11,35 @@ public class AnimationPlayer {
     private int tickInterval;
     private int ticksLeft;
 
+    // #region constructors
     public AnimationPlayer(Animation startingAnimation) {
         changeTo(startingAnimation);
+    }
+    // #endregion
+
+    // #region set-get
+    public Animation getCurrAnimation() {
+        return currAnimation;
+    }
+
+    public Image getCurrFrame() {
+        return currFrame;
+    }
+
+    private void setFrameIndex(int frameIndex) {
+        this.frameIndex = frameIndex % currAnimation.getLength();
+    }
+
+    // #endregion
+    public void tick() {
+        if (currAnimation.fps() == 0)
+            return;
+        if (ticksLeft-- <= 0) {
+            setFrameIndex(frameIndex + 1);
+            Image image = currAnimation.getFrame(frameIndex);
+            currFrame = image;
+            ticksLeft = tickInterval;
+        }
     }
 
     public void changeTo(Animation a) {
@@ -23,34 +50,8 @@ public class AnimationPlayer {
         frameIndex = 0;
     }
 
-    private void setFrameIndex(int frameIndex) {
-        this.frameIndex = frameIndex % currAnimation.getLength();
-    }
-
-    private void increaseFrameIndex() {
-        setFrameIndex(frameIndex + 1);
-    }
-
-    public void tick() {
-        if (currAnimation.fps() == 0)
-            return;
-        if (ticksLeft-- <= 0) {
-            increaseFrameIndex();
-            Image image = currAnimation.getFrame(frameIndex);
-            currFrame = image;
-            ticksLeft = tickInterval;
-        }
-    }
-
-    public Animation getCurrAnimation() {
-        return currAnimation;
-    }
-
-    public Image getCurrFrame() {
-        return currFrame;
-    }
-
     public record Animation(String identifier, Image[] frames, int fps) {
+        // #region set-get
         private Image getFrame(int i) {
             Image image = frames[i];
             if (image == null)
@@ -60,6 +61,12 @@ public class AnimationPlayer {
 
         private int getLength() {
             return frames.length;
+        }
+        // #endregion
+
+        @Override
+        public final @org.jspecify.annotations.Nullable String toString() {
+            return String.format("name:%s\n%s\nfps: %d", identifier, frames.toString(), fps);
         }
     }
 }

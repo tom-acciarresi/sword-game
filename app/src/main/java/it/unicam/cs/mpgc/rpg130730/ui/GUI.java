@@ -18,6 +18,7 @@ public class GUI extends Pane {
 
     private static final Vector2 HP_BAR_POS = new Vector2(624, 16);
 
+    // #region constructors
     public GUI(Player p) {
         createBackground();
         HealthBar healthBar = new HealthBar(p);
@@ -25,6 +26,7 @@ public class GUI extends Pane {
         healthBar.setLayoutY(HP_BAR_POS.y());
         this.getChildren().add(healthBar);
     }
+    // #endregion
 
     private void createBackground() {
         setPrefWidth(GUI_SIZE.x());
@@ -33,16 +35,30 @@ public class GUI extends Pane {
     }
 
     private class HealthBar extends Group implements Updatable {
+        // #region constants
         private static final Vector2 HP_BAR_SIZE = new Vector2(128, 32);
+        // #endregion
+
         private Rectangle healthBarSlider = createHealthBar();
 
         private Player player;
         private double healthPreviousFrame;
 
+        // #region constructors
         private HealthBar(Player p) {
             subscribeToUpdates();
             player = p;
             healthPreviousFrame = p.getHealth();
+        }
+        // #endregion
+
+        @Override
+        public void update(double timeDelta) {
+            double healthThisFrame = player.getHealth();
+            if (healthPreviousFrame != healthThisFrame) {
+                updateBar(healthThisFrame / Player.DEFAULT_PLAYER_HEALTH);
+            }
+            healthPreviousFrame = healthThisFrame;
         }
 
         private Rectangle createHealthBar() {
@@ -54,6 +70,14 @@ public class GUI extends Pane {
             return slidingRedBar;
         }
 
+        private void updateBar(double percentage) {
+            // Clamp between 0 and 1
+            percentage = percentage > 1 ? 1 : (percentage < 0 ? 0 : percentage);
+
+            healthBarSlider.setTranslateX(percentage * HP_BAR_SIZE.x());
+        }
+
+        // #region create elements
         // Red bar that slides according to HP
         private Rectangle createSlidingRedBar() {
             Rectangle slidingRedBar = new Rectangle(HP_BAR_SIZE.x(), HP_BAR_SIZE.y(), Color.RED);
@@ -78,21 +102,6 @@ public class GUI extends Pane {
             hpText.setFill(Color.WHITE);
             return hpText;
         }
-
-        @Override
-        public void update(double timeDelta) {
-            double healthThisFrame = player.getHealth();
-            if (healthPreviousFrame != healthThisFrame) {
-                updateBar(healthThisFrame / Player.DEFAULT_PLAYER_HEALTH);
-            }
-            healthPreviousFrame = healthThisFrame;
-        }
-
-        private void updateBar(double percentage) {
-            // Clamp between 0 and 1
-            percentage = percentage > 1 ? 1 : (percentage < 0 ? 0 : percentage);
-
-            healthBarSlider.setTranslateX(percentage * HP_BAR_SIZE.x());
-        }
+        // #endregion
     }
 }

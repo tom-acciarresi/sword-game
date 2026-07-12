@@ -27,6 +27,7 @@ public class Enemy extends Character2D {
     private Vector2 initialDirection;
     private Vector2 currDirection;
 
+    // #region constructors
     public Enemy(EnemyType type) {
         super();
 
@@ -47,12 +48,12 @@ public class Enemy extends Character2D {
         this(type);
         setPosition(position);
     }
+    // #endregion
 
     @Override
     public void update(double timeDelta) {
         handleMovement(timeDelta);
         handleAnimation();
-        setViewOrder(-getPosition().y());
     }
 
     private void handleMovement(double timeDelta) {
@@ -68,6 +69,8 @@ public class Enemy extends Character2D {
     }
 
     private void handleAnimation() {
+        setViewOrder(-getPosition().y());
+
         animationPlayer.tick();
         setSprite(animationPlayer.getCurrFrame());
 
@@ -92,5 +95,9 @@ public class Enemy extends Character2D {
     }
 
     public record EnemyInfo(double health, String identifier) {
+        @Override
+        public final @org.jspecify.annotations.Nullable String toString() {
+            return String.format("health:%.1f, type:%s", health, identifier);
+        }
     }
 }
