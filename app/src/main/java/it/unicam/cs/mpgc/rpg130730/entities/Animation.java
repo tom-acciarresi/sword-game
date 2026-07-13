@@ -7,7 +7,7 @@ public record Animation(String identifier, Image[] frames, int fps) {
     public Image getFrame(int i) {
         Image image = frames[i];
         if (image == null)
-            throw new NullPointerException(image + " is not a valid image");
+            throw new NullPointerException();
         return image;
     }
 

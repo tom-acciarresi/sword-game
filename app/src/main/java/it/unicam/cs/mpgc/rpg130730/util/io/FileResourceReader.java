@@ -11,7 +11,7 @@ public class FileResourceReader {
             String data = Files.newBufferedReader(Path.of(getClass().getResource(filepath).toURI())).readAllAsString();
 
             if (data == null)
-                throw new NullPointerException(data + " file content is null");
+                throw new NullPointerException();
 
             return data;
         } catch (IOException | URISyntaxException e) {

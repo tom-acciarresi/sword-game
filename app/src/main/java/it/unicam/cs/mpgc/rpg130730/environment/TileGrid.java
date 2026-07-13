@@ -31,7 +31,7 @@ public class TileGrid extends GridPane {
         Tile[] arr = Arrays.stream(tileGrid).flatMap(Stream::of).toArray(Tile[]::new);
 
         if (arr == null)
-            throw new NullPointerException(arr + " is null");
+            throw new NullPointerException();
 
         return arr;
     }

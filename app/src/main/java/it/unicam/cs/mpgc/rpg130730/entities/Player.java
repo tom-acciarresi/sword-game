@@ -10,6 +10,7 @@ import it.unicam.cs.mpgc.rpg130730.environment.RoomTransition;
 import it.unicam.cs.mpgc.rpg130730.persistence.SaveSystem;
 import it.unicam.cs.mpgc.rpg130730.util.datatypes.Vector2;
 import javafx.geometry.BoundingBox;
+import javafx.geometry.Bounds;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Rectangle;
 
@@ -17,34 +18,36 @@ public class Player extends Character2D {
     // #region constants
     private static final int DEFAULT_PLAYER_SPEED = 400; // px/s
     public static final int DEFAULT_PLAYER_HEALTH = 5;
-    private static final int HIT_COOLDOWN_FRAMES = 30;
+    public static final int DEFAULT_PLAYER_DAMAGE = 1;
+    private static final int DAMAGE_COOLDOWN_FRAMES = 30;
+    private static final int ATTACK_DURATION_FRAMES = 10;
+    private static final int ATTACK_COOLDOWN_FRAMES = 25 + ATTACK_DURATION_FRAMES;
     // #endregion
 
+    private Vector2 attackDirection = Vector2.DOWN;
     private Vector2 movementDirection = Vector2.ZERO;
-    private boolean acceptsInput = true;
 
     private AnimationPlayer animationPlayer;
     private Rectangle sword = new Rectangle(28, 48,
             new ImagePattern(AssetLibrary.SWORD_SPRITE));
 
-    private int cooldown = 0;
+    private int damageCooldown;
 
-    // TODO: count kills
-    private int kills = 0;
+    private boolean isAttacking = false;
+    private int attackDurationCounter;
+    private int attackCooldown;
+
+    private int kills;
 
     public Player() {
         super();
         setHealth(DEFAULT_PLAYER_HEALTH);
+
         animationPlayer = new AnimationPlayer(AssetLibrary.getAnimation("knight/idle_down"));
-        setSprite(animationPlayer.getCurrFrame());
+        this.setSprite(animationPlayer.getCurrFrame());
 
         sword.setVisible(false);
         this.getChildren().add(sword);
-    }
-
-    public Player(Vector2 position) {
-        this();
-        setPosition(position);
     }
 
     // #region get-set
@@ -58,10 +61,6 @@ public class Player extends Character2D {
         }
     }
 
-    public void setAcceptsInput(boolean acceptsInput) {
-        this.acceptsInput = acceptsInput;
-    }
-
     public void setKills(int kills) {
         this.kills = kills;
     }
@@ -73,41 +72,139 @@ public class Player extends Character2D {
 
     @Override
     public void update(double timeDelta) {
+        checkAttack();
         handleMovement(timeDelta);
-        handleAnimation();
         checkEnemyCollision();
         checkRoomTransition();
+
+        handleAnimation();
     }
 
+    private void checkAttack() {
+        if (!canAttack()) {
+            attackCooldown--;
+
+            if (attackDurationCounter > 0) {
+                attackDurationCounter--;
+                return;
+            } else {
+                sword.setVisible(false);
+                isAttacking = false;
+            }
+
+            return;
+        }
+
+        attackDirection = InputMap.getAttackDirection();
+        if (attackDirection.equals(Vector2.ZERO))
+            return;
+
+        attack(attackDirection);
+    }
+
+    private boolean canAttack() {
+        return attackCooldown <= 0;
+    }
+
+    private void attack(Vector2 attackDirection) {
+        attackCooldown = ATTACK_COOLDOWN_FRAMES;
+        attackDurationCounter = ATTACK_DURATION_FRAMES;
+        isAttacking = true;
+
+        moveSword(attackDirection.closestCardinalVector());
+        hitScan();
+    }
+
+    private void moveSword(Vector2 attackDirection) {
+        sword.setVisible(true);
+        if (attackDirection.equals(Vector2.LEFT)) {
+            sword.setTranslateX(-64 + 8);
+            sword.setTranslateY(16);
+            sword.setRotate(90);
+        } else if (attackDirection.equals(Vector2.RIGHT)) {
+            sword.setTranslateX(64 - 8);
+            sword.setTranslateY(16);
+            sword.setRotate(-90);
+        } else if (attackDirection.equals(Vector2.UP)) {
+            sword.setTranslateX(0 - 12);
+            sword.setTranslateY(-64 + 8);
+            sword.setRotate(180);
+        } else if (attackDirection.equals(Vector2.DOWN)) {
+            sword.setTranslateX(-8);
+            sword.setTranslateY(64 - 8);
+            sword.setRotate(0);
+        } else
+            throw new IllegalStateException("Attack direction not valid");
+    }
+
+    private void hitScan() {
+        Bounds hitBox = this.getBoundsInParent();
+        if (hitBox == null)
+            throw new NullPointerException();
+        // Launcher.getSceneManager().getLevelContainer().getChildren()
+        // .add(new Rectangle(bb.getMinX(), bb.getMinY(), bb.getWidth(),
+        // bb.getHeight()));
+        Optional<Enemy> collidesWithEnemy = CollisionSystem.collidesWithEnemy(hitBox);
+        if (collidesWithEnemy.isPresent()) {
+            Enemy enemy = collidesWithEnemy.get();
+            enemy.setHealth(enemy.getHealth() - 1);
+        }
+    }
+
+    // Bounds swordHitBox = sword.getBoundsInParent();
+    // Launcher.getSceneManager().getLevelContainer().getChildren().add(new
+    // Rectangle(swordHitBox.getMinX(),
+    // swordHitBox.getMinY(), swordHitBox.getWidth(), swordHitBox.getHeight()));
+    // Optional<Enemy> enemyHit = CollisionSystem.collidesWithEnemy(swordHitBox);
+    // System.out.println(enemyHit);
+    // if (enemyHit.isPresent()) {
+    // Enemy enemyInstance = enemyHit.get();
+    // enemyInstance.setHealth(enemyInstance.getHealth() - DEFAULT_PLAYER_DAMAGE);
+    // }
+
     private void handleMovement(double timeDelta) {
-        movementDirection = acceptsInput ? InputMap.getMovementInput() : Vector2.ZERO;
+        movementDirection = acceptsInput() ? InputMap.getMovementInput() : Vector2.ZERO;
         if (movementDirection.equals(Vector2.ZERO))
             return;
 
         double movementValue = DEFAULT_PLAYER_SPEED * GameLoop.getTimeDelta();
         Vector2 deltaPos = new Vector2(movementDirection.x() * movementValue, movementDirection.y() * movementValue);
-        Vector2 newPos = getPosition().plus(deltaPos);
 
-        move(newPos);
+        move(getPosition().plus(deltaPos));
+    }
+
+    private boolean acceptsInput() {
+        if (!canBeDamaged() || isAttacking)
+            return false;
+        return true;
     }
 
     private void checkEnemyCollision() {
-        if (cooldown > 0) {
-            this.getSprite().setVisible(System.currentTimeMillis() % 2 == 0);
-            cooldown--;
+        if (!canBeDamaged()) {
+            playFlashingAnimation();
+            damageCooldown--;
             return;
         }
 
+        this.getSprite().setVisible(true);
         BoundingBox playerBounds = this.getCollisionBounds();
 
         Optional<Enemy> enemy = CollisionSystem.collidesWithEnemy(playerBounds);
         if (enemy.isPresent()) {
-            cooldown = HIT_COOLDOWN_FRAMES;
+            damageCooldown = DAMAGE_COOLDOWN_FRAMES;
             Enemy enemyInstance = enemy.get();
             if (enemyInstance == null)
-                throw new NullPointerException(enemyInstance + " enemy is null");
+                throw new NullPointerException();
             collide(enemyInstance);
         }
+    }
+
+    private void playFlashingAnimation() {
+        this.getSprite().setVisible(System.currentTimeMillis() % 2 == 0);
+    }
+
+    private boolean canBeDamaged() {
+        return damageCooldown <= 0;
     }
 
     private void collide(Enemy enemy) {
@@ -131,24 +228,18 @@ public class Player extends Character2D {
         animationPlayer.tick();
         setSprite(animationPlayer.getCurrFrame());
 
-        double x = movementDirection.x(), y = movementDirection.y();
-        String direction = Math.abs(x) > Math.abs(y) ? (x < 0 ? "left" : "right") : (y < 0 ? "up" : "down");
+        String animationIdentifier;
+        if (!movementDirection.equals(Vector2.ZERO))
+            animationIdentifier = "knight/walk_" + movementDirection.cardinalDirectionString();
+        else
+            animationIdentifier = "knight/idle_" + movementDirection.cardinalDirectionString();
 
-        if (!acceptsInput || movementDirection == Vector2.ZERO) {
-            Animation newAnim = AssetLibrary.getAnimation("knight/idle_" + direction);
-            if (animationPlayer.getCurrAnimation().equals(newAnim)) {
-                return;
-            }
-            animationPlayer.changeTo(newAnim);
-            return;
-        }
+        if (isAttacking)
+            animationIdentifier = "knight/attack_" + attackDirection.cardinalDirectionString();
 
-        Animation newAnim = AssetLibrary.getAnimation("knight/walk_" + direction);
-        if (animationPlayer.getCurrAnimation().equals(newAnim)) {
-            return;
-        }
-
-        animationPlayer.changeTo(newAnim);
+        Animation newAnimation = AssetLibrary.getAnimation(animationIdentifier);
+        if (!animationPlayer.getCurrAnimation().equals(newAnimation))
+            animationPlayer.changeTo(newAnimation);
     }
 
     private void gameOver() {
