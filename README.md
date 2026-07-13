@@ -26,16 +26,16 @@ cd sword-game
 
 ### 3. Run the game
 
-Run game on windows
+Run game on Windows
 ```bash
-./gradlew run
+gradlew.bat run
 ```
 
 OR
 
-Run game on linux
+Run game on Linux:
 ```bash
-./gradle run
+./gradlew run
 ```
 
 ## Controls

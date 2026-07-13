@@ -1,43 +1,43 @@
 package it.unicam.cs.mpgc.rpg130730.entities;
 
+import java.util.Random;
+
 import it.unicam.cs.mpgc.rpg130730.AssetLibrary;
-import it.unicam.cs.mpgc.rpg130730.entities.AnimationPlayer.Animation;
-import it.unicam.cs.mpgc.rpg130730.util.Vector2;
+import it.unicam.cs.mpgc.rpg130730.util.datatypes.Vector2;
 
-public class Enemy extends Entity {
-    public enum EnemyType {
-        PIG(new EnemyInfo(1, "pig"));
+public class Enemy extends Character2D {
+    // #region constants
+    private static final int DEFAULT_ENEMY_SPEED = 150;
+    // #endregion
 
-        private final EnemyInfo info;
+    private EnemyData enemyData;
+    private AnimationPlayer animationPlayer;
 
-        EnemyType(EnemyInfo info) {
-            this.info = info;
-        }
+    private Vector2 initialDirection;
+    private Vector2 currDirection;
 
-        public EnemyInfo info() {
-            return info;
-        }
-    }
-
-    private EnemyInfo enemyInfo;
-    private AnimationPlayer ap;
-
-    private static final Vector2 INITIAL_DIRECTION = Vector2.DOWN;
-    private Vector2 currDirection = INITIAL_DIRECTION;
-
+    // #region constructors
     public Enemy(EnemyType type) {
         super();
 
-        enemyInfo = type.info();
-        ap = new AnimationPlayer(AssetLibrary.getAnimation(enemyInfo.identifier() + "/idle_down"));
+        boolean randBoolean = new Random().nextBoolean();
+        initialDirection = randBoolean
+                ? (randBoolean ? Vector2.LEFT : Vector2.RIGHT)
+                : (randBoolean ? Vector2.UP : Vector2.DOWN);
+        currDirection = initialDirection;
 
-        setHealth(enemyInfo.health());
+        enemyData = type.info();
+        animationPlayer = new AnimationPlayer(AssetLibrary.getAnimation(enemyData.identifier() + "/idle_down"));
+        setSprite(animationPlayer.getCurrFrame());
+
+        setHealth(enemyData.health());
     }
 
     public Enemy(EnemyType type, Vector2 position) {
         this(type);
         setPosition(position);
     }
+    // #endregion
 
     @Override
     public void update(double timeDelta) {
@@ -46,11 +46,13 @@ public class Enemy extends Entity {
     }
 
     private void handleMovement(double timeDelta) {
-        Vector2 posDelta = getPosition().add(currDirection.scalar(150 * timeDelta));
+        Vector2 posDelta = currDirection.scalar(DEFAULT_ENEMY_SPEED * timeDelta);
+
+        Vector2 newPos = getPosition().plus(posDelta);
 
         Vector2 oldPos = getPosition();
 
-        move(posDelta);
+        move(newPos);
 
         if (getPosition().equals(oldPos)) {
             currDirection = currDirection.invert();
@@ -58,45 +60,28 @@ public class Enemy extends Entity {
     }
 
     private void handleAnimation() {
-        setSprite(ap.getCurrFrame());
+        setViewOrder(-getPosition().y());
 
-        String direction = getPredominantDirection(currDirection);
+        animationPlayer.tick();
+        setSprite(animationPlayer.getCurrFrame());
+
+        double x = currDirection.x(), y = currDirection.y();
+        String direction = Math.abs(x) > Math.abs(y) ? (x < 0 ? "left" : "right") : (y < 0 ? "up" : "down");
 
         if (currDirection == Vector2.ZERO) {
-            Animation newAnim = AssetLibrary.getAnimation(enemyInfo.identifier() + "/idle_" + direction);
-            if (ap.getCurrAnimation().equals(newAnim)) {
+            Animation newAnim = AssetLibrary.getAnimation(enemyData.identifier() + "/idle_" + direction);
+            if (animationPlayer.getCurrAnimation().equals(newAnim)) {
                 return;
             }
-            ap.changeTo(newAnim);
+            animationPlayer.changeTo(newAnim);
             return;
         }
 
-        Animation newAnim = AssetLibrary.getAnimation(enemyInfo.identifier() + "/walk_" + direction);
-        if (ap.getCurrAnimation().equals(newAnim)) {
+        Animation newAnim = AssetLibrary.getAnimation(enemyData.identifier() + "/walk_" + direction);
+        if (animationPlayer.getCurrAnimation().equals(newAnim)) {
             return;
         }
 
-        ap.changeTo(newAnim);
-    }
-
-    private String getPredominantDirection(Vector2 v) {
-        String direction;
-
-        double x = v.x(), y = v.y();
-        if (Math.abs(x) > Math.abs(y)) {
-            if (x < 0)
-                direction = "left";
-            else
-                direction = "right";
-        } else if (y < 0) {
-            direction = "up";
-        } else {
-            direction = "down";
-        }
-
-        return direction;
-    }
-
-    public record EnemyInfo(double health, String identifier) {
+        animationPlayer.changeTo(newAnim);
     }
 }

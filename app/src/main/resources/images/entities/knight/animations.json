@@ -2,16 +2,16 @@
     {
         "fps": 1,
         "frames": [
-            "down.png"
+            "up.png"
         ],
-        "name": "idle_down"
+        "name": "idle_up"
     },
     {
         "fps": 1,
         "frames": [
-            "up.png"
+            "down.png"
         ],
-        "name": "idle_up"
+        "name": "idle_down"
     },
     {
         "fps": 1,
@@ -30,22 +30,22 @@
     {
         "fps": 10,
         "frames": [
-            "down1.png",
-            "down.png",
-            "down2.png",
-            "down.png"
-        ],
-        "name": "walk_down"
-    },
-    {
-        "fps": 10,
-        "frames": [
             "up1.png",
             "up.png",
             "up2.png",
             "up.png"
         ],
         "name": "walk_up"
+    },
+    {
+        "fps": 10,
+        "frames": [
+            "down1.png",
+            "down.png",
+            "down2.png",
+            "down.png"
+        ],
+        "name": "walk_down"
     },
     {
         "fps": 10,
@@ -66,5 +66,45 @@
             "right.png"
         ],
         "name": "walk_right"
+    },
+    {
+        "fps": 5,
+        "frames": [
+            "attack_up.png",
+            "attack_up.png",
+            "attack_up.png",
+            "attack_up.png"
+        ],
+        "name": "attack_up"
+    },
+    {
+        "fps": 5,
+        "frames": [
+            "attack_down.png",
+            "attack_down.png",
+            "attack_down.png",
+            "attack_down.png"
+        ],
+        "name": "attack_down"
+    },
+    {
+        "fps": 5,
+        "frames": [
+            "attack_left.png",
+            "attack_left.png",
+            "attack_left.png",
+            "attack_left.png"
+        ],
+        "name": "attack_left"
+    },
+    {
+        "fps": 5,
+        "frames": [
+            "attack_right.png",
+            "attack_right.png",
+            "attack_right.png",
+            "attack_right.png"
+        ],
+        "name": "attack_right"
     }
 ]

@@ -1,6 +1,6 @@
-package it.unicam.cs.mpgc.rpg130730.util;
+package it.unicam.cs.mpgc.rpg130730.util.datatypes;
 
-public record Vector2(double x, double y) {
+public record Vector2(double x, double y) implements java.io.Serializable {
     public static final Vector2 ZERO = new Vector2(0.0, 0.0),
             LEFT = new Vector2(-1.0, 0.0),
             RIGHT = new Vector2(1.0, 0.0),
@@ -20,16 +20,16 @@ public record Vector2(double x, double y) {
         return new Vector2(x / length, y / length);
     }
 
-    public Vector2 copy() {
-        return new Vector2(x, y);
-    }
-
     public Vector2 invert() {
         return new Vector2(-x, -y);
     }
 
-    public Vector2 add(Vector2 other) {
-        return new Vector2(this.x + other.x, this.y + other.y);
+    public Vector2 plus(Vector2 o) {
+        return new Vector2(this.x + o.x, this.y + o.y);
+    }
+
+    public Vector2 minus(Vector2 o) {
+        return this.plus(o.invert());
     }
 
     public Vector2 scalar(double k) {
@@ -40,8 +40,16 @@ public record Vector2(double x, double y) {
         return this.x * o.x + this.y * o.y;
     }
 
+    public Vector2 distanceTo(Vector2 o) {
+        return new Vector2(o.x - this.x, o.y - this.y);
+    }
+
+    public double distanceValueTo(Vector2 o) {
+        return new Vector2(o.x - this.x, o.y - this.y).length();
+    }
+
     @Override
-    public String toString() {
-        return "(" + String.format("%.2f", x) + ", " + String.format("%.2f", y) + ")";
+    public @org.jspecify.annotations.Nullable String toString() {
+        return String.format("%.2f, %.2f", x, y);
     }
 }
