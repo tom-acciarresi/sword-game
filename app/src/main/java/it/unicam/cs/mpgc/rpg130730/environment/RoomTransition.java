@@ -10,7 +10,8 @@ public class RoomTransition extends Rectangle {
     // #region constructors
     public RoomTransition(RoomTransitionData data) {
         transitionData = data;
-        setFill(new Color(44 / 255.0, 29 / 255.0, 14 / 255.0, 1));
+        Color DOOR_COLOR = new Color(44 / 255.0, 29 / 255.0, 14 / 255.0, 1);
+        setFill(DOOR_COLOR);
         setViewOrder(-1);
     }
 

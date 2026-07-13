@@ -20,9 +20,9 @@ public class TileGrid extends GridPane {
     public TileGrid() {
     }
 
-    public TileGrid(int[] tileArragementData) {
+    public TileGrid(int[] tileData) {
         this();
-        changeTileMapTo(tileArragementData);
+        changeTileMapTo(tileData);
     }
     // #endregion
 
@@ -37,14 +37,14 @@ public class TileGrid extends GridPane {
     }
     // #endregion
 
-    public void changeTileMapTo(int[] tileArragementData) {
+    public void changeTileMapTo(int[] tileData) {
         Tile[] tiles = getTiles();
         for (int i = 0; i < TILE_AMOUNT; i++) {
             Tile currTile = tiles[i];
             if (currTile.getInfo().canCollide())
                 CollisionSystem.removeCollidableTile(currTile);
 
-            currTile.changeTileTo(tileArragementData[i]);
+            currTile.changeTileTo(tileData[i]);
 
             if (currTile.getInfo().canCollide())
                 CollisionSystem.addCollidableTile(currTile);

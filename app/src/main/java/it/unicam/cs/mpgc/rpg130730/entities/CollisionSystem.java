@@ -38,10 +38,6 @@ public class CollisionSystem {
     public static boolean removeRoomTransition(RoomTransition roomTransition) {
         return transitions.remove(roomTransition);
     }
-
-    public static Set<Enemy> getEnemies() {
-        return enemies;
-    }
     // #endregion
 
     public static boolean collidesWithTiles(Bounds bounds) {

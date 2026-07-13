@@ -118,49 +118,33 @@ public class Player extends Character2D {
     private void moveSword(Vector2 attackDirection) {
         sword.setVisible(true);
         if (attackDirection.equals(Vector2.LEFT)) {
-            sword.setTranslateX(-64 + 8);
-            sword.setTranslateY(16);
-            sword.setRotate(90);
+            changeSwordProperties(-56, 16, 90);
         } else if (attackDirection.equals(Vector2.RIGHT)) {
-            sword.setTranslateX(64 - 8);
-            sword.setTranslateY(16);
-            sword.setRotate(-90);
+            changeSwordProperties(56, 16, -90);
         } else if (attackDirection.equals(Vector2.UP)) {
-            sword.setTranslateX(0 - 12);
-            sword.setTranslateY(-64 + 8);
-            sword.setRotate(180);
+            changeSwordProperties(-12, -56, 180);
         } else if (attackDirection.equals(Vector2.DOWN)) {
-            sword.setTranslateX(-8);
-            sword.setTranslateY(64 - 8);
-            sword.setRotate(0);
+            changeSwordProperties(-8, 56, 0);
         } else
             throw new IllegalStateException("Attack direction not valid");
+    }
+
+    private void changeSwordProperties(double x, double y, double deg) {
+        sword.setTranslateX(x);
+        sword.setTranslateY(y);
+        sword.setRotate(deg);
     }
 
     private void hitScan() {
         Bounds hitBox = this.getBoundsInParent();
         if (hitBox == null)
             throw new NullPointerException();
-        // Launcher.getSceneManager().getLevelContainer().getChildren()
-        // .add(new Rectangle(bb.getMinX(), bb.getMinY(), bb.getWidth(),
-        // bb.getHeight()));
         Optional<Enemy> collidesWithEnemy = CollisionSystem.collidesWithEnemy(hitBox);
         if (collidesWithEnemy.isPresent()) {
             Enemy enemy = collidesWithEnemy.get();
             enemy.setHealth(enemy.getHealth() - 1);
         }
     }
-
-    // Bounds swordHitBox = sword.getBoundsInParent();
-    // Launcher.getSceneManager().getLevelContainer().getChildren().add(new
-    // Rectangle(swordHitBox.getMinX(),
-    // swordHitBox.getMinY(), swordHitBox.getWidth(), swordHitBox.getHeight()));
-    // Optional<Enemy> enemyHit = CollisionSystem.collidesWithEnemy(swordHitBox);
-    // System.out.println(enemyHit);
-    // if (enemyHit.isPresent()) {
-    // Enemy enemyInstance = enemyHit.get();
-    // enemyInstance.setHealth(enemyInstance.getHealth() - DEFAULT_PLAYER_DAMAGE);
-    // }
 
     private void handleMovement(double timeDelta) {
         movementDirection = acceptsInput() ? InputMap.getMovementInput() : Vector2.ZERO;

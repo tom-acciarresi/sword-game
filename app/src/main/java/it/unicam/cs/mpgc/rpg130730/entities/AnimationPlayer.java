@@ -29,8 +29,8 @@ public class AnimationPlayer {
     private void setFrameIndex(int frameIndex) {
         this.frameIndex = frameIndex % currAnimation.getLength();
     }
-
     // #endregion
+
     public void tick() {
         if (currAnimation.fps() == 0)
             return;
