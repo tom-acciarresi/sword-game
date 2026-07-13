@@ -1,17 +1,22 @@
 [
     {
-        "index": 1,
+        "collides": "false",
         "filename": "tile1.png",
-        "collides": "false"
+        "index": 1
     },
     {
-        "index": 2,
+        "collides": "false",
         "filename": "tile2.png",
-        "collides": "false"
+        "index": 2
     },
     {
-        "index": 8,
+        "collides": "true",
         "filename": "wall.png",
-        "collides": "true"
+        "index": 8
+    },
+    {
+        "collides": "false",
+        "filename": "end.png",
+        "index": 9
     }
 ]
