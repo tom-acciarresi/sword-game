@@ -44,6 +44,12 @@ Run game on Linux:
 - ⬅, ⬆, ➡, ⬇ -- Directional attack (NOT IMPLEMENTED YET)
 - ESC -- Quit
 
+## Save Location
+
+Under the `{username}` folder in Windows, `/home/` in Linux
+
+`$user.home/Sword_Game/sav.dat`
+
 ## ABSOLUTELY NO AI was used in the making of this project
 
 <img src="https://github.com/waltzaround/RAID/blob/main/assets/NO-AI.png" alt="No AI was used in this project" width="200">
