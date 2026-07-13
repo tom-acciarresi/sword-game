@@ -41,7 +41,7 @@ Run game on Linux:
 ## Controls
 
 - W, A, S, D -- Movement
-- ⬅, ⬆, ➡, ⬇ -- Directional attack (NOT IMPLEMENTED YET)
+- ⬅, ⬆, ➡, ⬇ -- Directional attack
 - ESC -- Quit
 
 ## Save Location
