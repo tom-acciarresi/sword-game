@@ -6,6 +6,10 @@ import it.unicam.cs.mpgc.rpg130730.AssetLibrary;
 import it.unicam.cs.mpgc.rpg130730.util.datatypes.Vector2;
 
 public class Enemy extends Character2D {
+    // #region constants
+    private static final int DEFAULT_ENEMY_SPEED = 150;
+    // #endregion
+
     private EnemyData enemyData;
     private AnimationPlayer animationPlayer;
 
@@ -42,11 +46,13 @@ public class Enemy extends Character2D {
     }
 
     private void handleMovement(double timeDelta) {
-        Vector2 posDelta = getPosition().plus(currDirection.scalar(150 * timeDelta));
+        Vector2 posDelta = currDirection.scalar(DEFAULT_ENEMY_SPEED * timeDelta);
+
+        Vector2 newPos = getPosition().plus(posDelta);
 
         Vector2 oldPos = getPosition();
 
-        move(posDelta);
+        move(newPos);
 
         if (getPosition().equals(oldPos)) {
             currDirection = currDirection.invert();

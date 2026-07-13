@@ -1,16 +1,11 @@
 package it.unicam.cs.mpgc.rpg130730.entities;
 
-import java.util.Set;
-
 import it.unicam.cs.mpgc.rpg130730.AssetLibrary;
 import it.unicam.cs.mpgc.rpg130730.Launcher;
 import it.unicam.cs.mpgc.rpg130730.Updatable;
-import it.unicam.cs.mpgc.rpg130730.environment.SceneManager;
-import it.unicam.cs.mpgc.rpg130730.environment.Tile;
 import it.unicam.cs.mpgc.rpg130730.environment.TileGrid;
 import it.unicam.cs.mpgc.rpg130730.util.datatypes.Vector2;
 import javafx.geometry.BoundingBox;
-import javafx.geometry.Bounds;
 import javafx.scene.image.Image;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.ImagePattern;
@@ -46,7 +41,7 @@ public abstract class Character2D extends StackPane implements Updatable {
     }
     // #endregion
 
-    // #region set-get
+    // #region get-set
     public double getHealth() {
         return health;
     }
@@ -101,48 +96,37 @@ public abstract class Character2D extends StackPane implements Updatable {
                 newPos.x() + colliderOffset.x(),
                 newPos.y() + colliderOffset.y(),
                 colliderSize.x(),
-                colliderSize.y()).intersects(SceneManager.getTileMap().getBoundsInParent()));
+                colliderSize.y()).intersects(Launcher.getSceneManager().getTileMap().getBoundsInParent()));
     }
 
     private Vector2 calculateTileCollision(Vector2 newPos, Vector2 oldPos) {
-        Set<Tile> collTiles = CollisionSystem.getCollTiles();
-
         // Check horizontal collision
-        boolean intersectsX = getBoundsX(newPos, oldPos, collTiles);
+        boolean intersectsX = getBoundsX(newPos, oldPos);
 
         // Check vertical collision
-        boolean intersectsY = getBoundsY(newPos, oldPos, collTiles);
+        boolean intersectsY = getBoundsY(newPos, oldPos);
 
         // Don't update X if colliding horizontally
         // Don't update Y if colliding vertically
-        return new Vector2(intersectsX ? getPosition().x() : newPos.x(), intersectsY ? getPosition().y() : newPos.y());
+        return new Vector2(intersectsX ? oldPos.x() : newPos.x(), intersectsY ? oldPos.y() : newPos.y());
     }
 
-    private boolean getBoundsY(Vector2 newPos, Vector2 oldPos, Set<Tile> collTiles) {
-        boolean intersectsY = false;
-        BoundingBox boundsY = new BoundingBox(
-                oldPos.x() + colliderOffset.x(),
-                newPos.y() + colliderOffset.y(),
-                colliderSize.x(),
-                colliderSize.y());
-        intersectsY = collTiles.stream().anyMatch(t -> {
-            Bounds tileBounds = t.getBoundsInParent();
-            return tileBounds.intersects(boundsY);
-        });
-        return intersectsY;
-    }
-
-    private boolean getBoundsX(Vector2 newPos, Vector2 oldPos, Set<Tile> collTiles) {
-        boolean intersectsX = false;
+    private boolean getBoundsX(Vector2 newPos, Vector2 oldPos) {
         BoundingBox boundsX = new BoundingBox(
                 newPos.x() + colliderOffset.x(),
                 oldPos.y() + colliderOffset.y(),
                 colliderSize.x(),
                 colliderSize.y());
-        intersectsX = collTiles.stream().anyMatch(t -> {
-            Bounds tileBounds = t.getBoundsInParent();
-            return tileBounds.intersects(boundsX);
-        });
-        return intersectsX;
+        return CollisionSystem.collidesWithTiles(boundsX);
     }
+
+    private boolean getBoundsY(Vector2 newPos, Vector2 oldPos) {
+        BoundingBox boundsY = new BoundingBox(
+                oldPos.x() + colliderOffset.x(),
+                newPos.y() + colliderOffset.y(),
+                colliderSize.x(),
+                colliderSize.y());
+        return CollisionSystem.collidesWithTiles(boundsY);
+    }
+
 }

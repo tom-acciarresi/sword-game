@@ -20,10 +20,10 @@ public class HealthBar extends Group implements Updatable {
     private double healthPreviousFrame;
 
     // #region constructors
-    public HealthBar(Player p) {
+    public HealthBar(Player player) {
         subscribeToUpdates();
-        player = p;
-        healthPreviousFrame = p.getHealth();
+        this.player = player;
+        healthPreviousFrame = player.getHealth();
     }
     // #endregion
 

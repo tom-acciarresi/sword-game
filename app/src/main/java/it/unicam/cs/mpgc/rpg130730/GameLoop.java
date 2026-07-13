@@ -9,12 +9,18 @@ import javafx.animation.Timeline;
 
 public class GameLoop {
     private static Set<Updatable> objectsToUpdate = new HashSet<Updatable>();
-    private static Set<Updatable> objectsToAdd = new HashSet<Updatable>();
-    private static Set<Updatable> objectsToRemove = new HashSet<Updatable>();
 
     private static double timeDelta;
 
-    // #region set-get
+    // #region get-set
+    public static void startUpdating(Updatable obj) {
+        objectsToUpdate.add(obj);
+    }
+
+    public static void stopUpdating(Updatable obj) {
+        objectsToUpdate.remove(obj);
+    }
+
     public static double getTimeDelta() {
         return timeDelta;
     }
@@ -29,22 +35,9 @@ public class GameLoop {
         loop.play();
     }
 
-    public static void startUpdating(Updatable obj) {
-        objectsToAdd.add(obj);
-    }
-
-    public static void stopUpdating(Updatable obj) {
-        objectsToRemove.add(obj);
-    }
-
     private static void updateObjects(double timeDelta) {
         GameLoop.timeDelta = timeDelta;
 
-        objectsToUpdate.addAll(objectsToAdd);
-        objectsToAdd.clear();
-        objectsToUpdate.removeAll(objectsToRemove);
-        objectsToRemove.clear();
-
-        objectsToUpdate.stream().forEach(o -> o.update(timeDelta));
+        new HashSet<Updatable>(objectsToUpdate).stream().forEach(o -> o.update(timeDelta));
     }
 }

@@ -17,7 +17,7 @@ public class AnimationPlayer {
     }
     // #endregion
 
-    // #region set-get
+    // #region get-set
     public Animation getCurrAnimation() {
         return currAnimation;
     }

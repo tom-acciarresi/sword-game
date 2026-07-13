@@ -22,7 +22,7 @@ public class Launcher extends javafx.application.Application {
     private static Stage stage = new Stage();
     private static SceneManager sceneManager = new SceneManager();
 
-    // #region set-get
+    // #region get-set
     public static SceneManager getSceneManager() {
         return sceneManager;
     }

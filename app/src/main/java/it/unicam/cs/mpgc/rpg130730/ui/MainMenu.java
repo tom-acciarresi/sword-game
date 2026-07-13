@@ -22,8 +22,8 @@ public class MainMenu extends StackPane {
     public MainMenu() {
         createBackground();
         createElements();
-        setOnKeyPressed(e -> {
-            if (e.getCode() == KeyBind.QUIT.keyCode()) {
+        setOnKeyPressed(keyEvent -> {
+            if (keyEvent.getCode() == KeyBind.QUIT.keyCode()) {
                 Launcher.quitWithoutSaving();
             }
         });

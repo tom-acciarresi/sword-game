@@ -24,7 +24,7 @@ public class Tile extends StackPane {
     }
     // #endregion
 
-    // #region set-get
+    // #region get-set
     public TileData getInfo() {
         return info;
     }

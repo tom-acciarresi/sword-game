@@ -9,8 +9,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 
+import it.unicam.cs.mpgc.rpg130730.Launcher;
 import it.unicam.cs.mpgc.rpg130730.entities.Player;
-import it.unicam.cs.mpgc.rpg130730.environment.SceneManager;
 
 public class SaveSystem {
     // #region constants
@@ -20,9 +20,9 @@ public class SaveSystem {
     // #endregion
 
     public static void save() {
-        Player player = SceneManager.getPlayer();
+        Player player = Launcher.getSceneManager().getPlayer();
         SaveData data = new SaveData(
-                SceneManager.getCurrLevel(),
+                Launcher.getSceneManager().getCurrLevel(),
                 player.getPosition(),
                 player.getHealth(),
                 player.getKills());

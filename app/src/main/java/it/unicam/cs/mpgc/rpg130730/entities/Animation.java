@@ -3,7 +3,7 @@ package it.unicam.cs.mpgc.rpg130730.entities;
 import javafx.scene.image.Image;
 
 public record Animation(String identifier, Image[] frames, int fps) {
-    // #region set-get
+    // #region get-set
     public Image getFrame(int i) {
         Image image = frames[i];
         if (image == null)

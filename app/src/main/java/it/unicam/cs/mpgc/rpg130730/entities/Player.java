@@ -1,10 +1,12 @@
 package it.unicam.cs.mpgc.rpg130730.entities;
 
+import java.util.Optional;
+
 import it.unicam.cs.mpgc.rpg130730.AssetLibrary;
 import it.unicam.cs.mpgc.rpg130730.GameLoop;
 import it.unicam.cs.mpgc.rpg130730.InputMap;
-import it.unicam.cs.mpgc.rpg130730.KeyBind;
 import it.unicam.cs.mpgc.rpg130730.Launcher;
+import it.unicam.cs.mpgc.rpg130730.environment.RoomTransition;
 import it.unicam.cs.mpgc.rpg130730.persistence.SaveSystem;
 import it.unicam.cs.mpgc.rpg130730.util.datatypes.Vector2;
 import javafx.geometry.BoundingBox;
@@ -18,7 +20,7 @@ public class Player extends Character2D {
     private static final int HIT_COOLDOWN_FRAMES = 30;
     // #endregion
 
-    private Vector2 movementInput = Vector2.ZERO;
+    private Vector2 movementDirection = Vector2.ZERO;
     private boolean acceptsInput = true;
 
     private AnimationPlayer animationPlayer;
@@ -74,14 +76,16 @@ public class Player extends Character2D {
         handleMovement(timeDelta);
         handleAnimation();
         checkEnemyCollision();
+        checkRoomTransition();
     }
 
     private void handleMovement(double timeDelta) {
-        movementInput = acceptsInput ? getMovementInput() : Vector2.ZERO;
-        if (movementInput.equals(Vector2.ZERO))
+        movementDirection = acceptsInput ? InputMap.getMovementInput() : Vector2.ZERO;
+        if (movementDirection.equals(Vector2.ZERO))
             return;
-        double movementDelta = DEFAULT_PLAYER_SPEED * GameLoop.getTimeDelta();
-        Vector2 deltaPos = new Vector2(movementInput.x() * movementDelta, movementInput.y() * movementDelta);
+
+        double movementValue = DEFAULT_PLAYER_SPEED * GameLoop.getTimeDelta();
+        Vector2 deltaPos = new Vector2(movementDirection.x() * movementValue, movementDirection.y() * movementValue);
         Vector2 newPos = getPosition().plus(deltaPos);
 
         move(newPos);
@@ -89,36 +93,36 @@ public class Player extends Character2D {
 
     private void checkEnemyCollision() {
         if (cooldown > 0) {
+            this.getSprite().setVisible(System.currentTimeMillis() % 2 == 0);
             cooldown--;
             return;
         }
 
         BoundingBox playerBounds = this.getCollisionBounds();
-        boolean collision = CollisionSystem.getEnemies().stream().anyMatch(e -> {
-            BoundingBox enemyBounds = e.getCollisionBounds();
 
-            return enemyBounds.intersects(playerBounds);
-        });
-
-        if (collision) {
+        Optional<Enemy> enemy = CollisionSystem.collidesWithEnemy(playerBounds);
+        if (enemy.isPresent()) {
             cooldown = HIT_COOLDOWN_FRAMES;
-            collide();
+            Enemy enemyInstance = enemy.get();
+            if (enemyInstance == null)
+                throw new NullPointerException(enemyInstance + " enemy is null");
+            collide(enemyInstance);
         }
     }
 
-    private void collide() {
-        // TODO: knockback
+    private void collide(Enemy enemy) {
+        knockback(enemy.getPosition().distanceTo(this.getPosition()));
         setHealth(getHealth() - 1);
     }
 
-    private Vector2 getMovementInput() {
-        int horizontalAxis = (InputMap.isKeyPressed(KeyBind.LEFT) ? -1 : 0)
-                + (InputMap.isKeyPressed(KeyBind.RIGHT) ? +1 : 0);
+    private void knockback(Vector2 movementVector) {
+        this.move(getPosition().plus(movementVector));
+    }
 
-        int verticalAxis = (InputMap.isKeyPressed(KeyBind.UP) ? -1 : 0)
-                + (InputMap.isKeyPressed(KeyBind.DOWN) ? +1 : 0);
-
-        return new Vector2(horizontalAxis, verticalAxis).normalized();
+    private void checkRoomTransition() {
+        Optional<RoomTransition> transition = CollisionSystem.enteredTransition(getCollisionBounds());
+        if (transition.isPresent())
+            transition.get().enter();
     }
 
     private void handleAnimation() {
@@ -127,10 +131,10 @@ public class Player extends Character2D {
         animationPlayer.tick();
         setSprite(animationPlayer.getCurrFrame());
 
-        double x = movementInput.x(), y = movementInput.y();
+        double x = movementDirection.x(), y = movementDirection.y();
         String direction = Math.abs(x) > Math.abs(y) ? (x < 0 ? "left" : "right") : (y < 0 ? "up" : "down");
 
-        if (!acceptsInput || movementInput == Vector2.ZERO) {
+        if (!acceptsInput || movementDirection == Vector2.ZERO) {
             Animation newAnim = AssetLibrary.getAnimation("knight/idle_" + direction);
             if (animationPlayer.getCurrAnimation().equals(newAnim)) {
                 return;

@@ -56,7 +56,7 @@ public class AssetLibrary {
             TEXT_FONT = getFont("Sans", FontWeight.NORMAL, FontPosture.REGULAR, 24);
     // #endregion
 
-    // #region set-get
+    // #region get-set
     public static TileData getTileInfo(int i) {
         TileData info = TILE_INFO.get(i);
         if (info == null)

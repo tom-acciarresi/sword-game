@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import it.unicam.cs.mpgc.rpg130730.environment.Level;
+import it.unicam.cs.mpgc.rpg130730.util.datatypes.Vector2;
 import javafx.event.EventHandler;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -16,19 +17,29 @@ public class InputMap {
         inputListeningNode.getScene().setOnKeyReleased(onKeyReleased());
     }
 
-    // #region set-get
+    // #region get-set
     public static boolean isKeyPressed(KeyBind keyBind) {
         return currentlyPressedKeys.getOrDefault(keyBind.keyCode(), false);
     }
 
-    private static void setKeyPressed(KeyCode keyCode, boolean b) {
-        currentlyPressedKeys.put(keyCode, b);
+    private static void setKeyPressed(KeyCode keyCode, boolean bool) {
+        currentlyPressedKeys.put(keyCode, bool);
     }
     // #endregion
 
+    public static Vector2 getMovementInput() {
+        int horizontalAxis = (InputMap.isKeyPressed(KeyBind.LEFT) ? -1 : 0)
+                + (InputMap.isKeyPressed(KeyBind.RIGHT) ? +1 : 0);
+
+        int verticalAxis = (InputMap.isKeyPressed(KeyBind.UP) ? -1 : 0)
+                + (InputMap.isKeyPressed(KeyBind.DOWN) ? +1 : 0);
+
+        return new Vector2(horizontalAxis, verticalAxis).normalized();
+    }
+
     private static EventHandler<? super KeyEvent> onKeyPressed() {
-        return e -> {
-            KeyCode key = e.getCode();
+        return keyEvent -> {
+            KeyCode key = keyEvent.getCode();
             if (key == null)
                 throw new NullPointerException(key + "is not a valid keycode");
 
@@ -49,12 +60,13 @@ public class InputMap {
     }
 
     private static EventHandler<? super KeyEvent> onKeyReleased() {
-        return e -> {
-            KeyCode code = e.getCode();
+        return keyEvent -> {
+            KeyCode code = keyEvent.getCode();
             if (code == null)
                 throw new NullPointerException(code + "is not a valid keycode");
 
             InputMap.setKeyPressed(code, false);
         };
     }
+
 }

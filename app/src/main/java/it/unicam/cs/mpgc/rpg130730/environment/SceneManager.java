@@ -21,26 +21,27 @@ public class SceneManager extends Group {
     private static final Level INITIAL_LEVEL = Level.ROOM_1;
     // #endregion
 
-    private static Level currLevel = INITIAL_LEVEL;
-    private static TileGrid tilemap = new TileGrid();
+    private Level currLevel = INITIAL_LEVEL;
+    private TileGrid tilemap = new TileGrid();
 
     @SuppressWarnings("null")
-    private static Player player;
+    private Player player;
 
-    private static Set<Enemy> loadedEnemies = new HashSet<Enemy>();
+    private Set<Enemy> loadedEnemies = new HashSet<Enemy>();
+    private Set<RoomTransition> roomTransitions = new HashSet<RoomTransition>();
 
-    private static Group levelContainer = new Group();
+    private Group levelContainer = new Group();
 
     // #region get-set
-    public static Level getCurrLevel() {
+    public Level getCurrLevel() {
         return currLevel;
     }
 
-    public static TileGrid getTileMap() {
+    public TileGrid getTileMap() {
         return tilemap;
     }
 
-    public static Player getPlayer() {
+    public Player getPlayer() {
         return player;
     }
     // #endregion
@@ -58,6 +59,9 @@ public class SceneManager extends Group {
 
         player.setKills(savedata.kills());
         player.setHealth(savedata.health());
+
+        Vector2 spawnPos = calculatePlayerSpawnPos(savedata);
+        player.setPosition(spawnPos);
     }
 
     public void initialize(Level level) {
@@ -79,8 +83,9 @@ public class SceneManager extends Group {
         LevelData levelData = AssetLibrary.getLevelData(level.filename());
 
         currLevel = level;
-        loadTiles(levelData.tileArrangementData());
+        loadTiles(levelData.tileData());
         loadEnemies(levelData.enemyData());
+        loadRoomTransitions(levelData.transitions());
     }
 
     private void createLevelContainer() {
@@ -107,18 +112,89 @@ public class SceneManager extends Group {
     }
 
     private void loadNewEnemies(Map<Vector2, EnemyType> enemyData) {
-        enemyData.entrySet().stream().forEach(e -> {
-            EnemyType type = e.getValue();
+        enemyData.entrySet().stream().forEach(enemyEntry -> {
+            EnemyType type = enemyEntry.getValue();
 
             if (type == null)
                 throw new NullPointerException(type + " enemy type is null");
 
-            Vector2 pos = e.getKey();
-            Enemy newEnemy = new Enemy(type, pos.scalar(TileGrid.TILE_SIZE));
+            Vector2 pos = enemyEntry.getKey();
+
+            if (pos == null)
+                throw new NullPointerException(pos + " enemy pos is null");
+
+            Enemy newEnemy = new Enemy(type, pos);
+
             CollisionSystem.addEnemy(newEnemy);
             loadedEnemies.add(newEnemy);
             levelContainer.getChildren().add(newEnemy);
-
         });
+    }
+
+    private void loadRoomTransitions(Set<RoomTransitionData> transitions) {
+        deleteOldTransitions();
+        loadNewTransitions(transitions);
+    }
+
+    private void loadNewTransitions(Set<RoomTransitionData> transitions) {
+        transitions.stream().forEach(transitionData -> {
+            if (transitionData == null)
+                throw new NullPointerException(transitionData + " rt data is null");
+
+            Vector2 pos;
+            if (currLevel.equals(transitionData.roomA())) {
+                pos = transitionData.transitionLocationA();
+            } else if (currLevel.equals(transitionData.roomB())) {
+                pos = transitionData.transitionLocationB();
+            } else {
+                throw new IllegalArgumentException("Transition has nothing to do with current room");
+            }
+
+            RoomTransition newTransition = new RoomTransition(
+                    pos.x(),
+                    pos.y(),
+                    TileGrid.TILE_SIZE,
+                    TileGrid.TILE_SIZE,
+                    transitionData);
+
+            CollisionSystem.addRoomTransition(newTransition);
+            roomTransitions.add(newTransition);
+            levelContainer.getChildren().add(newTransition);
+        });
+    }
+
+    private void deleteOldTransitions() {
+        for (RoomTransition roomTransition : roomTransitions) {
+
+            if (roomTransition == null)
+                throw new NullPointerException(roomTransition + " rt data is null");
+
+            CollisionSystem.removeRoomTransition(roomTransition);
+            levelContainer.getChildren().remove(roomTransition);
+        }
+        roomTransitions.clear();
+    }
+
+    private Vector2 calculatePlayerSpawnPos(SaveData savedata) {
+        Set<Vector2> possibleSpawnCoords = new HashSet<Vector2>();
+        for (RoomTransition roomTransition : roomTransitions) {
+            RoomTransitionData data = roomTransition.getTransitionData();
+            if (data.roomA().equals(currLevel))
+                possibleSpawnCoords.add(data.playerSpawnA());
+            else
+                possibleSpawnCoords.add(data.playerSpawnB());
+        }
+
+        Vector2 playerPos = savedata.playerPos();
+        Vector2 spawnPos = possibleSpawnCoords.stream().min((vector1, vector2) -> {
+            if (vector1 == null || vector2 == null)
+                throw new NullPointerException(String.format("one of %s %s is null", vector1, vector2));
+
+            return Double.compare(playerPos.distanceValueTo(vector1), playerPos.distanceValueTo(vector2));
+        }).get();
+
+        if (spawnPos == null)
+            throw new NullPointerException(spawnPos + " spawn pos is null");
+        return spawnPos;
     }
 }

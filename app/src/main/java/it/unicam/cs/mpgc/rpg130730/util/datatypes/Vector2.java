@@ -44,6 +44,10 @@ public record Vector2(double x, double y) implements java.io.Serializable {
         return new Vector2(o.x - this.x, o.y - this.y);
     }
 
+    public double distanceValueTo(Vector2 o) {
+        return new Vector2(o.x - this.x, o.y - this.y).length();
+    }
+
     @Override
     public @org.jspecify.annotations.Nullable String toString() {
         return String.format("%.2f, %.2f", x, y);

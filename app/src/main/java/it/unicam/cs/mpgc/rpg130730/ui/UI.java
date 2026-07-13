@@ -13,9 +13,9 @@ public class UI extends Pane {
     private static final Vector2 HP_BAR_POS = new Vector2(624, 16);
 
     // #region constructors
-    public UI(Player p) {
+    public UI(Player player) {
         createBackground();
-        HealthBar healthBar = new HealthBar(p);
+        HealthBar healthBar = new HealthBar(player);
         healthBar.setLayoutX(HP_BAR_POS.x());
         healthBar.setLayoutY(HP_BAR_POS.y());
         this.getChildren().add(healthBar);

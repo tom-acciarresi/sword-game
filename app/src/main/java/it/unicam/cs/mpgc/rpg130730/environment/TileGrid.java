@@ -26,7 +26,7 @@ public class TileGrid extends GridPane {
     }
     // #endregion
 
-    // #region set-get
+    // #region get-set
     public Tile[] getTiles() {
         Tile[] arr = Arrays.stream(tileGrid).flatMap(Stream::of).toArray(Tile[]::new);
 
