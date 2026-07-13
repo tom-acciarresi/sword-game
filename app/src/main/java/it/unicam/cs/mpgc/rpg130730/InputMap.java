@@ -3,7 +3,6 @@ package it.unicam.cs.mpgc.rpg130730;
 import java.util.HashMap;
 import java.util.Map;
 
-import it.unicam.cs.mpgc.rpg130730.environment.Level;
 import it.unicam.cs.mpgc.rpg130730.util.datatypes.Vector2;
 import javafx.event.EventHandler;
 import javafx.scene.input.KeyCode;
@@ -25,7 +24,6 @@ public class InputMap {
     private static void setKeyPressed(KeyCode keyCode, boolean bool) {
         currentlyPressedKeys.put(keyCode, bool);
     }
-    // #endregion
 
     public static Vector2 getMovementInput() {
         int horizontalAxis = (InputMap.isKeyPressed(KeyBind.LEFT) ? -1 : 0)
@@ -37,22 +35,25 @@ public class InputMap {
         return new Vector2(horizontalAxis, verticalAxis).normalized();
     }
 
+    public static Vector2 getAttackDirection() {
+        int horizontalAxis = (InputMap.isKeyPressed(KeyBind.ATTACK_L) ? -1 : 0)
+                + (InputMap.isKeyPressed(KeyBind.ATTACK_R) ? +1 : 0);
+
+        int verticalAxis = (InputMap.isKeyPressed(KeyBind.ATTACK_U) ? -1 : 0)
+                + (InputMap.isKeyPressed(KeyBind.ATTACK_D) ? +1 : 0);
+
+        return new Vector2(horizontalAxis, verticalAxis).normalized();
+    };
+    // #endregion
+
     private static EventHandler<? super KeyEvent> onKeyPressed() {
         return keyEvent -> {
             KeyCode key = keyEvent.getCode();
             if (key == null)
-                throw new NullPointerException(key + "is not a valid keycode");
+                throw new NullPointerException();
 
-            if (key == KeyBind.QUIT.keyCode()) {
+            if (key.equals(KeyBind.QUIT.keyCode())) {
                 Launcher.saveAndQuit();
-            }
-
-            // TODO: just for debug
-            if (key == KeyCode.DIGIT1) {
-                Launcher.getSceneManager().loadLevel(Level.ROOM_1);
-            }
-            if (key == KeyCode.DIGIT2) {
-                Launcher.getSceneManager().loadLevel(Level.ROOM_2);
             }
 
             InputMap.setKeyPressed(key, true);
@@ -63,7 +64,7 @@ public class InputMap {
         return keyEvent -> {
             KeyCode code = keyEvent.getCode();
             if (code == null)
-                throw new NullPointerException(code + "is not a valid keycode");
+                throw new NullPointerException();
 
             InputMap.setKeyPressed(code, false);
         };

@@ -30,14 +30,9 @@ public abstract class Character2D extends StackPane implements Updatable {
     public Character2D() {
         subscribeToUpdates();
 
-        this.getChildren().add(getSprite());
+        this.getChildren().add(sprite);
 
         setPosition(Launcher.LEVEL_CENTER);
-    }
-
-    public Character2D(Vector2 position) {
-        this();
-        setPosition(position);
     }
     // #endregion
 
@@ -57,8 +52,8 @@ public abstract class Character2D extends StackPane implements Updatable {
     public void setPosition(Vector2 newPos) {
         position = newPos;
 
-        setTranslateX(position.x());
-        setTranslateY(position.y());
+        this.setTranslateX(position.x());
+        this.setTranslateY(position.y());
     }
 
     public Rectangle getSprite() {

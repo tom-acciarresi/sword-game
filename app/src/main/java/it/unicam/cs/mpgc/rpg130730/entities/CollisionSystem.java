@@ -38,6 +38,10 @@ public class CollisionSystem {
     public static boolean removeRoomTransition(RoomTransition roomTransition) {
         return transitions.remove(roomTransition);
     }
+
+    public static Set<Enemy> getEnemies() {
+        return enemies;
+    }
     // #endregion
 
     public static boolean collidesWithTiles(Bounds bounds) {
@@ -54,7 +58,7 @@ public class CollisionSystem {
         }).findFirst();
 
         if (enemyOptional == null)
-            throw new NullPointerException(enemyOptional + " is null");
+            throw new NullPointerException();
 
         return enemyOptional;
     }
@@ -67,7 +71,7 @@ public class CollisionSystem {
                 }).findFirst();
 
         if (transitionOptional == null)
-            throw new NullPointerException(transitionOptional + " is null");
+            throw new NullPointerException();
 
         return transitionOptional;
     }

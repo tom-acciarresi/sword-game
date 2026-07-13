@@ -60,21 +60,21 @@ public class AssetLibrary {
     public static TileData getTileInfo(int i) {
         TileData info = TILE_INFO.get(i);
         if (info == null)
-            throw new NullPointerException(info + " is not valid tile info");
+            throw new NullPointerException();
         return info;
     }
 
     public static LevelData getLevelData(String s) {
         LevelData levelData = LEVEL_DATA.get(s);
         if (levelData == null)
-            throw new NullPointerException(levelData + " is not valid level data");
+            throw new NullPointerException();
         return levelData;
     }
 
     public static Animation getAnimation(String s) {
         Animation animation = ANIMATIONS.get(s);
         if (animation == null)
-            throw new NullPointerException(animation + " is not a valid animation");
+            throw new NullPointerException();
         return animation;
     }
 

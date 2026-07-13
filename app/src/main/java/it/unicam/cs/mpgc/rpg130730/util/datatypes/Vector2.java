@@ -20,6 +20,26 @@ public record Vector2(double x, double y) implements java.io.Serializable {
         return new Vector2(x / length, y / length);
     }
 
+    public Vector2 closestCardinalVector() {
+        return Math.abs(x) > Math.abs(y)
+                ? (x < 0
+                        ? Vector2.LEFT
+                        : Vector2.RIGHT)
+                : (y < 0
+                        ? Vector2.UP
+                        : Vector2.DOWN);
+    }
+
+    public String cardinalDirectionString() {
+        return Math.abs(x) > Math.abs(y)
+                ? (x < 0
+                        ? "left"
+                        : "right")
+                : (y < 0
+                        ? "up"
+                        : "down");
+    }
+
     public Vector2 invert() {
         return new Vector2(-x, -y);
     }
@@ -49,7 +69,10 @@ public record Vector2(double x, double y) implements java.io.Serializable {
     }
 
     @Override
-    public @org.jspecify.annotations.Nullable String toString() {
-        return String.format("%.2f, %.2f", x, y);
+    public String toString() {
+        String output = String.format("%.2f, %.2f", x, y);
+        if (output == null)
+            throw new NullPointerException();
+        return output;
     }
 }

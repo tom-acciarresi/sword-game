@@ -44,6 +44,10 @@ public class SceneManager extends Group {
     public Player getPlayer() {
         return player;
     }
+
+    public Group getLevelContainer() {
+        return levelContainer;
+    }
     // #endregion
 
     public void loadMainMenu() {
@@ -103,12 +107,18 @@ public class SceneManager extends Group {
     }
 
     private void deleteOldEnemies() {
-        for (Enemy enemy : loadedEnemies) {
-            enemy.unsubscribeFromUpdates();
-            CollisionSystem.removeEnemy(enemy);
-            levelContainer.getChildren().remove(enemy);
-        }
+        loadedEnemies.stream().forEach(enemy -> {
+            if (enemy == null)
+                throw new NullPointerException();
+            deleteEnemy(enemy);
+        });
         loadedEnemies.clear();
+    }
+
+    public void deleteEnemy(Enemy enemy) {
+        enemy.unsubscribeFromUpdates();
+        CollisionSystem.removeEnemy(enemy);
+        levelContainer.getChildren().remove(enemy);
     }
 
     private void loadNewEnemies(Map<Vector2, EnemyType> enemyData) {
@@ -116,14 +126,15 @@ public class SceneManager extends Group {
             EnemyType type = enemyEntry.getValue();
 
             if (type == null)
-                throw new NullPointerException(type + " enemy type is null");
+                throw new NullPointerException();
 
             Vector2 pos = enemyEntry.getKey();
 
             if (pos == null)
-                throw new NullPointerException(pos + " enemy pos is null");
+                throw new NullPointerException();
 
-            Enemy newEnemy = new Enemy(type, pos);
+            Enemy newEnemy = new Enemy(type);
+            newEnemy.setPosition(pos);
 
             CollisionSystem.addEnemy(newEnemy);
             loadedEnemies.add(newEnemy);
@@ -139,7 +150,7 @@ public class SceneManager extends Group {
     private void loadNewTransitions(Set<RoomTransitionData> transitions) {
         transitions.stream().forEach(transitionData -> {
             if (transitionData == null)
-                throw new NullPointerException(transitionData + " rt data is null");
+                throw new NullPointerException();
 
             Vector2 pos;
             if (currLevel.equals(transitionData.roomA())) {
@@ -164,37 +175,37 @@ public class SceneManager extends Group {
     }
 
     private void deleteOldTransitions() {
-        for (RoomTransition roomTransition : roomTransitions) {
-
+        roomTransitions.stream().forEach(roomTransition -> {
             if (roomTransition == null)
-                throw new NullPointerException(roomTransition + " rt data is null");
+                throw new NullPointerException();
+            deleteRoomTransition(roomTransition);
 
-            CollisionSystem.removeRoomTransition(roomTransition);
-            levelContainer.getChildren().remove(roomTransition);
-        }
+        });
         roomTransitions.clear();
+    }
+
+    private void deleteRoomTransition(RoomTransition roomTransition) {
+        CollisionSystem.removeRoomTransition(roomTransition);
+        levelContainer.getChildren().remove(roomTransition);
     }
 
     private Vector2 calculatePlayerSpawnPos(SaveData savedata) {
         Set<Vector2> possibleSpawnCoords = new HashSet<Vector2>();
-        for (RoomTransition roomTransition : roomTransitions) {
+        roomTransitions.stream().forEach(roomTransition -> {
             RoomTransitionData data = roomTransition.getTransitionData();
-            if (data.roomA().equals(currLevel))
-                possibleSpawnCoords.add(data.playerSpawnA());
-            else
-                possibleSpawnCoords.add(data.playerSpawnB());
-        }
+            possibleSpawnCoords.add(data.roomA().equals(currLevel) ? data.playerSpawnA() : data.playerSpawnB());
+        });
 
         Vector2 playerPos = savedata.playerPos();
         Vector2 spawnPos = possibleSpawnCoords.stream().min((vector1, vector2) -> {
             if (vector1 == null || vector2 == null)
-                throw new NullPointerException(String.format("one of %s %s is null", vector1, vector2));
+                throw new NullPointerException();
 
             return Double.compare(playerPos.distanceValueTo(vector1), playerPos.distanceValueTo(vector2));
         }).get();
 
         if (spawnPos == null)
-            throw new NullPointerException(spawnPos + " spawn pos is null");
+            throw new NullPointerException();
         return spawnPos;
     }
 }

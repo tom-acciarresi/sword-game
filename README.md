@@ -28,7 +28,7 @@ cd sword-game
 
 Run game on Windows
 ```bash
-gradlew.bat run
+.\gradlew.bat run
 ```
 
 OR
