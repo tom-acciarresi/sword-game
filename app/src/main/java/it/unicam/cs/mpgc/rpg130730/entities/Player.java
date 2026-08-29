@@ -1,7 +1,5 @@
 package it.unicam.cs.mpgc.rpg130730.entities;
 
-import java.util.Objects;
-
 import it.unicam.cs.mpgc.rpg130730.AssetLibrary;
 import it.unicam.cs.mpgc.rpg130730.InputMap;
 import it.unicam.cs.mpgc.rpg130730.Launcher;
@@ -233,4 +231,50 @@ public class Player extends Character2D {
         SaveSystem.getInstance().deleteSave();
         Launcher.quitWithoutSaving();
     }
+
+    // public enum State {
+    // IDLE,
+    // WALK,
+    // ATTACK,
+    // HURT;
+
+    // private final String stringRepresentation;
+
+    // private State() {
+    // stringRepresentation = Objects.requireNonNull(this.toString().toLowerCase());
+    // }
+
+    // public String getStringRepresentation() {
+    // return stringRepresentation;
+    // }
+    // }
+
+    // public State currState = State.IDLE;
+
+    // private State decideState() {
+    // State output;
+    // switch (currState) {
+    // case State.IDLE:
+    // if (isAttacking)
+    // return State.ATTACK;
+    // if (!movementDirection.equals(Vector2.ZERO))
+    // return State.WALK;
+    // break;
+    // case State.WALK:
+    // if (isAttacking)
+    // return State.ATTACK;
+    // if (movementDirection.equals(Vector2.ZERO))
+    // return State.IDLE;
+    // break;
+    // case State.ATTACK:
+    // break;
+    // case State.HURT:
+    // if (damageCooldown <= 0)
+    // return State.IDLE;
+    // break;
+
+    // default:
+    // throw new IllegalStateException("Illegal State");
+    // }
+    // }
 }
