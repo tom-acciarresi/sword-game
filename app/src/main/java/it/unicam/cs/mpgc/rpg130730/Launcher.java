@@ -23,7 +23,6 @@ public class Launcher extends Application {
     @Override
     public void start(@Nullable Stage defaultStage) {
         // Load assets
-        // TODO async
         AssetLibrary.getInstance().initialize();
 
         // Create window
@@ -31,10 +30,11 @@ public class Launcher extends Application {
         initializeStage(stage);
 
         // Create tree with SceneManager as root
-        stage.setScene(new Scene(SceneManager.getInstance()));
+        SceneManager sceneManager = SceneManager.getInstance();
+        stage.setScene(new Scene(sceneManager));
 
         // Load main menu
-        SceneManager.getInstance().loadMainMenu();
+        sceneManager.loadMainMenu();
 
         // Adds title bar to window height
         stage.sizeToScene();

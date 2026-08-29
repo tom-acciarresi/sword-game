@@ -76,7 +76,7 @@ public class LevelEditor {
 
                                 Map.ofEntries(
                                                 entry(new Vector2(4, 3).scalar(64), EnemyType.PIG),
-                                                entry(new Vector2(9, 7).scalar(64), EnemyType.PIG)),
+                                                entry(new Vector2(8, 7).scalar(64), EnemyType.PIG)),
 
                                 new HashSet<RoomTransitionData>(Arrays.asList(
                                                 door1, door2)));

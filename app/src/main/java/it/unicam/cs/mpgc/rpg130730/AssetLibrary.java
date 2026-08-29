@@ -9,8 +9,12 @@ import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import org.jspecify.annotations.Nullable;
 
@@ -100,18 +104,42 @@ public class AssetLibrary {
     // #endregion
 
     public void initialize() {
-        FileResourceReader fr = new FileResourceReader();
-        ImageResourceLoader il = new ImageResourceLoader();
-
-        loadTileSprites(il, fr);
-
-        loadEntitySprites("knight", il, fr);
-        loadEntitySprites("pig", il, fr);
-
-        loadLevelData();
+        loadAssets(getAssetsToLoadAsTasks());
     }
 
-    private void loadTileSprites(ImageResourceLoader il, FileResourceReader fr) {
+    private void loadAssets(List<Runnable> tasks) {
+        ExecutorService pool = Executors.newWorkStealingPool();
+        tasks.parallelStream().forEach((t) -> {
+            pool.execute(t);
+        });
+
+        pool.shutdown();
+        try {
+            pool.awaitTermination(10, TimeUnit.SECONDS);
+        } catch (InterruptedException e) {
+            pool.shutdownNow();
+        }
+    }
+
+    private List<Runnable> getAssetsToLoadAsTasks() {
+        List<Runnable> tasks;
+        Runnable t1 = () -> {
+            loadTileSprites();
+        };
+        Runnable t2 = () -> {
+            loadEntitySprites("knight");
+        };
+        Runnable t3 = () -> {
+            loadEntitySprites("pig");
+        };
+        Runnable t4 = () -> {
+            loadLevelData();
+        };
+        tasks = Arrays.asList(t1, t2, t3, t4);
+        return Objects.requireNonNull(tasks);
+    }
+
+    private void loadTileSprites() {
         Gson gson = new GsonBuilder()
                 .registerTypeAdapter(TileData.class, (JsonDeserializer<TileData>) (JsonElement json,
                         Type typeOfT, JsonDeserializationContext context) -> {
@@ -119,7 +147,7 @@ public class AssetLibrary {
 
                     int index = jObject.get("index").getAsInt();
                     String filename = jObject.get("filename").getAsString();
-                    Image sprite = il.load(TILE_DIR_PREFIX + filename);
+                    Image sprite = new ImageResourceLoader().load(TILE_DIR_PREFIX + filename);
                     boolean collides = jObject.get("collides").getAsBoolean();
 
                     TileData tileData = new TileData(index, sprite, collides);
@@ -129,12 +157,11 @@ public class AssetLibrary {
                     return tileData;
                 }).create();
 
-        String tileInfoFile = fr.read(TILE_INFO_FILE);
+        String tileInfoFile = new FileResourceReader().read(TILE_INFO_FILE);
         gson.fromJson(tileInfoFile, TileData[].class);
     }
 
-    private void loadEntitySprites(String entityIdentifier, ImageResourceLoader il,
-            FileResourceReader fr) {
+    private void loadEntitySprites(String entityIdentifier) {
         Gson gson = new GsonBuilder()
                 .registerTypeAdapter(Animation.class, (JsonDeserializer<Animation>) (JsonElement json,
                         Type typeOfT, JsonDeserializationContext context) -> {
@@ -156,7 +183,7 @@ public class AssetLibrary {
                         // Don't load same sprite twice
                         if (!ANIMATION_SPRITES.containsKey(frameIdentifier)) {
                             String filepath = ENTITY_DIR_PREFIX + frameIdentifier;
-                            currFrame = il.load(filepath);
+                            currFrame = new ImageResourceLoader().load(filepath);
                             ANIMATION_SPRITES.put(frameIdentifier, currFrame);
                         } else {
                             currFrame = ANIMATION_SPRITES.get(frameIdentifier);
@@ -170,7 +197,8 @@ public class AssetLibrary {
                     return animation;
                 }).create();
 
-        String animationsFile = fr.read(ENTITY_DIR_PREFIX + entityIdentifier + ENTITY_INFO_SUFFIX);
+        String animationsFile = new FileResourceReader()
+                .read(ENTITY_DIR_PREFIX + entityIdentifier + ENTITY_INFO_SUFFIX);
         gson.fromJson(animationsFile, Animation[].class);
     }
 

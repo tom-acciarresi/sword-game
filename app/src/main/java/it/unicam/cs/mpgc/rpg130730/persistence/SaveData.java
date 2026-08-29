@@ -1,5 +1,7 @@
 package it.unicam.cs.mpgc.rpg130730.persistence;
 
+import java.io.Serializable;
+
 import org.jspecify.annotations.Nullable;
 
 import it.unicam.cs.mpgc.rpg130730.environment.Level;
@@ -15,7 +17,7 @@ import it.unicam.cs.mpgc.rpg130730.util.datatypes.Vector2;
  *
  * @author Tommaso Acciarresi
  */
-public record SaveData(Level level, Vector2 playerPos, double health, int kills) implements java.io.Serializable {
+public record SaveData(Level level, Vector2 playerPos, double health, int kills) implements Serializable {
     @Override
     public final @Nullable String toString() {
         return String.format("level: %s, playerPos: %s, health: %.1f, kills: %d",

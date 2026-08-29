@@ -14,12 +14,12 @@ import it.unicam.cs.mpgc.rpg130730.util.datatypes.Vector2;
 public class Enemy extends Character2D {
     // #region constants
     private static final int DEFAULT_ENEMY_SPEED = 150;
+
+    private final EnemyData enemyData;
+    private final AnimationPlayer animationPlayer;
+    private final Vector2 initialDirection;
     // #endregion
 
-    private EnemyData enemyData;
-    private AnimationPlayer animationPlayer;
-
-    private Vector2 initialDirection;
     private Vector2 currDirection;
 
     // #region constructors

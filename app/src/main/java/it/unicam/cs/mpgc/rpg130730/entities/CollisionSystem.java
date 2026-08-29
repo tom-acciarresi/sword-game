@@ -19,11 +19,13 @@ import javafx.geometry.Bounds;
  * @author Tommaso Acciarresi
  */
 public class CollisionSystem {
-    private static @Nullable CollisionSystem instance;
+    // #region constants
+    private final Set<Tile> collTiles = new HashSet<Tile>();
+    private final Set<Enemy> enemies = new HashSet<Enemy>();
+    private final Set<RoomTransition> transitions = new HashSet<RoomTransition>();
+    // #endregion
 
-    private Set<Tile> collTiles = new HashSet<Tile>();
-    private Set<Enemy> enemies = new HashSet<Enemy>();
-    private Set<RoomTransition> transitions = new HashSet<RoomTransition>();
+    private static @Nullable CollisionSystem instance;
 
     // #region get-set
     public static CollisionSystem getInstance() {

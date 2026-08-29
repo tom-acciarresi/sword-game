@@ -1,5 +1,6 @@
 package it.unicam.cs.mpgc.rpg130730.environment;
 
+import java.io.Serializable;
 import java.util.Map;
 import java.util.Set;
 
@@ -18,7 +19,7 @@ import it.unicam.cs.mpgc.rpg130730.util.datatypes.Vector2;
  * @author Tommaso Acciarresi
  */
 public record LevelData(int[] tileData, Map<Vector2, EnemyType> enemyData, Set<RoomTransitionData> transitions)
-        implements java.io.Serializable {
+        implements Serializable {
     @Override
     public final @Nullable String toString() {
         StringBuilder sb = new StringBuilder();

@@ -17,13 +17,13 @@ public class Tile extends StackPane {
     public static final TileData NULL_TILE = new TileData(
             0,
             AssetLibrary.MISSING_SPRITE, false);
+    private final Rectangle sprite = new Rectangle(
+            TileGrid.TILE_SIZE,
+            TileGrid.TILE_SIZE,
+            new ImagePattern(NULL_TILE.sprite()));
     // #endregion
 
     private TileData info = NULL_TILE;
-    private Rectangle sprite = new Rectangle(
-            TileGrid.TILE_SIZE,
-            TileGrid.TILE_SIZE,
-            new ImagePattern(info.sprite()));
 
     // #region constructors
     public Tile() {
