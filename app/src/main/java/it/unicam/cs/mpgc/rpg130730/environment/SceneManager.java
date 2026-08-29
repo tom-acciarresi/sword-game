@@ -53,6 +53,12 @@ public class SceneManager extends Group {
     // #endregion
 
     // #region get-set
+    public static SceneManager getInstance() {
+        if (instance == null)
+            instance = new SceneManager();
+        return Objects.requireNonNull(instance);
+    }
+
     public Level getCurrLevel() {
         return currLevel;
     }
@@ -69,12 +75,6 @@ public class SceneManager extends Group {
         return levelContainer;
     }
     // #endregion
-
-    public static SceneManager getInstance() {
-        if (instance == null)
-            instance = new SceneManager();
-        return Objects.requireNonNull(instance);
-    }
 
     public void loadMainMenu() {
         this.getChildren().add(new MainMenu());
@@ -102,11 +102,11 @@ public class SceneManager extends Group {
         this.getChildren().addAll(new UI(p));
 
         // Start reading input
-        InputMap.initialize(this);
+        InputMap.getInstance().initialize(this);
     }
 
     public void loadLevel(Level level) {
-        LevelData levelData = AssetLibrary.getLevelData(level.filename());
+        LevelData levelData = AssetLibrary.getInstance().getLevelData(level.filename());
 
         currLevel = level;
         loadTiles(levelData.tileData());
@@ -139,7 +139,7 @@ public class SceneManager extends Group {
 
     public void deleteEnemy(Enemy enemy) {
         enemy.unsubscribeFromUpdates();
-        CollisionSystem.removeEnemy(enemy);
+        CollisionSystem.getInstance().removeEnemy(enemy);
         levelContainer.getChildren().remove(enemy);
     }
 
@@ -158,7 +158,7 @@ public class SceneManager extends Group {
             Enemy newEnemy = new Enemy(type);
             newEnemy.setPosition(pos);
 
-            CollisionSystem.addEnemy(newEnemy);
+            CollisionSystem.getInstance().addEnemy(newEnemy);
             loadedEnemies.add(newEnemy);
             levelContainer.getChildren().add(newEnemy);
         });
@@ -190,7 +190,7 @@ public class SceneManager extends Group {
                     TileGrid.TILE_SIZE,
                     transitionData);
 
-            CollisionSystem.addRoomTransition(newTransition);
+            CollisionSystem.getInstance().addRoomTransition(newTransition);
             roomTransitions.add(newTransition);
             levelContainer.getChildren().add(newTransition);
         });
@@ -207,7 +207,7 @@ public class SceneManager extends Group {
     }
 
     private void deleteRoomTransition(RoomTransition roomTransition) {
-        CollisionSystem.removeRoomTransition(roomTransition);
+        CollisionSystem.getInstance().removeRoomTransition(roomTransition);
         levelContainer.getChildren().remove(roomTransition);
     }
 

@@ -30,7 +30,8 @@ public class Enemy extends Character2D {
         initialDirection = getRandomStartingDirection();
         currDirection = initialDirection;
 
-        animationPlayer = new AnimationPlayer(AssetLibrary.getAnimation(enemyData.identifier() + "/idle_down"));
+        animationPlayer = new AnimationPlayer(
+                AssetLibrary.getInstance().getAnimation(enemyData.identifier() + "/idle_down"));
         setSprite(animationPlayer.getCurrFrame());
 
         setHealth(enemyData.health());
@@ -89,7 +90,7 @@ public class Enemy extends Character2D {
         String direction = Math.abs(x) > Math.abs(y) ? (x < 0 ? "left" : "right") : (y < 0 ? "up" : "down");
 
         if (currDirection.equals(Vector2.ZERO)) {
-            Animation newAnim = AssetLibrary.getAnimation(enemyData.identifier() + "/idle_" + direction);
+            Animation newAnim = AssetLibrary.getInstance().getAnimation(enemyData.identifier() + "/idle_" + direction);
             if (animationPlayer.getCurrAnimation().equals(newAnim)) {
                 return;
             }
@@ -97,7 +98,7 @@ public class Enemy extends Character2D {
             return;
         }
 
-        Animation newAnim = AssetLibrary.getAnimation(enemyData.identifier() + "/walk_" + direction);
+        Animation newAnim = AssetLibrary.getInstance().getAnimation(enemyData.identifier() + "/walk_" + direction);
         if (animationPlayer.getCurrAnimation().equals(newAnim)) {
             return;
         }

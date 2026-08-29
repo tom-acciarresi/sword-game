@@ -24,7 +24,7 @@ public class Launcher extends Application {
     public void start(@Nullable Stage defaultStage) {
         // Load assets
         // TODO async
-        AssetLibrary.initialize();
+        AssetLibrary.getInstance().initialize();
 
         // Create window
         Stage stage = new Stage();
@@ -44,7 +44,7 @@ public class Launcher extends Application {
     }
 
     public static void saveAndQuit() {
-        SaveSystem.save();
+        SaveSystem.getInstance().save();
         Platform.exit();
     }
 

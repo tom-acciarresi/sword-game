@@ -1,7 +1,5 @@
 package it.unicam.cs.mpgc.rpg130730.entities;
 
-import java.util.Optional;
-
 import it.unicam.cs.mpgc.rpg130730.AssetLibrary;
 import it.unicam.cs.mpgc.rpg130730.InputMap;
 import it.unicam.cs.mpgc.rpg130730.Launcher;
@@ -47,7 +45,7 @@ public class Player extends Character2D {
         super();
         setHealth(DEFAULT_HEALTH);
 
-        animationPlayer = new AnimationPlayer(AssetLibrary.getAnimation("knight/idle_down"));
+        animationPlayer = new AnimationPlayer(AssetLibrary.getInstance().getAnimation("knight/idle_down"));
         this.setSprite(animationPlayer.getCurrFrame());
 
         sword.setVisible(false);
@@ -99,7 +97,7 @@ public class Player extends Character2D {
             return;
         }
 
-        attackDirection = InputMap.getAttackDirection();
+        attackDirection = InputMap.getInstance().getAttackDirection();
         if (attackDirection.equals(Vector2.ZERO))
             return;
 
@@ -145,15 +143,14 @@ public class Player extends Character2D {
         Bounds hitBox = this.getBoundsInParent();
         if (hitBox == null)
             throw new NullPointerException();
-        Optional<Enemy> collidesWithEnemy = CollisionSystem.collidesWithEnemy(hitBox);
-        if (collidesWithEnemy.isPresent()) {
-            Enemy enemy = collidesWithEnemy.get();
+        Enemy enemy = CollisionSystem.getInstance().collidesWithEnemy(hitBox);
+        if (enemy != null) {
             enemy.setHealth(enemy.getHealth() - 1);
         }
     }
 
     private void handleMovement(double timeDelta) {
-        movementDirection = acceptsInput() ? InputMap.getMovementInput() : Vector2.ZERO;
+        movementDirection = acceptsInput() ? InputMap.getInstance().getMovementInput() : Vector2.ZERO;
         if (movementDirection.equals(Vector2.ZERO))
             return;
 
@@ -179,13 +176,10 @@ public class Player extends Character2D {
         this.getSprite().setVisible(true);
         BoundingBox playerBounds = this.getCollisionBounds();
 
-        Optional<Enemy> enemy = CollisionSystem.collidesWithEnemy(playerBounds);
-        if (enemy.isPresent()) {
+        Enemy enemy = CollisionSystem.getInstance().collidesWithEnemy(playerBounds);
+        if (enemy != null) {
             damageCooldown = DAMAGE_COOLDOWN_FRAMES;
-            Enemy enemyInstance = enemy.get();
-            if (enemyInstance == null)
-                throw new NullPointerException();
-            collide(enemyInstance);
+            collide(enemy);
         }
     }
 
@@ -207,9 +201,9 @@ public class Player extends Character2D {
     }
 
     private void checkRoomTransition() {
-        Optional<RoomTransition> transition = CollisionSystem.enteredTransition(getCollisionBounds());
-        if (transition.isPresent())
-            transition.get().enter();
+        RoomTransition transition = CollisionSystem.getInstance().enteredTransition(getCollisionBounds());
+        if (transition != null)
+            transition.enter();
     }
 
     private void handleAnimation() {
@@ -227,13 +221,13 @@ public class Player extends Character2D {
         if (isAttacking)
             animationIdentifier = "knight/attack_" + attackDirection.cardinalDirectionString();
 
-        Animation newAnimation = AssetLibrary.getAnimation(animationIdentifier);
+        Animation newAnimation = AssetLibrary.getInstance().getAnimation(animationIdentifier);
         if (!animationPlayer.getCurrAnimation().equals(newAnimation))
             animationPlayer.changeTo(newAnimation);
     }
 
     private void gameOver() {
-        SaveSystem.deleteSave();
+        SaveSystem.getInstance().deleteSave();
         Launcher.quitWithoutSaving();
     }
 }

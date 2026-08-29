@@ -117,7 +117,7 @@ public abstract class Character2D extends StackPane implements Updatable {
                 oldPos.y() + colliderOffset.y(),
                 colliderSize.x(),
                 colliderSize.y());
-        return CollisionSystem.collidesWithTiles(boundsX);
+        return CollisionSystem.getInstance().collidesWithTiles(boundsX);
     }
 
     private boolean getBoundsY(Vector2 newPos, Vector2 oldPos) {
@@ -126,7 +126,7 @@ public abstract class Character2D extends StackPane implements Updatable {
                 newPos.y() + colliderOffset.y(),
                 colliderSize.x(),
                 colliderSize.y());
-        return CollisionSystem.collidesWithTiles(boundsY);
+        return CollisionSystem.getInstance().collidesWithTiles(boundsY);
     }
 
 }

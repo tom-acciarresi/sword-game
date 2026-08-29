@@ -48,12 +48,12 @@ public class TileGrid extends GridPane {
         for (int i = 0; i < TILE_AMOUNT; i++) {
             Tile currTile = tiles[i];
             if (currTile.getInfo().canCollide())
-                CollisionSystem.removeCollidableTile(currTile);
+                CollisionSystem.getInstance().removeCollidableTile(currTile);
 
             currTile.changeTileTo(tileArragementData[i]);
 
             if (currTile.getInfo().canCollide())
-                CollisionSystem.addCollidableTile(currTile);
+                CollisionSystem.getInstance().addCollidableTile(currTile);
         }
     }
 

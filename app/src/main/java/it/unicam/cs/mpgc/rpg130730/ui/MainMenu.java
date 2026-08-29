@@ -56,7 +56,7 @@ public class MainMenu extends StackPane {
     }
 
     private void continueGame() {
-        SaveData savedata = SaveSystem.load();
+        SaveData savedata = SaveSystem.getInstance().load();
         if (savedata == null) {
             newGame();
             return;

@@ -38,7 +38,7 @@ public class Tile extends StackPane {
     // #endregion
 
     public void changeTileTo(int index) {
-        TileData tileInfo = AssetLibrary.getTileInfo(index);
+        TileData tileInfo = AssetLibrary.getInstance().getTileInfo(index);
         info = tileInfo;
         sprite.setFill(new ImagePattern(info.sprite()));
     }

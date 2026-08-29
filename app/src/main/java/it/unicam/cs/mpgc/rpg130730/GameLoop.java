@@ -39,6 +39,12 @@ public class GameLoop {
     // #endregion
 
     // #region get-set
+    public static GameLoop getInstance() {
+        if (instance == null)
+            instance = new GameLoop();
+        return Objects.requireNonNull(instance);
+    }
+
     public void startUpdating(Updatable obj) {
         objectsToUpdate.add(obj);
     }
@@ -48,12 +54,6 @@ public class GameLoop {
     }
 
     // #endregion
-
-    public static GameLoop getInstance() {
-        if (instance == null)
-            instance = new GameLoop();
-        return Objects.requireNonNull(instance);
-    }
 
     public void start() {
         loop.play();

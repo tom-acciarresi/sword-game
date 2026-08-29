@@ -8,6 +8,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.util.Objects;
 
 import org.jspecify.annotations.Nullable;
 
@@ -26,7 +27,18 @@ public class SaveSystem {
     private static final String SAVE_LOCATION = SAVE_DIR + SAVE_FILENAME;
     // #endregion
 
-    public static void save() {
+    private static @Nullable SaveSystem instance;
+
+    // #region get-set
+    public static SaveSystem getInstance() {
+        if (instance == null) {
+            instance = new SaveSystem();
+        }
+        return Objects.requireNonNull(instance);
+    }
+    // #endregion
+
+    public void save() {
         Player player = SceneManager.getInstance().getPlayer();
         SaveData data = new SaveData(
                 SceneManager.getInstance().getCurrLevel(),
@@ -46,7 +58,7 @@ public class SaveSystem {
         }
     }
 
-    public static @Nullable SaveData load() {
+    public @Nullable SaveData load() {
         if (!Files.exists(Path.of(SAVE_LOCATION)))
             return null;
 
@@ -61,7 +73,7 @@ public class SaveSystem {
         return null;
     }
 
-    public static void deleteSave() {
+    public void deleteSave() {
         try {
             Files.deleteIfExists(Paths.get(SAVE_LOCATION));
         } catch (IOException e) {
