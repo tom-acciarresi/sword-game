@@ -5,6 +5,11 @@ import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+/**
+ * Reads files
+ *
+ * @author Tommaso Acciarresi
+ */
 public class FileResourceReader {
     public String read(String filepath) {
         try {

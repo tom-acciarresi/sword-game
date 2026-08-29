@@ -7,10 +7,16 @@ import it.unicam.cs.mpgc.rpg130730.entities.CollisionSystem;
 import it.unicam.cs.mpgc.rpg130730.util.datatypes.Vector2;
 import javafx.scene.layout.GridPane;
 
+/**
+ * 2D array of all the tiles that make up the ground
+ *
+ * @author Tommaso Acciarresi
+ */
 public class TileGrid extends GridPane {
     // #region constants
     public static final int TILE_SIZE = 64;
     public static final Vector2 TILEMAP_DIMENSIONS = new Vector2(12, 10);
+    public static final Vector2 TILEMAP_SIZE = TILEMAP_DIMENSIONS.scalar(TILE_SIZE);
     public static final int TILE_AMOUNT = (int) (TILEMAP_DIMENSIONS.x() * TILEMAP_DIMENSIONS.y());
     // #endregion
 
@@ -20,9 +26,9 @@ public class TileGrid extends GridPane {
     public TileGrid() {
     }
 
-    public TileGrid(int[] tileData) {
+    public TileGrid(int[] tileArragementData) {
         this();
-        changeTileMapTo(tileData);
+        changeTo(tileArragementData);
     }
     // #endregion
 
@@ -37,17 +43,17 @@ public class TileGrid extends GridPane {
     }
     // #endregion
 
-    public void changeTileMapTo(int[] tileData) {
+    public void changeTo(int[] tileArragementData) {
         Tile[] tiles = getTiles();
         for (int i = 0; i < TILE_AMOUNT; i++) {
             Tile currTile = tiles[i];
             if (currTile.getInfo().canCollide())
-                CollisionSystem.removeCollidableTile(currTile);
+                CollisionSystem.getInstance().removeCollidableTile(currTile);
 
-            currTile.changeTileTo(tileData[i]);
+            currTile.changeTileTo(tileArragementData[i]);
 
             if (currTile.getInfo().canCollide())
-                CollisionSystem.addCollidableTile(currTile);
+                CollisionSystem.getInstance().addCollidableTile(currTile);
         }
     }
 

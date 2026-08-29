@@ -1,5 +1,13 @@
 package it.unicam.cs.mpgc.rpg130730.util.datatypes;
 
+/**
+ * Tuple with double-typed components
+ *
+ * @param x
+ * @param y
+ *
+ * @author Tommaso Acciarresi
+ */
 public record Vector2(double x, double y) implements java.io.Serializable {
     public static final Vector2 ZERO = new Vector2(0.0, 0.0),
             LEFT = new Vector2(-1.0, 0.0),

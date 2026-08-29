@@ -3,6 +3,7 @@ package it.unicam.cs.mpgc.rpg130730.ui;
 import it.unicam.cs.mpgc.rpg130730.AssetLibrary;
 import it.unicam.cs.mpgc.rpg130730.KeyBind;
 import it.unicam.cs.mpgc.rpg130730.Launcher;
+import it.unicam.cs.mpgc.rpg130730.environment.SceneManager;
 import it.unicam.cs.mpgc.rpg130730.persistence.SaveData;
 import it.unicam.cs.mpgc.rpg130730.persistence.SaveSystem;
 import it.unicam.cs.mpgc.rpg130730.util.datatypes.Vector2;
@@ -11,11 +12,16 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 
+/**
+ * Main Menu
+ *
+ * @author Tommaso Acciarresi
+ */
 public class MainMenu extends StackPane {
     // #region constants
     public static final Vector2 MAIN_MENU_SIZE = new Vector2(
-            Launcher.LEVEL_SIZE.x(),
-            Launcher.LEVEL_SIZE.y() + UI.GUI_SIZE.y());
+            SceneManager.LEVEL_SIZE.x(),
+            SceneManager.LEVEL_SIZE.y() + UI.GUI_SIZE.y());
     // #endregion
 
     // #region constructors
@@ -45,19 +51,19 @@ public class MainMenu extends StackPane {
     }
 
     private void newGame() {
-        Launcher.getSceneManager().newGame();
-        Launcher.getSceneManager().getChildren().remove(this);
+        SceneManager.getInstance().initialize(null);
+        SceneManager.getInstance().getChildren().remove(this);
     }
 
     private void continueGame() {
-        SaveData savedata = SaveSystem.load();
+        SaveData savedata = SaveSystem.getInstance().load();
         if (savedata == null) {
             newGame();
             return;
         }
 
-        Launcher.getSceneManager().continueGame(savedata);
-        Launcher.getSceneManager().getChildren().remove(this);
+        SceneManager.getInstance().initialize(savedata);
+        SceneManager.getInstance().getChildren().remove(this);
     }
 
     // #region create elements

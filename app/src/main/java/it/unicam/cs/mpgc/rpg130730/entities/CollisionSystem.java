@@ -1,74 +1,84 @@
 package it.unicam.cs.mpgc.rpg130730.entities;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+
+import org.jspecify.annotations.Nullable;
 
 import it.unicam.cs.mpgc.rpg130730.environment.RoomTransition;
 import it.unicam.cs.mpgc.rpg130730.environment.Tile;
 import javafx.geometry.BoundingBox;
 import javafx.geometry.Bounds;
 
+/**
+ * Keeps track of collidables and determines provides methods to determine
+ * collision
+ *
+ * @author Tommaso Acciarresi
+ */
 public class CollisionSystem {
-    private static Set<Tile> collTiles = new HashSet<Tile>();
-    private static Set<Enemy> enemies = new HashSet<Enemy>();
-    private static Set<RoomTransition> transitions = new HashSet<RoomTransition>();
+    private static @Nullable CollisionSystem instance;
+
+    private Set<Tile> collTiles = new HashSet<Tile>();
+    private Set<Enemy> enemies = new HashSet<Enemy>();
+    private Set<RoomTransition> transitions = new HashSet<RoomTransition>();
 
     // #region get-set
-    public static boolean addCollidableTile(Tile tile) {
+    public static CollisionSystem getInstance() {
+        if (instance == null) {
+            instance = new CollisionSystem();
+        }
+        return Objects.requireNonNull(instance);
+    }
+
+    public boolean addCollidableTile(Tile tile) {
         return collTiles.add(tile);
     }
 
-    public static boolean removeCollidableTile(Tile tile) {
+    public boolean removeCollidableTile(Tile tile) {
         return collTiles.remove(tile);
     }
 
-    public static boolean addEnemy(Enemy enemy) {
+    public boolean addEnemy(Enemy enemy) {
         return enemies.add(enemy);
     }
 
-    public static boolean removeEnemy(Enemy enemy) {
+    public boolean removeEnemy(Enemy enemy) {
         return enemies.remove(enemy);
     }
 
-    public static boolean addRoomTransition(RoomTransition roomTransition) {
+    public boolean addRoomTransition(RoomTransition roomTransition) {
         return transitions.add(roomTransition);
     }
 
-    public static boolean removeRoomTransition(RoomTransition roomTransition) {
+    public boolean removeRoomTransition(RoomTransition roomTransition) {
         return transitions.remove(roomTransition);
     }
-    // #endregion
 
-    public static boolean collidesWithTiles(Bounds bounds) {
+    public boolean collidesWithTiles(Bounds bounds) {
         return new HashSet<Tile>(collTiles).stream().anyMatch(tile -> {
             Bounds tileBounds = tile.getBoundsInParent();
             return tileBounds.intersects(bounds);
         });
     }
 
-    public static Optional<Enemy> collidesWithEnemy(Bounds bounds) {
-        Optional<Enemy> enemyOptional = new HashSet<Enemy>(enemies).stream().filter(enemy -> {
-            BoundingBox enemyBounds = enemy.getCollisionBounds();
+    public @Nullable Enemy collidesWithEnemy(Bounds bounds) {
+        Optional<Enemy> enemyOptional = new HashSet<Enemy>(enemies).stream().filter(e -> {
+            BoundingBox enemyBounds = e.getCollisionBounds();
             return enemyBounds.intersects(bounds);
         }).findFirst();
+        return enemyOptional.isPresent() ? enemyOptional.get() : null;
 
-        if (enemyOptional == null)
-            throw new NullPointerException();
-
-        return enemyOptional;
     }
 
-    public static Optional<RoomTransition> enteredTransition(Bounds bounds) {
+    public @Nullable RoomTransition enteredTransition(Bounds bounds) {
         Optional<RoomTransition> transitionOptional = new HashSet<RoomTransition>(transitions).stream()
                 .filter(roomTransition -> {
                     Bounds transitionBounds = roomTransition.getBoundsInParent();
                     return transitionBounds.intersects(bounds);
                 }).findFirst();
-
-        if (transitionOptional == null)
-            throw new NullPointerException();
-
-        return transitionOptional;
+        return transitionOptional.isPresent() ? transitionOptional.get() : null;
     }
 }

@@ -2,6 +2,11 @@ package it.unicam.cs.mpgc.rpg130730;
 
 import javafx.scene.input.KeyCode;
 
+/**
+ * A list of all keybinds
+ *
+ * @author Tommaso Acciarresi
+ */
 public enum KeyBind {
     QUIT(KeyCode.ESCAPE),
     DOWN(KeyCode.S),

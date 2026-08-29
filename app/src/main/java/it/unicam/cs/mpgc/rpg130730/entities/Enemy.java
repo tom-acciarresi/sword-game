@@ -3,9 +3,14 @@ package it.unicam.cs.mpgc.rpg130730.entities;
 import java.util.Random;
 
 import it.unicam.cs.mpgc.rpg130730.AssetLibrary;
-import it.unicam.cs.mpgc.rpg130730.Launcher;
+import it.unicam.cs.mpgc.rpg130730.environment.SceneManager;
 import it.unicam.cs.mpgc.rpg130730.util.datatypes.Vector2;
 
+/**
+ * Enemy
+ *
+ * @author Tommaso Acciarresi
+ */
 public class Enemy extends Character2D {
     // #region constants
     private static final int DEFAULT_ENEMY_SPEED = 150;
@@ -25,7 +30,8 @@ public class Enemy extends Character2D {
         initialDirection = getRandomStartingDirection();
         currDirection = initialDirection;
 
-        animationPlayer = new AnimationPlayer(AssetLibrary.getAnimation(enemyData.identifier() + "/idle_down"));
+        animationPlayer = new AnimationPlayer(
+                AssetLibrary.getInstance().getAnimation(enemyData.identifier() + "/idle_down"));
         setSprite(animationPlayer.getCurrFrame());
 
         setHealth(enemyData.health());
@@ -84,7 +90,7 @@ public class Enemy extends Character2D {
         String direction = Math.abs(x) > Math.abs(y) ? (x < 0 ? "left" : "right") : (y < 0 ? "up" : "down");
 
         if (currDirection.equals(Vector2.ZERO)) {
-            Animation newAnim = AssetLibrary.getAnimation(enemyData.identifier() + "/idle_" + direction);
+            Animation newAnim = AssetLibrary.getInstance().getAnimation(enemyData.identifier() + "/idle_" + direction);
             if (animationPlayer.getCurrAnimation().equals(newAnim)) {
                 return;
             }
@@ -92,7 +98,7 @@ public class Enemy extends Character2D {
             return;
         }
 
-        Animation newAnim = AssetLibrary.getAnimation(enemyData.identifier() + "/walk_" + direction);
+        Animation newAnim = AssetLibrary.getInstance().getAnimation(enemyData.identifier() + "/walk_" + direction);
         if (animationPlayer.getCurrAnimation().equals(newAnim)) {
             return;
         }
@@ -101,8 +107,8 @@ public class Enemy extends Character2D {
     }
 
     private void die() {
-        Launcher.getSceneManager().deleteEnemy(this);
-        Player player = Launcher.getSceneManager().getPlayer();
+        SceneManager.getInstance().deleteEnemy(this);
+        Player player = SceneManager.getInstance().getPlayer();
         player.setKills(player.getKills() + 1);
         System.out.println(String.format("Kills: %d", player.getKills()));
     }

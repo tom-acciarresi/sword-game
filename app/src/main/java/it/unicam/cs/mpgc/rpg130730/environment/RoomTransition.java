@@ -1,9 +1,15 @@
 package it.unicam.cs.mpgc.rpg130730.environment;
 
-import it.unicam.cs.mpgc.rpg130730.Launcher;
+import org.jspecify.annotations.Nullable;
+
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
+/**
+ * A teleporter (doorway) between two levels
+ *
+ * @author Tommaso Acciarresi
+ */
 public class RoomTransition extends Rectangle {
     private RoomTransitionData transitionData;
 
@@ -31,20 +37,20 @@ public class RoomTransition extends Rectangle {
     // #endregion
 
     public void enter() {
-        SceneManager sm = Launcher.getSceneManager();
+        SceneManager sm = SceneManager.getInstance();
         if (sm.getCurrLevel().equals(transitionData.roomA())) {
             sm.loadLevel(transitionData.roomB());
-            Launcher.getSceneManager().getPlayer().setPosition(transitionData.playerSpawnB());
+            SceneManager.getInstance().getPlayer().setPosition(transitionData.playerSpawnB());
         }
 
         else {
             sm.loadLevel(transitionData.roomA());
-            Launcher.getSceneManager().getPlayer().setPosition(transitionData.playerSpawnA());
+            SceneManager.getInstance().getPlayer().setPosition(transitionData.playerSpawnA());
         }
     }
 
     @Override
-    public @org.jspecify.annotations.Nullable String toString() {
+    public @Nullable String toString() {
         return transitionData.toString();
     }
 }

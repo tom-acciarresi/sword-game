@@ -2,9 +2,13 @@ package it.unicam.cs.mpgc.rpg130730.environment;
 
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
+import org.jspecify.annotations.Nullable;
+
 import it.unicam.cs.mpgc.rpg130730.AssetLibrary;
+import it.unicam.cs.mpgc.rpg130730.GameLoop;
 import it.unicam.cs.mpgc.rpg130730.InputMap;
 import it.unicam.cs.mpgc.rpg130730.entities.CollisionSystem;
 import it.unicam.cs.mpgc.rpg130730.entities.Enemy;
@@ -16,23 +20,45 @@ import it.unicam.cs.mpgc.rpg130730.ui.MainMenu;
 import it.unicam.cs.mpgc.rpg130730.util.datatypes.Vector2;
 import javafx.scene.Group;
 
+/**
+ * Handles loading and changing levels (scenes)
+ *
+ * @author Tommaso Acciarresi
+ */
 public class SceneManager extends Group {
     // #region constants
+    public static final Vector2 LEVEL_SIZE = TileGrid.TILEMAP_SIZE;
+    public static final Vector2 LEVEL_CENTER = new Vector2(
+            LEVEL_SIZE.x() / 2 - TileGrid.TILE_SIZE / 2,
+            LEVEL_SIZE.y() / 2 - TileGrid.TILE_SIZE / 2);
+
     private static final Level INITIAL_LEVEL = Level.ROOM_1;
     // #endregion
+
+    private static @Nullable SceneManager instance;
 
     private Level currLevel = INITIAL_LEVEL;
     private TileGrid tilemap = new TileGrid();
 
-    @SuppressWarnings("null")
-    private Player player;
+    private @Nullable Player player;
 
     private Set<Enemy> loadedEnemies = new HashSet<Enemy>();
     private Set<RoomTransition> roomTransitions = new HashSet<RoomTransition>();
 
     private Group levelContainer = new Group();
 
+    // #region constructors
+    private SceneManager() {
+    };
+    // #endregion
+
     // #region get-set
+    public static SceneManager getInstance() {
+        if (instance == null)
+            instance = new SceneManager();
+        return Objects.requireNonNull(instance);
+    }
+
     public Level getCurrLevel() {
         return currLevel;
     }
@@ -42,7 +68,7 @@ public class SceneManager extends Group {
     }
 
     public Player getPlayer() {
-        return player;
+        return Objects.requireNonNull(player);
     }
 
     public Group getLevelContainer() {
@@ -52,39 +78,35 @@ public class SceneManager extends Group {
 
     public void loadMainMenu() {
         this.getChildren().add(new MainMenu());
+        GameLoop.getInstance().start();
     }
 
-    public void newGame() {
-        initialize(INITIAL_LEVEL);
-    }
-
-    public void continueGame(SaveData savedata) {
-        initialize(savedata.level());
-
-        player.setKills(savedata.kills());
-        player.setHealth(savedata.health());
-
-        Vector2 spawnPos = calculatePlayerSpawnPos(savedata);
-        player.setPosition(spawnPos);
-    }
-
-    public void initialize(Level level) {
+    public void initialize(@Nullable SaveData savedata) {
         createLevelContainer();
 
-        loadLevel(level);
-
         player = new Player();
+        Player p = Objects.requireNonNull(player);
+
+        if (savedata != null) {
+            p.setKills(savedata.kills());
+            p.setHealth(savedata.health());
+            loadLevel(savedata.level());
+            Vector2 spawnPos = calculatePlayerSpawnPos(savedata);
+            p.setPosition(spawnPos);
+        } else {
+            loadLevel(INITIAL_LEVEL);
+        }
 
         levelContainer.getChildren().addAll(tilemap, player);
 
-        this.getChildren().addAll(new UI(player));
+        this.getChildren().addAll(new UI(p));
 
         // Start reading input
-        InputMap.initialize(this);
+        InputMap.getInstance().initialize(this);
     }
 
     public void loadLevel(Level level) {
-        LevelData levelData = AssetLibrary.getLevelData(level.filename());
+        LevelData levelData = AssetLibrary.getInstance().getLevelData(level.filename());
 
         currLevel = level;
         loadTiles(levelData.tileData());
@@ -98,7 +120,7 @@ public class SceneManager extends Group {
     }
 
     private void loadTiles(int[] tileData) {
-        tilemap.changeTileMapTo(tileData);
+        tilemap.changeTo(tileData);
     }
 
     private void loadEnemies(Map<Vector2, EnemyType> enemyData) {
@@ -117,7 +139,7 @@ public class SceneManager extends Group {
 
     public void deleteEnemy(Enemy enemy) {
         enemy.unsubscribeFromUpdates();
-        CollisionSystem.removeEnemy(enemy);
+        CollisionSystem.getInstance().removeEnemy(enemy);
         levelContainer.getChildren().remove(enemy);
     }
 
@@ -136,7 +158,7 @@ public class SceneManager extends Group {
             Enemy newEnemy = new Enemy(type);
             newEnemy.setPosition(pos);
 
-            CollisionSystem.addEnemy(newEnemy);
+            CollisionSystem.getInstance().addEnemy(newEnemy);
             loadedEnemies.add(newEnemy);
             levelContainer.getChildren().add(newEnemy);
         });
@@ -168,7 +190,7 @@ public class SceneManager extends Group {
                     TileGrid.TILE_SIZE,
                     transitionData);
 
-            CollisionSystem.addRoomTransition(newTransition);
+            CollisionSystem.getInstance().addRoomTransition(newTransition);
             roomTransitions.add(newTransition);
             levelContainer.getChildren().add(newTransition);
         });
@@ -185,7 +207,7 @@ public class SceneManager extends Group {
     }
 
     private void deleteRoomTransition(RoomTransition roomTransition) {
-        CollisionSystem.removeRoomTransition(roomTransition);
+        CollisionSystem.getInstance().removeRoomTransition(roomTransition);
         levelContainer.getChildren().remove(roomTransition);
     }
 

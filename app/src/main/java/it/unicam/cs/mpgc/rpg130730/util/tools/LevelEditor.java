@@ -17,6 +17,11 @@ import it.unicam.cs.mpgc.rpg130730.environment.TileGrid;
 import it.unicam.cs.mpgc.rpg130730.util.datatypes.Vector2;
 
 @SuppressWarnings("null")
+/**
+ * Code for manually generating the levels
+ *
+ * @author Tommaso Acciarresi
+ */
 public class LevelEditor {
         // #region constants
         // FIXME: MAY CONTAIN PRIVATE INFO!
@@ -24,7 +29,10 @@ public class LevelEditor {
         // #endregion
 
         public static void main(String[] args) {
-                // #region level creation
+                new LevelEditor().createLevels();
+        }
+
+        public void createLevels() {
                 RoomTransitionData door1 = new RoomTransitionData(
                                 new Vector2(11.75, 6).scalar(64), Level.ROOM_1, new Vector2(10.5, 5.9).scalar(64),
                                 new Vector2(-0.75, 6).scalar(64), Level.ROOM_2, new Vector2(0.5, 5.9).scalar(64));
@@ -144,16 +152,15 @@ public class LevelEditor {
 
                                 new HashSet<RoomTransitionData>(Arrays.asList(
                                                 door4)));
-                // # endregion
 
-                LevelEditor.writeToDisk("level1.dat", lvl1);
-                LevelEditor.writeToDisk("level2.dat", lvl2);
-                LevelEditor.writeToDisk("level3.dat", lvl3);
-                LevelEditor.writeToDisk("level4.dat", lvl4);
-                LevelEditor.writeToDisk("level5.dat", lvl5);
+                writeToDisk("level1.dat", lvl1);
+                writeToDisk("level2.dat", lvl2);
+                writeToDisk("level3.dat", lvl3);
+                writeToDisk("level4.dat", lvl4);
+                writeToDisk("level5.dat", lvl5);
         }
 
-        private static void writeToDisk(String filename, LevelData data) {
+        private void writeToDisk(String filename, LevelData data) {
                 try {
                         ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(LEVELS_DIR + filename));
                         oos.writeObject(data);
@@ -164,7 +171,7 @@ public class LevelEditor {
                 System.out.println("Created '" + filename + "'");
         }
 
-        private static int[] stringToIntArray(String s) {
+        private int[] stringToIntArray(String s) {
                 int[] array = Arrays.stream(s.strip().split("\\D+")).mapToInt(Integer::parseInt).toArray();
 
                 if (array.length != TileGrid.TILE_AMOUNT)

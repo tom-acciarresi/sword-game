@@ -8,10 +8,18 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.util.Objects;
 
-import it.unicam.cs.mpgc.rpg130730.Launcher;
+import org.jspecify.annotations.Nullable;
+
 import it.unicam.cs.mpgc.rpg130730.entities.Player;
+import it.unicam.cs.mpgc.rpg130730.environment.SceneManager;
 
+/**
+ * Handles saving and loading save data
+ *
+ * @author Tommaso Acciarresi
+ */
 public class SaveSystem {
     // #region constants
     private static final String SAVE_DIR = System.getProperty("user.home") + "/Sword_Game/";
@@ -19,10 +27,21 @@ public class SaveSystem {
     private static final String SAVE_LOCATION = SAVE_DIR + SAVE_FILENAME;
     // #endregion
 
-    public static void save() {
-        Player player = Launcher.getSceneManager().getPlayer();
+    private static @Nullable SaveSystem instance;
+
+    // #region get-set
+    public static SaveSystem getInstance() {
+        if (instance == null) {
+            instance = new SaveSystem();
+        }
+        return Objects.requireNonNull(instance);
+    }
+    // #endregion
+
+    public void save() {
+        Player player = SceneManager.getInstance().getPlayer();
         SaveData data = new SaveData(
-                Launcher.getSceneManager().getCurrLevel(),
+                SceneManager.getInstance().getCurrLevel(),
                 player.getPosition(),
                 player.getHealth(),
                 player.getKills());
@@ -39,7 +58,7 @@ public class SaveSystem {
         }
     }
 
-    public static @org.jspecify.annotations.Nullable SaveData load() {
+    public @Nullable SaveData load() {
         if (!Files.exists(Path.of(SAVE_LOCATION)))
             return null;
 
@@ -54,7 +73,7 @@ public class SaveSystem {
         return null;
     }
 
-    public static void deleteSave() {
+    public void deleteSave() {
         try {
             Files.deleteIfExists(Paths.get(SAVE_LOCATION));
         } catch (IOException e) {

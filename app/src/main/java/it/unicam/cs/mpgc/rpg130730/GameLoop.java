@@ -1,43 +1,69 @@
 package it.unicam.cs.mpgc.rpg130730;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
+
+import org.jspecify.annotations.Nullable;
 
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
+import javafx.util.Duration;
 
+/**
+ * 60 UPS game loop
+ *
+ * @author Tommaso Acciarresi
+ */
 public class GameLoop {
-    private static Set<Updatable> objectsToUpdate = new HashSet<Updatable>();
+    // #region constants
+    public static final int TARGET_FRAMERATE = 60;
+    private static final double TIME_DELTA = 1.0 / TARGET_FRAMERATE;
+    // #endregion
 
-    private static double timeDelta;
+    private static @Nullable GameLoop instance;
+
+    private Timeline loop;
+
+    private Set<Updatable> objectsToUpdate = new HashSet<Updatable>();
+
+    // #region constructors
+    private GameLoop() {
+        loop = new Timeline(new KeyFrame(
+                Duration.seconds(TIME_DELTA),
+                e -> updateObjects(TIME_DELTA)));
+
+        loop.setCycleCount(Animation.INDEFINITE);
+    };
+    // #endregion
 
     // #region get-set
-    public static void startUpdating(Updatable obj) {
+    public static GameLoop getInstance() {
+        if (instance == null)
+            instance = new GameLoop();
+        return Objects.requireNonNull(instance);
+    }
+
+    public void startUpdating(Updatable obj) {
         objectsToUpdate.add(obj);
     }
 
-    public static void stopUpdating(Updatable obj) {
+    public void stopUpdating(Updatable obj) {
         objectsToUpdate.remove(obj);
     }
 
-    public static double getTimeDelta() {
-        return timeDelta;
-    }
     // #endregion
 
-    public static void initialize() {
-        Timeline loop = new Timeline(new KeyFrame(
-                javafx.util.Duration.seconds(1.0 / Launcher.TARGET_FRAMERATE),
-                e -> updateObjects(1.0 / Launcher.TARGET_FRAMERATE)));
-
-        loop.setCycleCount(Animation.INDEFINITE);
+    public void start() {
         loop.play();
     }
 
-    private static void updateObjects(double timeDelta) {
-        GameLoop.timeDelta = timeDelta;
+    public void pause() {
+        loop.pause();
+    }
 
-        new HashSet<Updatable>(objectsToUpdate).stream().forEach(o -> o.update(timeDelta));
+    private void updateObjects(double timeDelta) {
+        new HashSet<Updatable>(objectsToUpdate).stream().forEach(o -> o.update(TIME_DELTA));
     }
 }

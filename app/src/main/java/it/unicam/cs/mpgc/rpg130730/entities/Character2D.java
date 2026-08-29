@@ -1,8 +1,8 @@
 package it.unicam.cs.mpgc.rpg130730.entities;
 
 import it.unicam.cs.mpgc.rpg130730.AssetLibrary;
-import it.unicam.cs.mpgc.rpg130730.Launcher;
 import it.unicam.cs.mpgc.rpg130730.Updatable;
+import it.unicam.cs.mpgc.rpg130730.environment.SceneManager;
 import it.unicam.cs.mpgc.rpg130730.environment.TileGrid;
 import it.unicam.cs.mpgc.rpg130730.util.datatypes.Vector2;
 import javafx.geometry.BoundingBox;
@@ -11,6 +11,11 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Rectangle;
 
+/**
+ * Superclass of player and enemy
+ *
+ * @author Tommaso Acciarresi
+ */
 public abstract class Character2D extends StackPane implements Updatable {
     private double health;
 
@@ -32,7 +37,7 @@ public abstract class Character2D extends StackPane implements Updatable {
 
         this.getChildren().add(sprite);
 
-        setPosition(Launcher.LEVEL_CENTER);
+        setPosition(SceneManager.LEVEL_CENTER);
     }
     // #endregion
 
@@ -91,7 +96,7 @@ public abstract class Character2D extends StackPane implements Updatable {
                 newPos.x() + colliderOffset.x(),
                 newPos.y() + colliderOffset.y(),
                 colliderSize.x(),
-                colliderSize.y()).intersects(Launcher.getSceneManager().getTileMap().getBoundsInParent()));
+                colliderSize.y()).intersects(SceneManager.getInstance().getTileMap().getBoundsInParent()));
     }
 
     private Vector2 calculateTileCollision(Vector2 newPos, Vector2 oldPos) {
@@ -112,7 +117,7 @@ public abstract class Character2D extends StackPane implements Updatable {
                 oldPos.y() + colliderOffset.y(),
                 colliderSize.x(),
                 colliderSize.y());
-        return CollisionSystem.collidesWithTiles(boundsX);
+        return CollisionSystem.getInstance().collidesWithTiles(boundsX);
     }
 
     private boolean getBoundsY(Vector2 newPos, Vector2 oldPos) {
@@ -121,7 +126,7 @@ public abstract class Character2D extends StackPane implements Updatable {
                 newPos.y() + colliderOffset.y(),
                 colliderSize.x(),
                 colliderSize.y());
-        return CollisionSystem.collidesWithTiles(boundsY);
+        return CollisionSystem.getInstance().collidesWithTiles(boundsY);
     }
 
 }
