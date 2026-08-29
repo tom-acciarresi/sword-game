@@ -1,5 +1,9 @@
 package it.unicam.cs.mpgc.rpg130730.util.datatypes;
 
+import java.io.Serializable;
+
+import org.jspecify.annotations.Nullable;
+
 /**
  * Tuple with double-typed components
  *
@@ -8,7 +12,7 @@ package it.unicam.cs.mpgc.rpg130730.util.datatypes;
  *
  * @author Tommaso Acciarresi
  */
-public record Vector2(double x, double y) implements java.io.Serializable {
+public record Vector2(double x, double y) implements Serializable {
     public static final Vector2 ZERO = new Vector2(0.0, 0.0),
             LEFT = new Vector2(-1.0, 0.0),
             RIGHT = new Vector2(1.0, 0.0),
@@ -77,10 +81,7 @@ public record Vector2(double x, double y) implements java.io.Serializable {
     }
 
     @Override
-    public String toString() {
-        String output = String.format("%.2f, %.2f", x, y);
-        if (output == null)
-            throw new NullPointerException();
-        return output;
+    public @Nullable String toString() {
+        return String.format("%.2f, %.2f", x, y);
     }
 }

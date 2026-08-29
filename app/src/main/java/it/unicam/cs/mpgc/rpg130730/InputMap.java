@@ -7,10 +7,8 @@ import java.util.Objects;
 import org.jspecify.annotations.Nullable;
 
 import it.unicam.cs.mpgc.rpg130730.util.datatypes.Vector2;
-import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
 
 /**
  * Interprets player input
@@ -21,11 +19,6 @@ public class InputMap {
     private static @Nullable InputMap instance;
 
     private Map<KeyCode, Boolean> currentlyPressedKeys = new HashMap<KeyCode, Boolean>();
-
-    public void initialize(Node inputListeningNode) {
-        inputListeningNode.getScene().setOnKeyPressed(onKeyPressed());
-        inputListeningNode.getScene().setOnKeyReleased(onKeyReleased());
-    }
 
     // #region get-set
     public static InputMap getInstance() {
@@ -64,8 +57,13 @@ public class InputMap {
     };
     // #endregion
 
-    private EventHandler<? super KeyEvent> onKeyPressed() {
-        return keyEvent -> {
+    public void initialize(Node inputListeningNode) {
+        assignOnKeyPressedMethod(inputListeningNode);
+        assignOnKeyReleasedMethod(inputListeningNode);
+    }
+
+    private void assignOnKeyPressedMethod(Node inputListeningNode) {
+        inputListeningNode.getScene().setOnKeyPressed(keyEvent -> {
             KeyCode key = keyEvent.getCode();
             if (key == null)
                 throw new NullPointerException();
@@ -75,17 +73,16 @@ public class InputMap {
             }
 
             setKeyPressed(key, true);
-        };
+        });
     }
 
-    private EventHandler<? super KeyEvent> onKeyReleased() {
-        return keyEvent -> {
+    private void assignOnKeyReleasedMethod(Node inputListeningNode) {
+        inputListeningNode.getScene().setOnKeyReleased(keyEvent -> {
             KeyCode code = keyEvent.getCode();
             if (code == null)
                 throw new NullPointerException();
 
             setKeyPressed(code, false);
-        };
+        });
     }
-
 }

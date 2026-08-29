@@ -1,5 +1,7 @@
 package it.unicam.cs.mpgc.rpg130730.environment;
 
+import java.io.Serializable;
+
 import org.jspecify.annotations.Nullable;
 
 import it.unicam.cs.mpgc.rpg130730.util.datatypes.Vector2;
@@ -23,7 +25,7 @@ public record RoomTransitionData(
         Vector2 transitionLocationB,
         Level roomB,
         Vector2 playerSpawnB)
-        implements java.io.Serializable {
+        implements Serializable {
     @Override
     public final @Nullable String toString() {
         return String.format("%s %s -> %s %s", transitionLocationA, roomA, transitionLocationB, roomB);
