@@ -1,5 +1,7 @@
 package it.unicam.cs.mpgc.rpg130730.entities;
 
+import org.jspecify.annotations.Nullable;
+
 import javafx.scene.image.Image;
 
 /**
@@ -26,7 +28,7 @@ public record Animation(String identifier, Image[] frames, int fps) {
     // #endregion
 
     @Override
-    public final @org.jspecify.annotations.Nullable String toString() {
+    public final @Nullable String toString() {
         return String.format("name:%s\n%s\nfps: %d", identifier, frames.toString(), fps);
     }
 }

@@ -9,8 +9,10 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 
-import it.unicam.cs.mpgc.rpg130730.Launcher;
+import org.jspecify.annotations.Nullable;
+
 import it.unicam.cs.mpgc.rpg130730.entities.Player;
+import it.unicam.cs.mpgc.rpg130730.environment.SceneManager;
 
 /**
  * Handles saving and loading save data
@@ -25,9 +27,9 @@ public class SaveSystem {
     // #endregion
 
     public static void save() {
-        Player player = Launcher.getSceneManager().getPlayer();
+        Player player = SceneManager.getInstance().getPlayer();
         SaveData data = new SaveData(
-                Launcher.getSceneManager().getCurrLevel(),
+                SceneManager.getInstance().getCurrLevel(),
                 player.getPosition(),
                 player.getHealth(),
                 player.getKills());
@@ -44,7 +46,7 @@ public class SaveSystem {
         }
     }
 
-    public static @org.jspecify.annotations.Nullable SaveData load() {
+    public static @Nullable SaveData load() {
         if (!Files.exists(Path.of(SAVE_LOCATION)))
             return null;
 

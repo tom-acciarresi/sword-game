@@ -1,7 +1,7 @@
 package it.unicam.cs.mpgc.rpg130730.ui;
 
-import it.unicam.cs.mpgc.rpg130730.Launcher;
 import it.unicam.cs.mpgc.rpg130730.entities.Player;
+import it.unicam.cs.mpgc.rpg130730.environment.SceneManager;
 import it.unicam.cs.mpgc.rpg130730.util.datatypes.Vector2;
 import javafx.scene.layout.Pane;
 
@@ -12,7 +12,7 @@ import javafx.scene.layout.Pane;
  */
 public class UI extends Pane {
     public static final Vector2 GUI_SIZE = new Vector2(
-            Launcher.LEVEL_SIZE.x(),
+            SceneManager.LEVEL_SIZE.x(),
             64);
 
     private static final Vector2 HP_BAR_POS = new Vector2(624, 16);

@@ -5,6 +5,7 @@ import java.util.Map;
 
 import it.unicam.cs.mpgc.rpg130730.util.datatypes.Vector2;
 import javafx.event.EventHandler;
+import javafx.scene.Node;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 
@@ -16,7 +17,7 @@ import javafx.scene.input.KeyEvent;
 public class InputMap {
     private static Map<KeyCode, Boolean> currentlyPressedKeys = new HashMap<KeyCode, Boolean>();
 
-    public static void initialize(javafx.scene.Node inputListeningNode) {
+    public static void initialize(Node inputListeningNode) {
         inputListeningNode.getScene().setOnKeyPressed(onKeyPressed());
         inputListeningNode.getScene().setOnKeyReleased(onKeyReleased());
     }

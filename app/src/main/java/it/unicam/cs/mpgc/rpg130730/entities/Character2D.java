@@ -1,8 +1,8 @@
 package it.unicam.cs.mpgc.rpg130730.entities;
 
 import it.unicam.cs.mpgc.rpg130730.AssetLibrary;
-import it.unicam.cs.mpgc.rpg130730.Launcher;
 import it.unicam.cs.mpgc.rpg130730.Updatable;
+import it.unicam.cs.mpgc.rpg130730.environment.SceneManager;
 import it.unicam.cs.mpgc.rpg130730.environment.TileGrid;
 import it.unicam.cs.mpgc.rpg130730.util.datatypes.Vector2;
 import javafx.geometry.BoundingBox;
@@ -37,7 +37,7 @@ public abstract class Character2D extends StackPane implements Updatable {
 
         this.getChildren().add(sprite);
 
-        setPosition(Launcher.LEVEL_CENTER);
+        setPosition(SceneManager.LEVEL_CENTER);
     }
     // #endregion
 
@@ -96,7 +96,7 @@ public abstract class Character2D extends StackPane implements Updatable {
                 newPos.x() + colliderOffset.x(),
                 newPos.y() + colliderOffset.y(),
                 colliderSize.x(),
-                colliderSize.y()).intersects(Launcher.getSceneManager().getTileMap().getBoundsInParent()));
+                colliderSize.y()).intersects(SceneManager.getInstance().getTileMap().getBoundsInParent()));
     }
 
     private Vector2 calculateTileCollision(Vector2 newPos, Vector2 oldPos) {

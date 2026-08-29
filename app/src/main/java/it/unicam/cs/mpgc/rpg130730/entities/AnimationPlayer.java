@@ -1,7 +1,7 @@
 package it.unicam.cs.mpgc.rpg130730.entities;
 
 import it.unicam.cs.mpgc.rpg130730.AssetLibrary;
-import it.unicam.cs.mpgc.rpg130730.Launcher;
+import it.unicam.cs.mpgc.rpg130730.GameLoop;
 import javafx.scene.image.Image;
 
 /**
@@ -51,7 +51,7 @@ public class AnimationPlayer {
     public void changeTo(Animation a) {
         currAnimation = a;
         currFrame = currAnimation.getFrame(0);
-        tickInterval = Launcher.TARGET_FRAMERATE / currAnimation.fps();
+        tickInterval = GameLoop.TARGET_FRAMERATE / currAnimation.fps();
         ticksLeft = tickInterval;
         frameIndex = 0;
     }

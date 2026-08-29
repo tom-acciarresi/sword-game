@@ -1,9 +1,12 @@
 package it.unicam.cs.mpgc.rpg130730;
 
+import org.jspecify.annotations.Nullable;
+
 import it.unicam.cs.mpgc.rpg130730.environment.SceneManager;
-import it.unicam.cs.mpgc.rpg130730.environment.TileGrid;
 import it.unicam.cs.mpgc.rpg130730.persistence.SaveSystem;
-import it.unicam.cs.mpgc.rpg130730.util.datatypes.Vector2;
+import javafx.application.Application;
+import javafx.application.Platform;
+import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 /**
@@ -11,44 +14,27 @@ import javafx.stage.Stage;
  *
  * @author Tommaso Acciarresi
  */
-public class Launcher extends javafx.application.Application {
+public class Launcher extends Application {
     // #region constants
-    private static final boolean IS_RESIZABLE = false;
     public static final String APPLICATION_TITLE = "Sword Game";
-
-    public static final Vector2 LEVEL_SIZE = TileGrid.TILEMAP_DIMENSIONS.scalar(TileGrid.TILE_SIZE);
-    public static final Vector2 LEVEL_CENTER = new Vector2(
-            LEVEL_SIZE.x() / 2 - TileGrid.TILE_SIZE / 2,
-            LEVEL_SIZE.y() / 2 - TileGrid.TILE_SIZE / 2);
-
-    public static final int TARGET_FRAMERATE = 60;
-    // #endregion
-
-    private static Stage stage = new Stage();
-    private static SceneManager sceneManager = new SceneManager();
-
-    // #region get-set
-    public static SceneManager getSceneManager() {
-        return sceneManager;
-    }
+    private static final boolean IS_RESIZABLE = false;
     // #endregion
 
     @Override
-    public void start(@org.jspecify.annotations.Nullable Stage defaultStage) {
+    public void start(@Nullable Stage defaultStage) {
         // Load assets
+        // TODO async
         AssetLibrary.initialize();
 
         // Create window
-        initializeStage();
+        Stage stage = new Stage();
+        initializeStage(stage);
 
         // Create tree with SceneManager as root
-        stage.setScene(new javafx.scene.Scene(sceneManager));
-
-        // Start game loop
-        GameLoop.initialize();
+        stage.setScene(new Scene(SceneManager.getInstance()));
 
         // Load main menu
-        sceneManager.loadMainMenu();
+        SceneManager.getInstance().loadMainMenu();
 
         // Adds title bar to window height
         stage.sizeToScene();
@@ -59,14 +45,14 @@ public class Launcher extends javafx.application.Application {
 
     public static void saveAndQuit() {
         SaveSystem.save();
-        javafx.application.Platform.exit();
+        Platform.exit();
     }
 
     public static void quitWithoutSaving() {
-        javafx.application.Platform.exit();
+        Platform.exit();
     }
 
-    private void initializeStage() {
+    private void initializeStage(Stage stage) {
         // Set Window Settings
         stage.setTitle(APPLICATION_TITLE);
         stage.setResizable(IS_RESIZABLE);

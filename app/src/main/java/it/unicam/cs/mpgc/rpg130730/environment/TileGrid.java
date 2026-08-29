@@ -16,6 +16,7 @@ public class TileGrid extends GridPane {
     // #region constants
     public static final int TILE_SIZE = 64;
     public static final Vector2 TILEMAP_DIMENSIONS = new Vector2(12, 10);
+    public static final Vector2 TILEMAP_SIZE = TILEMAP_DIMENSIONS.scalar(TILE_SIZE);
     public static final int TILE_AMOUNT = (int) (TILEMAP_DIMENSIONS.x() * TILEMAP_DIMENSIONS.y());
     // #endregion
 

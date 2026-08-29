@@ -1,5 +1,7 @@
 package it.unicam.cs.mpgc.rpg130730.environment;
 
+import org.jspecify.annotations.Nullable;
+
 import it.unicam.cs.mpgc.rpg130730.AssetLibrary;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.ImagePattern;
@@ -42,7 +44,7 @@ public class Tile extends StackPane {
     }
 
     @Override
-    public @org.jspecify.annotations.Nullable String toString() {
+    public @Nullable String toString() {
         return String.format("info: %s, sprite: %s", info, sprite);
     }
 }

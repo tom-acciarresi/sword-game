@@ -3,7 +3,6 @@ package it.unicam.cs.mpgc.rpg130730.entities;
 import java.util.Optional;
 
 import it.unicam.cs.mpgc.rpg130730.AssetLibrary;
-import it.unicam.cs.mpgc.rpg130730.GameLoop;
 import it.unicam.cs.mpgc.rpg130730.InputMap;
 import it.unicam.cs.mpgc.rpg130730.Launcher;
 import it.unicam.cs.mpgc.rpg130730.environment.RoomTransition;
@@ -21,9 +20,9 @@ import javafx.scene.shape.Rectangle;
  */
 public class Player extends Character2D {
     // #region constants
-    private static final int DEFAULT_PLAYER_SPEED = 400; // px/s
-    public static final int DEFAULT_PLAYER_HEALTH = 5;
-    public static final int DEFAULT_PLAYER_DAMAGE = 1;
+    private static final int DEFAULT_SPEED = 400; // px/s
+    public static final int DEFAULT_HEALTH = 5;
+    public static final int DEFAULT_DAMAGE = 1;
     private static final int DAMAGE_COOLDOWN_FRAMES = 30;
     private static final int ATTACK_DURATION_FRAMES = 10;
     private static final int ATTACK_COOLDOWN_FRAMES = 25 + ATTACK_DURATION_FRAMES;
@@ -46,7 +45,7 @@ public class Player extends Character2D {
 
     public Player() {
         super();
-        setHealth(DEFAULT_PLAYER_HEALTH);
+        setHealth(DEFAULT_HEALTH);
 
         animationPlayer = new AnimationPlayer(AssetLibrary.getAnimation("knight/idle_down"));
         this.setSprite(animationPlayer.getCurrFrame());
@@ -146,9 +145,6 @@ public class Player extends Character2D {
         Bounds hitBox = this.getBoundsInParent();
         if (hitBox == null)
             throw new NullPointerException();
-        // Launcher.getSceneManager().getLevelContainer().getChildren()
-        // .add(new Rectangle(bb.getMinX(), bb.getMinY(), bb.getWidth(),
-        // bb.getHeight()));
         Optional<Enemy> collidesWithEnemy = CollisionSystem.collidesWithEnemy(hitBox);
         if (collidesWithEnemy.isPresent()) {
             Enemy enemy = collidesWithEnemy.get();
@@ -156,23 +152,12 @@ public class Player extends Character2D {
         }
     }
 
-    // Bounds swordHitBox = sword.getBoundsInParent();
-    // Launcher.getSceneManager().getLevelContainer().getChildren().add(new
-    // Rectangle(swordHitBox.getMinX(),
-    // swordHitBox.getMinY(), swordHitBox.getWidth(), swordHitBox.getHeight()));
-    // Optional<Enemy> enemyHit = CollisionSystem.collidesWithEnemy(swordHitBox);
-    // System.out.println(enemyHit);
-    // if (enemyHit.isPresent()) {
-    // Enemy enemyInstance = enemyHit.get();
-    // enemyInstance.setHealth(enemyInstance.getHealth() - DEFAULT_PLAYER_DAMAGE);
-    // }
-
     private void handleMovement(double timeDelta) {
         movementDirection = acceptsInput() ? InputMap.getMovementInput() : Vector2.ZERO;
         if (movementDirection.equals(Vector2.ZERO))
             return;
 
-        double movementValue = DEFAULT_PLAYER_SPEED * GameLoop.getTimeDelta();
+        double movementValue = DEFAULT_SPEED * timeDelta;
         Vector2 deltaPos = new Vector2(movementDirection.x() * movementValue, movementDirection.y() * movementValue);
 
         move(getPosition().plus(deltaPos));

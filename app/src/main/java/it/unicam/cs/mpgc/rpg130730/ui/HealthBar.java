@@ -36,7 +36,7 @@ public class HealthBar extends Group implements Updatable {
     public void update(double timeDelta) {
         double healthThisFrame = player.getHealth();
         if (healthPreviousFrame != healthThisFrame) {
-            updateBar(healthThisFrame / Player.DEFAULT_PLAYER_HEALTH);
+            updateBar(healthThisFrame / Player.DEFAULT_HEALTH);
         }
         healthPreviousFrame = healthThisFrame;
     }

@@ -3,7 +3,7 @@ package it.unicam.cs.mpgc.rpg130730.entities;
 import java.util.Random;
 
 import it.unicam.cs.mpgc.rpg130730.AssetLibrary;
-import it.unicam.cs.mpgc.rpg130730.Launcher;
+import it.unicam.cs.mpgc.rpg130730.environment.SceneManager;
 import it.unicam.cs.mpgc.rpg130730.util.datatypes.Vector2;
 
 /**
@@ -106,8 +106,8 @@ public class Enemy extends Character2D {
     }
 
     private void die() {
-        Launcher.getSceneManager().deleteEnemy(this);
-        Player player = Launcher.getSceneManager().getPlayer();
+        SceneManager.getInstance().deleteEnemy(this);
+        Player player = SceneManager.getInstance().getPlayer();
         player.setKills(player.getKills() + 1);
         System.out.println(String.format("Kills: %d", player.getKills()));
     }
