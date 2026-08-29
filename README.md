@@ -41,8 +41,14 @@ Run game on Linux:
 ## Controls
 
 - W, A, S, D -- Movement
-- ⬅, ⬆, ➡, ⬇ -- Directional attack (NOT IMPLEMENTED YET)
+- ⬅, ⬆, ➡, ⬇ -- Directional attack
 - ESC -- Quit
+
+## Save Location
+
+Under the `{username}` folder in Windows, `/home/` in Linux
+
+`$user.home/Sword_Game/sav.dat`
 
 ## ABSOLUTELY NO AI was used in the making of this project
 

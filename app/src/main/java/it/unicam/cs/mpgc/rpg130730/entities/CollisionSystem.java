@@ -57,11 +57,6 @@ public class CollisionSystem {
         return transitions.remove(roomTransition);
     }
 
-    public Set<Enemy> getEnemies() {
-        return enemies;
-    }
-    // #endregion
-
     public boolean collidesWithTiles(Bounds bounds) {
         return new HashSet<Tile>(collTiles).stream().anyMatch(tile -> {
             Bounds tileBounds = tile.getBoundsInParent();
