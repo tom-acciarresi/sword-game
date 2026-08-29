@@ -16,9 +16,11 @@ import javafx.scene.input.KeyCode;
  * @author Tommaso Acciarresi
  */
 public class InputMap {
-    private static @Nullable InputMap instance;
+    // #region constants
+    private final Map<KeyCode, Boolean> currentlyPressedKeys = new HashMap<KeyCode, Boolean>();
+    // #endregion
 
-    private Map<KeyCode, Boolean> currentlyPressedKeys = new HashMap<KeyCode, Boolean>();
+    private static @Nullable InputMap instance;
 
     // #region get-set
     public static InputMap getInstance() {

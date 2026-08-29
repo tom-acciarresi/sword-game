@@ -17,11 +17,11 @@ import javafx.scene.text.Text;
 public class HealthBar extends Group implements Updatable {
     // #region constants
     private static final Vector2 HP_BAR_SIZE = new Vector2(128, 32);
+
+    private final Rectangle healthBarSlider = createHealthBar();
+    private final Player player;
     // #endregion
 
-    private Rectangle healthBarSlider = createHealthBar();
-
-    private Player player;
     private double healthPreviousFrame;
 
     // #region constructors
@@ -29,6 +29,7 @@ public class HealthBar extends Group implements Updatable {
         subscribeToUpdates();
         this.player = player;
         healthPreviousFrame = player.getHealth();
+        updateBar(healthPreviousFrame / Player.DEFAULT_HEALTH);
     }
     // #endregion
 

@@ -33,19 +33,18 @@ public class SceneManager extends Group {
             LEVEL_SIZE.y() / 2 - TileGrid.TILE_SIZE / 2);
 
     private static final Level INITIAL_LEVEL = Level.ROOM_1;
+
+    private final TileGrid tilemap = new TileGrid();
+    private final Set<Enemy> loadedEnemies = new HashSet<Enemy>();
+    private final Set<RoomTransition> roomTransitions = new HashSet<RoomTransition>();
+    private final Group levelContainer = new Group();
     // #endregion
 
     private static @Nullable SceneManager instance;
 
     private Level currLevel = INITIAL_LEVEL;
-    private TileGrid tilemap = new TileGrid();
 
     private @Nullable Player player;
-
-    private Set<Enemy> loadedEnemies = new HashSet<Enemy>();
-    private Set<RoomTransition> roomTransitions = new HashSet<RoomTransition>();
-
-    private Group levelContainer = new Group();
 
     // #region constructors
     private SceneManager() {

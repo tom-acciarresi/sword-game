@@ -19,17 +19,19 @@ import javafx.scene.shape.Rectangle;
 public abstract class Character2D extends StackPane implements Updatable {
     private double health;
 
-    private Rectangle sprite = new Rectangle(
+    // #region constants
+    private final Rectangle sprite = new Rectangle(
             TileGrid.TILE_SIZE,
             TileGrid.TILE_SIZE,
             new ImagePattern(AssetLibrary.MISSING_SPRITE));
 
-    private Vector2 position = Vector2.ZERO;
-
-    private Vector2 colliderSize = new Vector2(48, 24);
-    private Vector2 colliderOffset = new Vector2(
+    private final Vector2 colliderSize = new Vector2(48, 24);
+    private final Vector2 colliderOffset = new Vector2(
             (TileGrid.TILE_SIZE - colliderSize.x()) / 2,
             TileGrid.TILE_SIZE - colliderSize.y());
+    // #endregion
+
+    private Vector2 position = Vector2.ZERO;
 
     // #region constructors
     public Character2D() {

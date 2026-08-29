@@ -11,7 +11,9 @@ import javafx.scene.shape.Rectangle;
  * @author Tommaso Acciarresi
  */
 public class RoomTransition extends Rectangle {
-    private RoomTransitionData transitionData;
+    // #region constants
+    private final RoomTransitionData transitionData;
+    // #endregion
 
     // #region constructors
     public RoomTransition(RoomTransitionData data) {

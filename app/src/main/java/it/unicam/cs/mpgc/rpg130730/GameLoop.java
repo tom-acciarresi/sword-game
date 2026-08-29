@@ -20,13 +20,12 @@ public class GameLoop {
     // #region constants
     public static final int TARGET_FRAMERATE = 60;
     private static final double TIME_DELTA = 1.0 / TARGET_FRAMERATE;
+
+    private final Timeline loop;
+    private final Set<Updatable> objectsToUpdate = new HashSet<Updatable>();
     // #endregion
 
     private static @Nullable GameLoop instance;
-
-    private Timeline loop;
-
-    private Set<Updatable> objectsToUpdate = new HashSet<Updatable>();
 
     // #region constructors
     private GameLoop() {
