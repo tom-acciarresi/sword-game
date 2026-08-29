@@ -11,6 +11,11 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Rectangle;
 
+/**
+ * Superclass of player and enemy
+ *
+ * @author Tommaso Acciarresi
+ */
 public abstract class Character2D extends StackPane implements Updatable {
     private double health;
 

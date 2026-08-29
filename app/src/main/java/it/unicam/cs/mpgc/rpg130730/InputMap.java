@@ -8,6 +8,11 @@ import javafx.event.EventHandler;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 
+/**
+ * Interprets player input
+ *
+ * @author Tommaso Acciarresi
+ */
 public class InputMap {
     private static Map<KeyCode, Boolean> currentlyPressedKeys = new HashMap<KeyCode, Boolean>();
 

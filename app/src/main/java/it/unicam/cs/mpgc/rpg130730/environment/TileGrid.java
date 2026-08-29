@@ -7,6 +7,11 @@ import it.unicam.cs.mpgc.rpg130730.entities.CollisionSystem;
 import it.unicam.cs.mpgc.rpg130730.util.datatypes.Vector2;
 import javafx.scene.layout.GridPane;
 
+/**
+ * 2D array of all the tiles that make up the ground
+ *
+ * @author Tommaso Acciarresi
+ */
 public class TileGrid extends GridPane {
     // #region constants
     public static final int TILE_SIZE = 64;
@@ -22,7 +27,7 @@ public class TileGrid extends GridPane {
 
     public TileGrid(int[] tileArragementData) {
         this();
-        changeTileMapTo(tileArragementData);
+        changeTo(tileArragementData);
     }
     // #endregion
 
@@ -37,7 +42,7 @@ public class TileGrid extends GridPane {
     }
     // #endregion
 
-    public void changeTileMapTo(int[] tileArragementData) {
+    public void changeTo(int[] tileArragementData) {
         Tile[] tiles = getTiles();
         for (int i = 0; i < TILE_AMOUNT; i++) {
             Tile currTile = tiles[i];

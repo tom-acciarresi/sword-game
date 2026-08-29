@@ -11,6 +11,11 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 
+/**
+ * Main Menu
+ *
+ * @author Tommaso Acciarresi
+ */
 public class MainMenu extends StackPane {
     // #region constants
     public static final Vector2 MAIN_MENU_SIZE = new Vector2(

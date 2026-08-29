@@ -27,6 +27,11 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
 
+/**
+ * Contains references to all resources needed by the game
+ *
+ * @author Tommaso Acciarresi
+ */
 public class AssetLibrary {
     // #region constants
     private static final String APP_ICON_PATH = "/images/icon.png",

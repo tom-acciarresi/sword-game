@@ -4,6 +4,12 @@ import it.unicam.cs.mpgc.rpg130730.AssetLibrary;
 import it.unicam.cs.mpgc.rpg130730.Launcher;
 import javafx.scene.image.Image;
 
+/**
+ * Custom animationplayer that counts elapsed frames to determine which sprite
+ * to use at each tick
+ *
+ * @author Tommaso Acciarresi
+ */
 public class AnimationPlayer {
     private Animation currAnimation = new Animation("null", new Image[0], 0);
     private Image currFrame = AssetLibrary.MISSING_SPRITE;

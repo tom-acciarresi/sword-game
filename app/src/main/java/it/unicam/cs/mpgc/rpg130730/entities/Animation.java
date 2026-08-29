@@ -2,6 +2,15 @@ package it.unicam.cs.mpgc.rpg130730.entities;
 
 import javafx.scene.image.Image;
 
+/**
+ * Animation
+ *
+ * @param identifier - animation identifier
+ * @param frames     - animation duration in frames
+ * @param fps        - animation playback speed
+ *
+ * @author Tommaso Acciarresi
+ */
 public record Animation(String identifier, Image[] frames, int fps) {
     // #region get-set
     public Image getFrame(int i) {

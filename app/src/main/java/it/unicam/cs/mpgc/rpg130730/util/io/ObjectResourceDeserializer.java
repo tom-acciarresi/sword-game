@@ -7,6 +7,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 
+/**
+ * Deserializes files to objects
+ *
+ * @author Tommaso Acciarresi
+ */
 public class ObjectResourceDeserializer {
     @SuppressWarnings("unchecked")
     public <T> T read(String filepath) {

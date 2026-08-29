@@ -16,6 +16,11 @@ import it.unicam.cs.mpgc.rpg130730.ui.MainMenu;
 import it.unicam.cs.mpgc.rpg130730.util.datatypes.Vector2;
 import javafx.scene.Group;
 
+/**
+ * Handles loading and changing levels (scenes)
+ *
+ * @author Tommaso Acciarresi
+ */
 public class SceneManager extends Group {
     // #region constants
     private static final Level INITIAL_LEVEL = Level.ROOM_1;
@@ -98,7 +103,7 @@ public class SceneManager extends Group {
     }
 
     private void loadTiles(int[] tileData) {
-        tilemap.changeTileMapTo(tileData);
+        tilemap.changeTo(tileData);
     }
 
     private void loadEnemies(Map<Vector2, EnemyType> enemyData) {

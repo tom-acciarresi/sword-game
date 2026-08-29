@@ -4,6 +4,11 @@ import it.unicam.cs.mpgc.rpg130730.Launcher;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
+/**
+ * A teleporter (doorway) between two levels
+ *
+ * @author Tommaso Acciarresi
+ */
 public class RoomTransition extends Rectangle {
     private RoomTransitionData transitionData;
 

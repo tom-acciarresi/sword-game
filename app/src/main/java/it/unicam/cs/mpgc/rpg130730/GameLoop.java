@@ -7,6 +7,11 @@ import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 
+/**
+ * 60 UPS game loop
+ *
+ * @author Tommaso Acciarresi
+ */
 public class GameLoop {
     private static Set<Updatable> objectsToUpdate = new HashSet<Updatable>();
 

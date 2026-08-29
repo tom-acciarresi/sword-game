@@ -5,6 +5,11 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Rectangle;
 
+/**
+ * Individual tile in a TileGrid
+ *
+ * @author Tommaso Acciarresi
+ */
 public class Tile extends StackPane {
     // #region constants
     public static final TileData NULL_TILE = new TileData(

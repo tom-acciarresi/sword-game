@@ -14,6 +14,11 @@ import javafx.geometry.Bounds;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Rectangle;
 
+/**
+ * Player
+ *
+ * @author Tommaso Acciarresi
+ */
 public class Player extends Character2D {
     // #region constants
     private static final int DEFAULT_PLAYER_SPEED = 400; // px/s

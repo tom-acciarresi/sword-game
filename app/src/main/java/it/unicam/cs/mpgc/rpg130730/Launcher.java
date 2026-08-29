@@ -6,6 +6,11 @@ import it.unicam.cs.mpgc.rpg130730.persistence.SaveSystem;
 import it.unicam.cs.mpgc.rpg130730.util.datatypes.Vector2;
 import javafx.stage.Stage;
 
+/**
+ * Launches the game
+ *
+ * @author Tommaso Acciarresi
+ */
 public class Launcher extends javafx.application.Application {
     // #region constants
     private static final boolean IS_RESIZABLE = false;

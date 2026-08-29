@@ -12,6 +12,11 @@ import java.nio.file.StandardOpenOption;
 import it.unicam.cs.mpgc.rpg130730.Launcher;
 import it.unicam.cs.mpgc.rpg130730.entities.Player;
 
+/**
+ * Handles saving and loading save data
+ *
+ * @author Tommaso Acciarresi
+ */
 public class SaveSystem {
     // #region constants
     private static final String SAVE_DIR = System.getProperty("user.home") + "/Sword_Game/";

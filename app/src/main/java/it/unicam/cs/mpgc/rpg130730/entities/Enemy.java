@@ -6,6 +6,11 @@ import it.unicam.cs.mpgc.rpg130730.AssetLibrary;
 import it.unicam.cs.mpgc.rpg130730.Launcher;
 import it.unicam.cs.mpgc.rpg130730.util.datatypes.Vector2;
 
+/**
+ * Enemy
+ *
+ * @author Tommaso Acciarresi
+ */
 public class Enemy extends Character2D {
     // #region constants
     private static final int DEFAULT_ENEMY_SPEED = 150;

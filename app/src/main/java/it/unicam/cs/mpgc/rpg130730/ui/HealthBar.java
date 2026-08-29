@@ -9,6 +9,11 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 
+/**
+ * Health Bar
+ *
+ * @author Tommaso Acciarresi
+ */
 public class HealthBar extends Group implements Updatable {
     // #region constants
     private static final Vector2 HP_BAR_SIZE = new Vector2(128, 32);

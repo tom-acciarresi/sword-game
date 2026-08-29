@@ -17,6 +17,11 @@ import it.unicam.cs.mpgc.rpg130730.environment.TileGrid;
 import it.unicam.cs.mpgc.rpg130730.util.datatypes.Vector2;
 
 @SuppressWarnings("null")
+/**
+ * Code for manually generating the levels
+ *
+ * @author Tommaso Acciarresi
+ */
 public class LevelEditor {
         // #region constants
         // FIXME: MAY CONTAIN PRIVATE INFO!

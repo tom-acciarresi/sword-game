@@ -6,6 +6,15 @@ import java.util.Set;
 import it.unicam.cs.mpgc.rpg130730.entities.EnemyType;
 import it.unicam.cs.mpgc.rpg130730.util.datatypes.Vector2;
 
+/**
+ * LevelData
+ *
+ * @param tileData    - a flattened 2D array of each tile in the level
+ * @param enemyData   - set of every enemy and its corresponding location
+ * @param transitions - set of doorways
+ *
+ * @author Tommaso Acciarresi
+ */
 public record LevelData(int[] tileData, Map<Vector2, EnemyType> enemyData, Set<RoomTransitionData> transitions)
         implements java.io.Serializable {
     @Override

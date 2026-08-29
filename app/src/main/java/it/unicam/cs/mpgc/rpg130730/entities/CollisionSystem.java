@@ -9,6 +9,12 @@ import it.unicam.cs.mpgc.rpg130730.environment.Tile;
 import javafx.geometry.BoundingBox;
 import javafx.geometry.Bounds;
 
+/**
+ * Keeps track of collidables and determines provides methods to determine
+ * collision
+ *
+ * @author Tommaso Acciarresi
+ */
 public class CollisionSystem {
     private static Set<Tile> collTiles = new HashSet<Tile>();
     private static Set<Enemy> enemies = new HashSet<Enemy>();
