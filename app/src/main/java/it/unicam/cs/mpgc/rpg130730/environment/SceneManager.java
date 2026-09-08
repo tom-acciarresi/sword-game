@@ -32,7 +32,7 @@ public class SceneManager extends Group {
             LEVEL_SIZE.x() / 2 - TileGrid.TILE_SIZE / 2,
             LEVEL_SIZE.y() / 2 - TileGrid.TILE_SIZE / 2);
 
-    private static final Level INITIAL_LEVEL = Level.ROOM_1;
+    public static final Level INITIAL_LEVEL = Level.ROOM_1;
 
     private final TileGrid tilemap = new TileGrid();
     private final Set<Enemy> loadedEnemies = new HashSet<Enemy>();

@@ -1,6 +1,7 @@
 plugins {
     application
     id("org.openjfx.javafxplugin") version "0.1.0"
+    id("com.gradleup.shadow") version "9.6.1"
 }
 
 javafx {
@@ -28,3 +29,11 @@ java {
 application {
     mainClass = "it.unicam.cs.mpgc.rpg130730.Main"
 }
+
+tasks.jar {
+    manifest {
+        attributes["Main-Class"] = application.mainClass
+    }
+}
+
+version = "1.0.4"

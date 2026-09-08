@@ -3,10 +3,6 @@ package it.unicam.cs.mpgc.rpg130730;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.lang.reflect.Type;
-import java.net.URISyntaxException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.StandardOpenOption;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -29,6 +25,7 @@ import com.google.gson.JsonObject;
 import it.unicam.cs.mpgc.rpg130730.entities.Animation;
 import it.unicam.cs.mpgc.rpg130730.environment.Level;
 import it.unicam.cs.mpgc.rpg130730.environment.LevelData;
+import it.unicam.cs.mpgc.rpg130730.environment.SceneManager;
 import it.unicam.cs.mpgc.rpg130730.environment.TileData;
 import it.unicam.cs.mpgc.rpg130730.util.io.FileResourceReader;
 import it.unicam.cs.mpgc.rpg130730.util.io.ImageResourceLoader;
@@ -203,7 +200,7 @@ public class AssetLibrary {
     }
 
     private void loadLevelData() {
-        Level[] levels = Level.ROOM_1.getDeclaringClass().getEnumConstants();
+        Level[] levels = SceneManager.INITIAL_LEVEL.getDeclaringClass().getEnumConstants();
 
         Arrays.stream(levels).forEach(l -> {
             String levelFilename = l.filename();
@@ -214,12 +211,9 @@ public class AssetLibrary {
 
     private @Nullable LevelData deserializeLevelData(String filepath) {
         try {
-            Path resourcePath = Path.of(getClass().getResource(filepath).toURI());
-            ObjectInputStream ois = new ObjectInputStream(Files.newInputStream(
-                    resourcePath,
-                    StandardOpenOption.READ));
+            ObjectInputStream ois = new ObjectInputStream(getClass().getResourceAsStream(filepath));
             return (LevelData) ois.readObject();
-        } catch (IOException | URISyntaxException | ClassNotFoundException e) {
+        } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
         }
 
