@@ -1,9 +1,10 @@
 package it.unicam.cs.mpgc.rpg130730.util.io;
 
+import java.io.BufferedInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.net.URISyntaxException;
-import java.nio.file.Files;
-import java.nio.file.Path;
+
+import org.jspecify.annotations.Nullable;
 
 /**
  * Reads files
@@ -11,17 +12,19 @@ import java.nio.file.Path;
  * @author Tommaso Acciarresi
  */
 public class FileResourceReader {
-    public String read(String filepath) {
+    public @Nullable String read(String filepath) {
+        BufferedInputStream bis = new BufferedInputStream(getClass().getResourceAsStream(filepath));
+        ByteArrayOutputStream buf = new ByteArrayOutputStream();
         try {
-            String data = Files.newBufferedReader(Path.of(getClass().getResource(filepath).toURI())).readAllAsString();
-
-            if (data == null)
-                throw new NullPointerException();
-
-            return data;
-        } catch (IOException | URISyntaxException e) {
+            for (int result = bis.read(); result != -1; result = bis.read()) {
+                buf.write((byte) result);
+            }
+            return buf.toString("UTF-8");
+        } catch (IOException e) {
             e.printStackTrace();
-            return "";
         }
+
+        System.err.println("Error reading file " + filepath);
+        return null;
     }
 }

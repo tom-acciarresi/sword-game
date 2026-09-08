@@ -9,6 +9,6 @@ import javafx.scene.image.Image;
  */
 public class ImageResourceLoader {
     public Image load(String filepath) {
-        return new Image(getClass().getResource(filepath).toExternalForm());
+        return new Image(getClass().getResourceAsStream(filepath));
     }
 }
